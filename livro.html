@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Livro da Isadora - Versão Especial</title>
+    <style>
+        :root {
+            --cor-capa: #FF69B4;
+            --cor-pagina: #FFF5F8;
+            --cor-texto: #5D4037;
+            --cor-casa: #FFD700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #fce4ec;
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--cor-texto);
+            overflow-x: hidden;
+        }
+
+        #livro-container {
+            width: 95vw;
+            max-width: 550px;
+            background: var(--cor-pagina);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border: 8px solid var(--cor-capa);
+            position: relative;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .pagina {
+            display: none;
+            animation: fadeIn 0.8s;
+        }
+
+        .pagina.ativa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Imagem da Isadora */
+        .foto-isadora {
+            width: 140px; height: 280px;
+            margin: 0 auto 15px;
+            background-image: url('seu_personagem.png');
+            background-size: 300% 100%;
+            background-repeat: no-repeat;
+            filter: drop-shadow(0 8px 4px rgba(0,0,0,0.1));
+        }
+
+        /* Moldura para a Casa Sorrir */
+        .foto-casa {
+            width: 100%;
+            height: 250px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-image: url('casa_sorrir.png'); /* Nomeie a imagem da casa assim */
+            background-size: cover;
+            background-position: center;
+            border: 4px solid var(--cor-casa);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .pose-1 { background-position: 0% 0%; }
+        .pose-2 { background-position: 50% 0%; }
+        .pose-3 { background-position: 100% 0%; }
+
+        h1 { color: var(--cor-capa); font-size: 26px; margin-bottom: 15px; text-shadow: 1px 1px 0 #fff; }
+        p { font-size: 17px; line-height: 1.5; margin-bottom: 15px; text-align: justify; padding: 0 10px; }
+
+        .controles {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        button {
+            background: var(--cor-capa);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #D81B60;
+            font-size: 16px;
+        }
+
+        button:active { transform: translateY(2px); box-shadow: 0 2px 0 #D81B60; }
+        button:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+
+        .numero-pagina { font-size: 14px; color: #ad8a8a; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="livro-container">
+    <!-- PÁGINA 1 -->
+    <div class="pagina ativa" id="p1">
+        <div class="foto-isadora pose-1"></div>
+        <h1>Um Presente do Céu</h1>
+        <p>Em Mirandiba, nasceu a pequena Isadora. Ela chegou trazendo um sorriso único, com uma marquinha especial chamada lábio leporino. Desde o primeiro dia, ela mostrou que tinha a força de uma gigante.</p>
+    </div>
+
+    <!-- PÁGINA 2: CASA SORRIR -->
+    <div class="pagina" id="p2">
+        <div class="foto-casa"></div>
+        <h1>Um Lar em Recife</h1>
+        <p>Quando chegou a hora da primeira cirurgia, a família viajou para Recife. Lá, eles encontraram a <strong>Casa Sorrir</strong>. Mais que um abrigo, era um lugar de "Acolhimento, Cuidado e Amor".</p>
+        <p>Lá, a Isadora e seus pais conheceram outras famílias que viviam a mesma história. Juntos, eles descobriram que ninguém estava sozinho e que a união trazia a coragem necessária.</p>
+    </div>
+
+    <!-- PÁGINA 3 -->
+    <div class="pagina" id="p3">
+        <div class="foto-isadora pose-2"></div>
+        <h1>Mãos de Fada</h1>
+        <p>Com o apoio da Casa Sorrir e o carinho de todos, Isadora enfrentou sua primeira jornada no hospital. Médicos habilidosos, como magos do bem, cuidaram de cada detalhe para que o seu sorriso brilhasse ainda mais.</p>
+    </div>
+
+    <!-- PÁGINA 4 -->
+    <div class="pagina" id="p4">
+        <div class="foto-isadora pose-3"></div>
+        <h1>O Sorriso que Venceu</h1>
+        <p>Hoje, aquela marquinha é o símbolo de uma grande vitória. Isadora cresce feliz, correndo e brincando, sempre lembrando que o amor e o apoio de lugares como a Casa Sorrir ajudaram a construir o seu final feliz.</p>
+    </div>
+
+    <div class="controles">
+        <button id="prevBtn" disabled onclick="mudarPagina(-1)">Anterior</button>
+        <button id="nextBtn" onclick="mudarPagina(1)">Próxima</button>
+    </div>
+    <div class="numero-pagina" id="paginacao">Página 1 de 4</div>
+</div>
+
+<script>
+    let paginaAtual = 1;
+    const totalPaginas = 4;
+
+    function mudarPagina(delta) {
+        document.getElementById(`p${paginaAtual}`).classList.remove('ativa');
+        paginaAtual += delta;
+        document.getElementById(`p${paginaAtual}`).classList.add('ativa');
+        
+        document.getElementById('prevBtn').disabled = (paginaAtual === 1);
+        document.getElementById('nextBtn').disabled = (paginaAtual === totalPaginas);
+        
+        document.getElementById('paginacao').innerText = `Página ${paginaAtual} de ${totalPaginas}`;
+    }
+</script>
+</body>
+</html>

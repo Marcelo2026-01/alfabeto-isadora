@@ -1,0 +1,18 @@
+{
+  "name": "O Alfabeto da Isadora",
+  "short_name": "Isadora",
+  "description": "Um jogo educativo de alto nível para aprender o alfabeto.",
+  "start_url": "./",
+  "display": "fullscreen",
+  "background_color": "#1a252f",
+  "theme_color": "#1a252f",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "icone512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
