@@ -360,6 +360,15 @@
         </div>
     </div>
 
+    <!-- TELA DE SAÍDA PS5 (Substitui o Alert nativo) -->
+    <div id="exit-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; opacity: 0; transition: opacity 0.5s ease; text-align: center;">
+        <div style="background: rgba(15, 20, 35, 0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 80%; display: flex; flex-direction: column; align-items: center;">
+            <h1 style="color: #FF107A; font-size: clamp(24px, 6vw, 35px); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-family: 'Fredoka', sans-serif;">Sistema</h1>
+            <p style="color: #A0AAB5; font-size: clamp(14px, 3.5vw, 18px); margin-bottom: 25px; line-height: 1.5; font-family: 'Fredoka', sans-serif;">Para encerrar sua sessao, minimize ou feche este aplicativo no seu celular.</p>
+            <button id="btn-cancelar-sair" class="btn-pause-ui">VOLTAR AO MENU</button>
+        </div>
+    </div>
+
     <canvas id="gameCanvas" role="img" aria-label="Area do jogo interativo da Isadora"></canvas>
 </div>
 
@@ -374,6 +383,9 @@
     const btnSomMenu = document.getElementById('btn-som-menu');
     const btnSairMenu = document.getElementById('btn-sair-menu');
     
+    const exitScreen = document.getElementById('exit-screen');
+    const btnCancelarSair = document.getElementById('btn-cancelar-sair');
+
     const btnHistoria = document.getElementById('btn-historia');
     const modalHistoria = document.getElementById('modal-historia');
     const btnFecharHistoria = document.getElementById('btn-fechar-historia');
@@ -666,7 +678,22 @@
     }
 
     btnJogar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); iniciarJogo(); });
-    btnSairMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); window.close(); setTimeout(() => { alert("Para sair do jogo, feche a aba do seu navegador!"); }, 300); }); 
+
+    btnSairMenu.addEventListener('click', (e) => { 
+        e.preventDefault(); e.stopPropagation(); 
+        AudioManager.playHoverTick();
+        try { window.close(); } catch(err) {} 
+        // Se o navegador travar o fechamento, exibe nossa interface PS5 AAA
+        exitScreen.style.display = 'flex'; 
+        setTimeout(() => { exitScreen.style.opacity = '1'; }, 50); 
+    });
+
+    btnCancelarSair.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        AudioManager.playHoverTick();
+        exitScreen.style.opacity = '0'; 
+        setTimeout(() => { exitScreen.style.display = 'none'; }, 300);
+    });
     
     btnPause.addEventListener('click', (e) => { 
         e.preventDefault(); e.stopPropagation();
@@ -922,7 +949,7 @@
     let itemInterval = 2500; 
 
     function handleDown(e) { 
-        if (e.target.closest('button') || e.target.closest('.ps5-btn') || e.target.closest('.btn-corner') || document.getElementById('modal-historia').style.display === 'flex' || !gameActive) return; 
+        if (e.target.closest('button') || e.target.closest('.ps5-btn') || e.target.closest('.btn-corner') || document.getElementById('modal-historia').style.display === 'flex' || document.getElementById('exit-screen').style.display === 'flex' || !gameActive) return; 
         isHolding = true; 
         if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } 
         if(gameActive && !isPaused && faseAtual !== 3) { e.preventDefault(); player.jump(); } 
@@ -1178,24 +1205,37 @@
     }
 
     // ========================================================
-    // LOGICA DE CARREGAMENTO PS5 (LOADER INICIAL)
+    // LOGICA DE CARREGAMENTO PS5 (LOADER INICIAL BLINDADO)
     // ========================================================
-    window.onload = () => { 
+    function removerLoader() {
+        const loader = document.getElementById('loading-screen');
+        if (loader && loader.style.display !== 'none') {
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+            setTimeout(() => loader.style.display = 'none', 800);
+        }
+    }
+
+    window.addEventListener('load', () => { 
         hudLayer.style.display = 'none'; 
         btnSom.style.display = 'none'; 
         btnPause.style.display = 'none';
         redimensionarCanvas(); 
         if (!gameActive && fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height); 
         
-        setTimeout(() => {
-            const loader = document.getElementById('loading-screen');
-            if (loader) {
-                loader.style.opacity = '0';
-                loader.style.visibility = 'hidden';
-                setTimeout(() => loader.style.display = 'none', 800);
-            }
-        }, 1500); 
-    }
+        setTimeout(removerLoader, 1500); 
+    });
+
+    setTimeout(() => {
+        removerLoader();
+        if (!gameActive) {
+            hudLayer.style.display = 'none'; 
+            btnSom.style.display = 'none'; 
+            btnPause.style.display = 'none';
+        }
+        redimensionarCanvas();
+    }, 3500);
+
 </script>
 
 <script type="module">
@@ -1204,6 +1244,17 @@
   const firebaseConfig = { apiKey: "COLE_SUA_API_KEY_AQUI", authDomain: "seu-projeto.firebaseapp.com", projectId: "seu-projeto", storageBucket: "seu-projeto.appspot.com", messagingSenderId: "123456789", appId: "1:123456789:web:abcdef" };
   const app = initializeApp(firebaseConfig); const db = getFirestore(app); window.db = db;
   console.log("🚀 Motor Firebase Conectado com Sucesso! Nível AAA.");
+</script>
+
+<!-- ACIONADOR DE INSTALAÇÃO PWA -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(err => {
+                console.log('Falha ao registrar o App: ', err);
+            });
+        });
+    }
 </script>
 
 </body>
