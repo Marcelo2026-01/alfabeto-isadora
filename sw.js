@@ -4,6 +4,16 @@ self.addEventListener('install', (e) => {
     self.skipWaiting();
 });
 
+self.addEventListener('activate', (e) => {
+    console.log('[Motor PWA] Ativado!');
+    self.clients.claim();
+});
+
 self.addEventListener('fetch', (e) => {
-    // Permite que o jogo rode normal, mas libera a instalação
+    // Permite que o jogo rode rápido e de forma estável
+    e.respondWith(
+        fetch(e.request).catch(() => {
+            return new Response('Conectando ao servidor...');
+        })
+    );
 });
