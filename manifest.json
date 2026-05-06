@@ -1,7 +1,7 @@
 {
   "name": "O Alfabeto da Isadora",
   "short_name": "Isadora",
-  "start_url": "/index.html",
+  "start_url": "/jogo.html",
   "display": "fullscreen",
   "background_color": "#05070e",
   "theme_color": "#00D8FF",
