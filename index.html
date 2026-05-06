@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O Alfabeto da Isadora - A Jornada</title>
     
+    <meta property="og:title" content="O Alfabeto da Isadora - Jogo AAA">
+    <meta property="og:description" content="Uma jornada imersiva e mágica para aprender as letras e sílabas. Jogue grátis!">
+    <meta property="og:image" content="icone512.png">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#00D8FF">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icone512.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -35,7 +44,7 @@
             position: relative;
         }
 
-        /* ATMOSFERA PS5 (FUNDO NEBULOSO ANIMADO) */
+        /* ATMOSFERA PS5 */
         body::before {
             content: '';
             position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
@@ -48,274 +57,100 @@
 
         .container { max-width: 1200px; margin: 0 auto; padding: 0 25px; position: relative; z-index: 10; }
 
-        /* === ANIMAÇÕES PS5 === */
         @keyframes flutuarBadge { 0%, 100% { transform: translateY(0); box-shadow: 0 10px 25px rgba(0,216,255,0.1); } 50% { transform: translateY(-8px); box-shadow: 0 20px 35px rgba(0,216,255,0.25); } }
         @keyframes sweepText { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
         @keyframes brilhoBotao { 0% { box-shadow: 0 0 15px rgba(0,216,255,0.3); } 100% { box-shadow: 0 0 35px rgba(0,216,255,0.7); } }
         @keyframes respirarFundo { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(2deg); } }
 
-        /* === HERO SECTION (O PALCO MAGNÍFICO) === */
-        .hero {
-            min-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 100px 0 60px;
-            position: relative;
-        }
+        /* === HERO SECTION === */
+        .hero { min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 0 60px; position: relative; }
         
-        /* NOVO BADGE SUBSTITUINDO A IMAGEM QUADRADA */
-        .hero-badge {
-            background: rgba(0, 216, 255, 0.05);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 216, 255, 0.3);
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 10px 28px;
-            border-radius: 50px;
-            color: var(--neon-blue);
-            font-size: clamp(12px, 3vw, 15px);
-            font-weight: 900;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            animation: flutuarBadge 4s ease-in-out infinite;
-        }
+        .hero-badge { background: rgba(0, 216, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 216, 255, 0.3); border-top: 1px solid rgba(255, 255, 255, 0.4); padding: 10px 28px; border-radius: 50px; color: var(--neon-blue); font-size: clamp(12px, 3vw, 15px); font-weight: 900; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 40px; animation: flutuarBadge 4s ease-in-out infinite; }
+        .hero h1 { font-size: clamp(40px, 8vw, 95px); font-weight: 900; letter-spacing: 1px; line-height: 1.05; margin-bottom: 20px; background: linear-gradient(90deg, #FFFFFF, #94a3b8, #FFFFFF, #00D8FF, #FFFFFF); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: sweepText 8s linear infinite; text-transform: uppercase; }
+        .hero h2 { font-size: clamp(16px, 3vw, 26px); color: var(--text-muted); font-weight: 600; margin-bottom: 50px; letter-spacing: 3px; text-transform: uppercase; max-width: 600px; }
+        
+        .hero-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 
-        .hero h1 {
-            font-size: clamp(40px, 8vw, 95px);
-            font-weight: 900;
-            letter-spacing: 1px;
-            line-height: 1.05;
-            margin-bottom: 20px;
-            /* Efeito Prateado/Metálico PS5 */
-            background: linear-gradient(90deg, #FFFFFF, #94a3b8, #FFFFFF, #00D8FF, #FFFFFF);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: sweepText 8s linear infinite;
-            text-transform: uppercase;
-        }
-
-        .hero h2 {
-            font-size: clamp(16px, 3vw, 26px);
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-bottom: 50px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            max-width: 600px;
-        }
-        
-        .btn-ps5-play {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            color: #FFF;
-            text-decoration: none;
-            font-size: clamp(16px, 3.5vw, 22px);
-            font-weight: 900;
-            padding: 22px 65px;
-            border-radius: 50px;
-            border: 1px solid var(--glass-border-light);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            position: relative;
-            overflow: hidden;
-            animation: brilhoBotao 3s infinite alternate;
-        }
-        
-        .btn-ps5-play::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s ease;
-        }
-
-        .btn-ps5-play:hover {
-            transform: scale(1.05) translateY(-5px);
-            background: #FFF;
-            color: var(--bg-dark);
-            border-color: #FFF;
-            box-shadow: 0 20px 40px rgba(0, 216, 255, 0.5);
-        }
-        
+        .btn-ps5-play { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); color: #FFF; text-decoration: none; font-size: clamp(16px, 3.5vw, 22px); font-weight: 900; padding: 22px 65px; border-radius: 50px; border: 1px solid var(--glass-border-light); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; letter-spacing: 3px; display: inline-flex; align-items: center; position: relative; overflow: hidden; animation: brilhoBotao 3s infinite alternate; cursor: pointer; }
+        .btn-ps5-play::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s ease; }
+        .btn-ps5-play:hover { transform: scale(1.05) translateY(-5px); background: #FFF; color: var(--bg-dark); border-color: #FFF; box-shadow: 0 20px 40px rgba(0, 216, 255, 0.5); }
         .btn-ps5-play:hover::before { left: 150%; }
 
-        /* === FASES DO JOGO (GAMEPLAY SHOWCASE) === */
+        .btn-ps5-install { background: rgba(20, 25, 45, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); color: #FFF; font-size: clamp(14px, 3vw, 18px); font-weight: 700; padding: 15px 40px; border-radius: 50px; border: 1px solid var(--neon-pink); transition: all 0.4s; text-transform: uppercase; letter-spacing: 2px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; outline: none; }
+        .btn-ps5-install:hover { background: var(--neon-pink); color: #FFF; box-shadow: 0 10px 30px rgba(255, 16, 122, 0.4); transform: translateY(-3px); }
+
+        /* === FASES DO JOGO === */
         .showcase-section { padding: 100px 0; position: relative; z-index: 2; }
-        .section-title {
-            text-align: center; font-size: clamp(30px, 6vw, 55px); font-weight: 900;
-            margin-bottom: 70px; color: #FFF; text-transform: uppercase; letter-spacing: 3px;
-        }
+        .section-title { text-align: center; font-size: clamp(30px, 6vw, 55px); font-weight: 900; margin-bottom: 70px; color: #FFF; text-transform: uppercase; letter-spacing: 3px; }
         .section-title span { color: var(--neon-pink); text-shadow: 0 0 25px rgba(255,16,122,0.4); }
+        .fases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
 
-        .fases-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 40px;
-        }
-
-        .fase-card {
-            background: var(--bg-panel);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-top: 1px solid rgba(255,255,255,0.15);
-            border-left: 1px solid rgba(255,255,255,0.15);
-            border-radius: 28px;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-            display: flex; flex-direction: column;
-            position: relative;
-        }
-        
-        .fase-card:hover {
-            transform: translateY(-15px) scale(1.02);
-            background: var(--bg-panel-hover);
-            border-color: var(--glass-border-light);
-        }
-        
+        .fase-card { background: var(--bg-panel); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.15); border-left: 1px solid rgba(255,255,255,0.15); border-radius: 28px; overflow: hidden; transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 25px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; position: relative; }
+        .fase-card:hover { transform: translateY(-15px) scale(1.02); background: var(--bg-panel-hover); border-color: var(--glass-border-light); }
         .fase-card:nth-child(1):hover { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(0, 216, 255, 0.15); }
         .fase-card:nth-child(2):hover { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255, 16, 122, 0.15); }
         .fase-card:nth-child(3):hover { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255, 200, 0, 0.15); }
 
-        .fase-img {
-            width: 100%; height: 240px;
-            background-color: #1a1e2d; 
-            background-size: cover; background-position: center;
-            position: relative;
-            transition: transform 0.8s ease;
-        }
-        
+        .fase-img { width: 100%; height: 240px; background-color: #1a1e2d; background-size: cover; background-position: center; position: relative; transition: transform 0.8s ease; }
         .fase-card:hover .fase-img { transform: scale(1.05); }
+        .img-ato1 { background-image: url('fase1.png'); } .img-ato2 { background-image: url('fase2.png'); } .img-ato3 { background-image: url('fase3.png'); }
 
-        .img-ato1 { background-image: url('fase1.png'); }
-        .img-ato2 { background-image: url('fase2.png'); }
-        .img-ato3 { background-image: url('fase3.png'); }
-
-        .fase-tag {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(5, 7, 14, 0.8); backdrop-filter: blur(10px);
-            padding: 8px 20px; border-radius: 30px;
-            font-size: 12px; font-weight: 900; color: #FFF; letter-spacing: 2px;
-            border: 1px solid var(--glass-border-light);
-            z-index: 2;
-        }
-
+        .fase-tag { position: absolute; top: 20px; right: 20px; background: rgba(5, 7, 14, 0.8); backdrop-filter: blur(10px); padding: 8px 20px; border-radius: 30px; font-size: 12px; font-weight: 900; color: #FFF; letter-spacing: 2px; border: 1px solid var(--glass-border-light); z-index: 2; }
         .fase-content { padding: 35px; flex-grow: 1; position: relative; z-index: 2; background: var(--bg-panel); }
         .fase-content h3 { font-size: 26px; margin-bottom: 15px; color: #FFF; font-weight: 900; letter-spacing: 1px; }
-        .fase-card:nth-child(1) h3 { color: var(--neon-blue); }
-        .fase-card:nth-child(2) h3 { color: var(--neon-pink); }
-        .fase-card:nth-child(3) h3 { color: var(--neon-gold); }
-        
+        .fase-card:nth-child(1) h3 { color: var(--neon-blue); } .fase-card:nth-child(2) h3 { color: var(--neon-pink); } .fase-card:nth-child(3) h3 { color: var(--neon-gold); }
         .fase-content p { color: var(--text-muted); font-size: 16px; line-height: 1.7; font-weight: 400; font-family: -apple-system, sans-serif; }
 
-        /* === A ALMA DO PROJETO (STORY CINEMATOGRÁFICA) === */
+        /* === STORY === */
         .story-section { padding: 100px 0; position: relative; z-index: 2; }
-        .story-box {
-            background: linear-gradient(135deg, rgba(20, 25, 45, 0.5) 0%, rgba(5, 10, 20, 0.8) 100%);
-            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
-            border: 1px solid var(--glass-border);
-            border-top: 1px solid rgba(255,255,255,0.2);
-            border-left: 1px solid rgba(255,255,255,0.1);
-            border-radius: 40px; padding: clamp(40px, 6vw, 80px);
-            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: center;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-            position: relative; overflow: hidden;
-        }
-        
-        .story-box::after {
-            content: ''; position: absolute; top: -30%; right: -30%; width: 80%; height: 80%;
-            background: radial-gradient(circle, rgba(255,16,122,0.08) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
+        .story-box { background: linear-gradient(135deg, rgba(20, 25, 45, 0.5) 0%, rgba(5, 10, 20, 0.8) 100%); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.2); border-left: 1px solid rgba(255,255,255,0.1); border-radius: 40px; padding: clamp(40px, 6vw, 80px); display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: center; box-shadow: 0 40px 80px rgba(0,0,0,0.8); position: relative; overflow: hidden; }
+        .story-box::after { content: ''; position: absolute; top: -30%; right: -30%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(255,16,122,0.08) 0%, transparent 60%); pointer-events: none; }
         @media (max-width: 900px) { .story-box { grid-template-columns: 1fr; } }
         
         .story-text h3 { font-size: clamp(30px, 5vw, 45px); color: var(--neon-pink); margin-bottom: 30px; line-height: 1.2; font-weight: 900; }
         .story-text p { font-size: 18px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.8; font-family: -apple-system, sans-serif; }
         .story-text strong { color: #FFF; font-weight: 600; }
-
         .story-galeria { display: flex; flex-direction: column; gap: 25px; position: relative; z-index: 2; }
-        .foto-lore {
-            width: 100%; height: 280px; border-radius: 25px;
-            background-size: cover; background-position: center;
-            border: 1px solid var(--glass-border-light);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
-            transition: transform 0.4s ease;
-        }
+        .foto-lore { width: 100%; height: 280px; border-radius: 25px; background-size: cover; background-position: center; border: 1px solid var(--glass-border-light); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transition: transform 0.4s ease; }
         .foto-lore:hover { transform: scale(1.03); }
         .foto-isadora { background-image: url('seu_personagem.png'); background-size: contain; background-repeat: no-repeat; background-color: rgba(5,7,14,0.8); }
         .foto-casa { background-image: url('casa_sorrir.png'); }
 
-        /* === APOIO (MONETIZAÇÃO PIX PREMIUM) === */
+        /* === APOIO PIX === */
         .support-section { padding: 100px 0 140px; text-align: center; position: relative; z-index: 2; }
-        .support-card {
-            max-width: 750px; margin: 0 auto;
-            background: rgba(15, 20, 35, 0.5); 
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 200, 0, 0.2); 
-            border-top: 1px solid rgba(255, 200, 0, 0.5);
-            border-radius: 40px;
-            padding: 60px 40px; 
-            box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 80px rgba(255, 200, 0, 0.08);
-            position: relative;
-        }
+        .support-card { max-width: 750px; margin: 0 auto; background: rgba(15, 20, 35, 0.5); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 200, 0, 0.2); border-top: 1px solid rgba(255, 200, 0, 0.5); border-radius: 40px; padding: 60px 40px; box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 80px rgba(255, 200, 0, 0.08); position: relative; }
         .support-card h3 { font-size: clamp(28px, 5vw, 40px); color: var(--neon-gold); margin-bottom: 20px; font-weight: 900; letter-spacing: 1px; }
         .support-card p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; font-family: -apple-system, sans-serif; }
-        
-        .pix-box {
-            background: rgba(5, 7, 14, 0.8); padding: 35px 25px; border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 35px;
-            box-shadow: inset 0 5px 20px rgba(0,0,0,0.6);
-        }
+        .pix-box { background: rgba(5, 7, 14, 0.8); padding: 35px 25px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 35px; box-shadow: inset 0 5px 20px rgba(0,0,0,0.6); }
         .pix-title { font-size: 13px; color: #64748B; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
         .pix-key { font-size: clamp(16px, 3.5vw, 26px); font-weight: 700; color: #FFF; margin: 20px 0; word-break: break-all; letter-spacing: 1px; }
-        
-        .btn-pix {
-            background: linear-gradient(135deg, rgba(255, 200, 0, 0.1), rgba(255, 150, 0, 0.15)); 
-            color: var(--neon-gold);
-            border: 1px solid rgba(255, 200, 0, 0.5); padding: 20px 50px;
-            font-size: 16px; font-weight: 900; border-radius: 50px; cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            font-family: 'Fredoka', sans-serif; text-transform: uppercase; letter-spacing: 2px;
-        }
+        .btn-pix { background: linear-gradient(135deg, rgba(255, 200, 0, 0.1), rgba(255, 150, 0, 0.15)); color: var(--neon-gold); border: 1px solid rgba(255, 200, 0, 0.5); padding: 20px 50px; font-size: 16px; font-weight: 900; border-radius: 50px; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: 'Fredoka', sans-serif; text-transform: uppercase; letter-spacing: 2px; }
         .btn-pix:hover { background: var(--neon-gold); color: #000; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(255, 200, 0, 0.3); border-color: var(--neon-gold); }
 
         footer { text-align: center; padding: 40px 0; color: #475569; font-size: 15px; font-weight: 600; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(5,7,14,0.5); position: relative; z-index: 2; }
-
-        @media (max-width: 600px) {
-            .hero { padding: 80px 0 40px; }
-            .fase-content { padding: 25px; }
-            .support-card { padding: 40px 20px; }
-        }
+        @media (max-width: 600px) { .hero { padding: 80px 0 40px; } .fase-content { padding: 25px; } .support-card { padding: 40px 20px; } .hero-buttons { flex-direction: column; align-items: center; } }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
-        <!-- PALCO PRINCIPAL (HERO) -->
         <section class="hero">
-            <!-- Badge Substituindo a Imagem Quadrada -->
             <div class="hero-badge">⭐ Jogo Educativo de Alta Performance</div>
-            
             <h1>O Alfabeto da Isadora</h1>
             <h2>Domine as letras, sílabas e palavras em uma jornada imersiva e mágica.</h2>
             
-            <a href="jogo.html" class="btn-ps5-play">▶ Jogar Grátis Agora</a>
+            <div class="hero-buttons">
+                <button onclick="window.location.href='jogo.html'" class="btn-ps5-play" style="font-family: 'Fredoka', sans-serif;">▶ Jogar Grátis</button>
+                
+                <button id="btnInstalar" class="btn-ps5-install" style="display: none; font-family: 'Fredoka', sans-serif;">
+                    ⬇ Instalar Jogo
+                </button>
+            </div>
         </section>
 
-        <!-- SHOWCASE DE FASES (COPYWRITING AAA) -->
         <section class="showcase-section">
             <h2 class="section-title">Uma Jornada em <span>3 Atos</span></h2>
-            
             <div class="fases-grid">
-                <!-- FASE 1 -->
                 <div class="fase-card">
                     <div class="fase-img img-ato1"><div class="fase-tag">ATO I</div></div>
                     <div class="fase-content">
@@ -323,8 +158,6 @@
                         <p>Acelere por uma estrada mágica! Ajude Isadora a saltar sobre obstáculos no tempo exato para coletar letras de cristal. Uma introdução dinâmica que treina reflexos e o reconhecimento do alfabeto completo.</p>
                     </div>
                 </div>
-
-                <!-- FASE 2 -->
                 <div class="fase-card">
                     <div class="fase-img img-ato2"><div class="fase-tag">ATO II</div></div>
                     <div class="fase-content">
@@ -332,8 +165,6 @@
                         <p>O desafio evolui. O jogo testa o conhecimento absorvido exigindo decisões em frações de segundo. Duas letras flutuantes caem do céu: escolha a correta para completar a palavra e provar sua genialidade.</p>
                     </div>
                 </div>
-
-                <!-- FASE 3 -->
                 <div class="fase-card">
                     <div class="fase-img img-ato3"><div class="fase-tag">ATO III</div></div>
                     <div class="fase-content">
@@ -344,7 +175,6 @@
             </div>
         </section>
 
-        <!-- A ALMA DO PROJETO -->
         <section class="story-section">
             <div class="story-box">
                 <div class="story-text">
@@ -360,15 +190,12 @@
             </div>
         </section>
 
-        <!-- APOIO (MONETIZAÇÃO INTELIGENTE) -->
         <section class="support-section">
             <div class="support-card">
                 <h3>Desbloqueie o Futuro</h3>
                 <p>Nós não usamos anúncios irritantes e não cobramos pelo jogo. Acreditamos no acesso livre à educação. Se você ficou impressionado com a qualidade do projeto, <strong>ajude a financiar o "Módulo 2: O Vale dos Números"</strong> doando qualquer valor!</p>
-                
                 <div class="pix-box">
                     <div class="pix-title">CHAVE PIX OFICIAL (E-MAIL)</div>
-                    <!-- CHAVE PIX PROFISSIONAL INSERIDA -->
                     <div class="pix-key" id="chave-pix-texto">pagar.jmarcelo@gmail.com</div> 
                     <button class="btn-pix" onclick="copiarPix()">📋 Copiar Chave PIX</button>
                 </div>
@@ -389,12 +216,37 @@
                 btn.innerText = "✅ COPIADO COM SUCESSO!";
                 btn.style.background = "#FFC800";
                 btn.style.color = "#000";
-                
                 setTimeout(() => {
                     btn.innerText = "📋 Copiar Chave PIX";
                     btn.style.background = "linear-gradient(135deg, rgba(255, 200, 0, 0.1), rgba(255, 150, 0, 0.15))";
                     btn.style.color = "#FFC800";
                 }, 3000);
+            });
+        }
+
+        // MOTOR DE INSTALAÇÃO PWA
+        let eventoInstalacao;
+        const botaoInstalar = document.getElementById('btnInstalar');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            eventoInstalacao = e;
+            botaoInstalar.style.display = 'inline-flex';
+        });
+
+        botaoInstalar.addEventListener('click', async () => {
+            if (eventoInstalacao !== null) {
+                eventoInstalacao.prompt();
+                const { outcome } = await eventoInstalacao.userChoice;
+                if (outcome === 'accepted') { console.log('Isadora App Instalado!'); }
+                eventoInstalacao = null;
+                botaoInstalar.style.display = 'none';
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
             });
         }
     </script>
