@@ -61,6 +61,7 @@
         @keyframes sweepText { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
         @keyframes brilhoBotao { 0% { box-shadow: 0 0 15px rgba(0,216,255,0.3); } 100% { box-shadow: 0 0 35px rgba(0,216,255,0.7); } }
         @keyframes respirarFundo { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(2deg); } }
+        @keyframes flutuarImagem { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
         /* === HERO SECTION === */
         .hero { min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 0 60px; position: relative; }
@@ -101,25 +102,41 @@
         .fase-card:nth-child(1) h3 { color: var(--neon-blue); } .fase-card:nth-child(2) h3 { color: var(--neon-pink); } .fase-card:nth-child(3) h3 { color: var(--neon-gold); }
         .fase-content p { color: var(--text-muted); font-size: 16px; line-height: 1.7; font-weight: 400; font-family: -apple-system, sans-serif; }
 
-        /* === STORY === */
+        /* === STORY SECTION (A MAGIA DE ALTO NÍVEL) === */
         .story-section { padding: 100px 0; position: relative; z-index: 2; }
-        .story-box { background: linear-gradient(135deg, rgba(20, 25, 45, 0.5) 0%, rgba(5, 10, 20, 0.8) 100%); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.2); border-left: 1px solid rgba(255,255,255,0.1); border-radius: 40px; padding: clamp(40px, 6vw, 80px); display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: center; box-shadow: 0 40px 80px rgba(0,0,0,0.8); position: relative; overflow: hidden; }
-        .story-box::after { content: ''; position: absolute; top: -30%; right: -30%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(255,16,122,0.08) 0%, transparent 60%); pointer-events: none; }
-        @media (max-width: 900px) { .story-box { grid-template-columns: 1fr; } }
         
-        .story-text h3 { font-size: clamp(30px, 5vw, 45px); color: var(--neon-pink); margin-bottom: 30px; line-height: 1.2; font-weight: 900; }
-        .story-text p { font-size: 18px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.8; font-family: -apple-system, sans-serif; }
+        .story-box { background: linear-gradient(135deg, rgba(20, 25, 45, 0.5) 0%, rgba(5, 10, 20, 0.8) 100%); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.2); border-left: 1px solid rgba(255,255,255,0.1); border-radius: 40px; padding: clamp(30px, 5vw, 80px); display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; box-shadow: 0 40px 80px rgba(0,0,0,0.8); position: relative; overflow: hidden; }
+        .story-box::after { content: ''; position: absolute; top: -30%; right: -30%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(255,16,122,0.08) 0%, transparent 60%); pointer-events: none; }
+        
+        .story-text h3 { font-size: clamp(28px, 5vw, 45px); color: var(--neon-pink); margin-bottom: 30px; line-height: 1.2; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;}
+        .story-text p { font-size: 17px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.8; font-family: -apple-system, sans-serif; }
         .story-text strong { color: #FFF; font-weight: 600; }
-        .story-galeria { display: flex; flex-direction: column; gap: 25px; position: relative; z-index: 2; }
-        .foto-lore { width: 100%; height: 280px; border-radius: 25px; background-size: cover; background-position: center; border: 1px solid var(--glass-border-light); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transition: transform 0.4s ease; }
-        .foto-lore:hover { transform: scale(1.03); }
-        .foto-isadora { background-image: url('seu_personagem.png'); background-size: contain; background-repeat: no-repeat; background-color: rgba(5,7,14,0.8); }
-        .foto-casa { background-image: url('casa_sorrir.png'); }
+        
+        /* A NOVA GALERIA (LIMPA E PREMIUM) */
+        .story-galeria { display: flex; justify-content: center; align-items: center; position: relative; height: 100%; min-height: 400px; perspective: 1000px; }
+        
+        .foto-magica {
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+            border-radius: 30px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255, 16, 122, 0.25);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            animation: flutuarImagem 6s ease-in-out infinite;
+        }
+
+        .foto-magica:hover {
+            transform: scale(1.05) translateY(-15px);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 80px rgba(0, 216, 255, 0.4);
+            border-color: rgba(0, 216, 255, 0.5);
+        }
 
         /* === APOIO PIX === */
         .support-section { padding: 100px 0 140px; text-align: center; position: relative; z-index: 2; }
         .support-card { max-width: 750px; margin: 0 auto; background: rgba(15, 20, 35, 0.5); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 200, 0, 0.2); border-top: 1px solid rgba(255, 200, 0, 0.5); border-radius: 40px; padding: 60px 40px; box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 80px rgba(255, 200, 0, 0.08); position: relative; }
-        .support-card h3 { font-size: clamp(28px, 5vw, 40px); color: var(--neon-gold); margin-bottom: 20px; font-weight: 900; letter-spacing: 1px; }
+        .support-card h3 { font-size: clamp(28px, 5vw, 40px); color: var(--neon-gold); margin-bottom: 20px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
         .support-card p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; font-family: -apple-system, sans-serif; }
         .pix-box { background: rgba(5, 7, 14, 0.8); padding: 35px 25px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 35px; box-shadow: inset 0 5px 20px rgba(0,0,0,0.6); }
         .pix-title { font-size: 13px; color: #64748B; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
@@ -128,7 +145,33 @@
         .btn-pix:hover { background: var(--neon-gold); color: #000; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(255, 200, 0, 0.3); border-color: var(--neon-gold); }
 
         footer { text-align: center; padding: 40px 0; color: #475569; font-size: 15px; font-weight: 600; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(5,7,14,0.5); position: relative; z-index: 2; }
-        @media (max-width: 600px) { .hero { padding: 80px 0 40px; } .fase-content { padding: 25px; } .support-card { padding: 40px 20px; } .hero-buttons { flex-direction: column; align-items: center; } }
+
+        /* ==========================================================
+           OTIMIZAÇÃO SUPREMA PARA CELULARES (JUSTIFICADO CERTINHO)
+           ========================================================== */
+        @media (max-width: 990px) { 
+            .story-box { grid-template-columns: 1fr; text-align: center; } 
+            .story-galeria { order: -1; margin-bottom: 30px; } 
+        }
+
+        @media (max-width: 600px) { 
+            .hero { padding: 80px 0 40px; } 
+            .fase-content { padding: 25px; } 
+            .support-card { padding: 40px 20px; } 
+            .hero-buttons { flex-direction: column; align-items: center; } 
+            .story-galeria { min-height: 280px; } 
+            .foto-magica { max-width: 280px; } /* Ajuste fino do tamanho para mobile */
+            
+            /* FORÇANDO O TEXTO A FICAR 100% JUSTIFICADO NO CELULAR */
+            .story-text p, .fase-content p, .support-card p {
+                text-align: justify;
+                -webkit-hyphens: auto;
+                -ms-hyphens: auto;
+                hyphens: auto;
+            }
+            /* Volta o h3 pro centro, para contrastar com o texto justificado */
+            .story-text h3 { text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -141,7 +184,6 @@
             
             <div class="hero-buttons">
                 <button onclick="window.location.href='jogo.html'" class="btn-ps5-play" style="font-family: 'Fredoka', sans-serif;">▶ Jogar Grátis</button>
-                
                 <button id="btnInstalar" class="btn-ps5-install" style="display: none; font-family: 'Fredoka', sans-serif;">
                     ⬇ Instalar Jogo
                 </button>
@@ -181,11 +223,12 @@
                     <h3>A Nossa História Real</h3>
                     <p>Em Mirandiba, nasceu a pequena Isadora. Ela chegou trazendo um sorriso único, com uma marquinha especial chamada lábio leporino. Desde o primeiro dia, ela mostrou que tinha a força de uma gigante.</p>
                     <p>Quando chegou a hora da primeira cirurgia, a família viajou para Recife e encontrou a <strong>Casa Sorrir</strong>. Mais que um abrigo, nós encontramos um verdadeiro lar de Acolhimento, Cuidado e Amor.</p>
-                    <p><strong>Este jogo foi desenvolvido do zero pelo papai da Isadora.</strong> O objetivo? Criar uma ferramenta de ponta para ajudá-la a aprender o alfabeto. Hoje, decidimos abrir o jogo gratuitamente para o mundo, para que qualquer criança possa aprender brincando.</p>
+                    <p><strong>Este jogo foi desenvolvido do zero pelo papai da Isadora.</strong> O objetivo? Criar uma ferramenta de ponta para ajudá-la a aprender. Hoje, transformamos esse projeto em uma experiência 3D de alta tecnologia.</p>
+                    <p>Decidimos abrir o jogo gratuitamente para o mundo, para que qualquer criança possa aprender brincando.</p>
                 </div>
+                
                 <div class="story-galeria">
-                    <div class="foto-lore foto-isadora" title="Isadora, nossa protagonista"></div>
-                    <div class="foto-lore foto-casa" title="O apoio da Casa Sorrir"></div>
+                    <img src="Isadora.png" alt="A Mágica de Isadora" class="foto-magica">
                 </div>
             </div>
         </section>
