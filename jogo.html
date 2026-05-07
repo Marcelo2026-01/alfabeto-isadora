@@ -998,7 +998,10 @@
                     if (this.isJumping) { for(let i=0;i<12;i++) particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } 
                     this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt = 0; 
                 } else { 
-                    let gravidadeAtual = this.gravity; if (Math.abs(this.vy) < 5) gravidadeAtual *= 0.5; this.vy += gravidadeAtual; this.isJumping = true; this.tilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); 
+                    // REMOVIDO: O "hang time" (tempo de suspensão) que causava lentidão
+                    this.vy += this.gravity; 
+                    this.isJumping = true; 
+                    this.tilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); 
                 }
                 
                 if (!this.isJumping) { 
