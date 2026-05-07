@@ -2,520 +2,253 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <meta name="theme-color" content="#1a252f">
-    <title>O Sonho Doce de Isadora - O Alfabeto</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Alfabeto da Isadora - A Jornada</title>
+    
     <meta property="og:title" content="O Alfabeto da Isadora - Jogo AAA">
-    <meta property="og:description" content="Acelere por uma estrada mágica! Ajude Isadora nesta jornada épica para aprender o alfabeto e as sílabas. Jogue grátis!">
-    <meta property="og:image" content="Isadora.png">
+    <meta property="og:description" content="Uma jornada imersiva e mágica para aprender as letras e sílabas. Jogue grátis!">
+    <meta property="og:image" content="icone512.png">
     <meta property="og:type" content="website">
+    <meta name="theme-color" content="#00D8FF">
 
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icone512.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* ========================================================
-           BASE & RESET
-           ======================================================== */
+        /* === VARIÁVEIS PS5 AAA SUPREMO === */
+        :root {
+            --bg-dark: #05070e;
+            --bg-panel: rgba(15, 20, 35, 0.45);
+            --bg-panel-hover: rgba(25, 30, 50, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-light: rgba(255, 255, 255, 0.2);
+            --neon-blue: #00D8FF;
+            --neon-pink: #FF107A;
+            --neon-gold: #FFC800;
+            --text-main: #FFFFFF;
+            --text-muted: #A0ABC0;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            background-color: #1a252f;
-            overflow: hidden; 
-            font-family: 'Fredoka', 'Segoe UI', sans-serif;
-            user-select: none; touch-action: none; -webkit-touch-callout: none;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Fredoka', -apple-system, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+            position: relative;
         }
-        #game-container {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%; height: 100%; overflow: hidden;
-            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
-        }
-        canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 
-        /* ========================================================
-           TELA DE CARREGAMENTO SUPREMA (LOADER PS5 NEXT-GEN)
-           ======================================================== */
-        #loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #050811;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(0, 243, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(255, 0, 127, 0.08) 0%, transparent 50%);
-            z-index: 999999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s;
-            will-change: opacity, visibility;
+        /* ATMOSFERA PS5 */
+        body::before {
+            content: '';
+            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(0, 216, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(255, 16, 122, 0.06) 0%, transparent 40%);
+            z-index: -1;
+            animation: respirarFundo 15s ease-in-out infinite alternate;
         }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 25px; position: relative; z-index: 10; }
+
+        @keyframes flutuarBadge { 0%, 100% { transform: translateY(0); box-shadow: 0 10px 25px rgba(0,216,255,0.1); } 50% { transform: translateY(-8px); box-shadow: 0 20px 35px rgba(0,216,255,0.25); } }
+        @keyframes sweepText { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+        @keyframes brilhoBotao { 0% { box-shadow: 0 0 15px rgba(0,216,255,0.3); } 100% { box-shadow: 0 0 35px rgba(0,216,255,0.7); } }
+        @keyframes respirarFundo { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.1) rotate(2deg); } }
+
+        /* === HERO SECTION === */
+        .hero { min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 0 60px; position: relative; }
         
-        .loader-ring {
-            width: clamp(80px, 15vw, 120px); height: clamp(80px, 15vw, 120px);
-            position: relative; margin-bottom: 40px;
-            display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
-            animation: pulseCore 2s ease-in-out infinite alternate;
-        }
+        .hero-badge { background: rgba(0, 216, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 216, 255, 0.3); border-top: 1px solid rgba(255, 255, 255, 0.4); padding: 10px 28px; border-radius: 50px; color: var(--neon-blue); font-size: clamp(12px, 3vw, 15px); font-weight: 900; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 40px; animation: flutuarBadge 4s ease-in-out infinite; }
+        .hero h1 { font-size: clamp(40px, 8vw, 95px); font-weight: 900; letter-spacing: 1px; line-height: 1.05; margin-bottom: 20px; background: linear-gradient(90deg, #FFFFFF, #94a3b8, #FFFFFF, #00D8FF, #FFFFFF); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: sweepText 8s linear infinite; text-transform: uppercase; }
+        .hero h2 { font-size: clamp(16px, 3vw, 26px); color: var(--text-muted); font-weight: 600; margin-bottom: 50px; letter-spacing: 3px; text-transform: uppercase; max-width: 600px; }
         
-        .loader-ring::before, .loader-ring::after {
-            content: ''; position: absolute; border-radius: 50%; border: 4px solid transparent;
-        }
+        .hero-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 
-        .loader-ring::before {
-            width: 100%; height: 100%; border-top-color: #00f3ff; border-bottom-color: #00f3ff;
-            animation: spinArc 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2);
-        }
+        .btn-ps5-play { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); color: #FFF; text-decoration: none; font-size: clamp(16px, 3.5vw, 22px); font-weight: 900; padding: 22px 65px; border-radius: 50px; border: 1px solid var(--glass-border-light); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; letter-spacing: 3px; display: inline-flex; align-items: center; position: relative; overflow: hidden; animation: brilhoBotao 3s infinite alternate; cursor: pointer; }
+        .btn-ps5-play::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s ease; }
+        .btn-ps5-play:hover { transform: scale(1.05) translateY(-5px); background: #FFF; color: var(--bg-dark); border-color: #FFF; box-shadow: 0 20px 40px rgba(0, 216, 255, 0.5); }
+        .btn-ps5-play:hover::before { left: 150%; }
+
+        .btn-ps5-install { background: rgba(20, 25, 45, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); color: #FFF; font-size: clamp(14px, 3vw, 18px); font-weight: 700; padding: 15px 40px; border-radius: 50px; border: 1px solid var(--neon-pink); transition: all 0.4s; text-transform: uppercase; letter-spacing: 2px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; outline: none; }
+        .btn-ps5-install:hover { background: var(--neon-pink); color: #FFF; box-shadow: 0 10px 30px rgba(255, 16, 122, 0.4); transform: translateY(-3px); }
+
+        /* === FASES DO JOGO === */
+        .showcase-section { padding: 100px 0; position: relative; z-index: 2; }
+        .section-title { text-align: center; font-size: clamp(30px, 6vw, 55px); font-weight: 900; margin-bottom: 70px; color: #FFF; text-transform: uppercase; letter-spacing: 3px; }
+        .section-title span { color: var(--neon-pink); text-shadow: 0 0 25px rgba(255,16,122,0.4); }
+        .fases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
+
+        .fase-card { background: var(--bg-panel); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.15); border-left: 1px solid rgba(255,255,255,0.15); border-radius: 28px; overflow: hidden; transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 25px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; position: relative; }
+        .fase-card:hover { transform: translateY(-15px) scale(1.02); background: var(--bg-panel-hover); border-color: var(--glass-border-light); }
+        .fase-card:nth-child(1):hover { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(0, 216, 255, 0.15); }
+        .fase-card:nth-child(2):hover { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255, 16, 122, 0.15); }
+        .fase-card:nth-child(3):hover { box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255, 200, 0, 0.15); }
+
+        .fase-img { width: 100%; height: 240px; background-color: #1a1e2d; background-size: cover; background-position: center; position: relative; transition: transform 0.8s ease; }
+        .fase-card:hover .fase-img { transform: scale(1.05); }
+        .img-ato1 { background-image: url('fase1.png'); } .img-ato2 { background-image: url('fase2.png'); } .img-ato3 { background-image: url('fase3.png'); }
+
+        .fase-tag { position: absolute; top: 20px; right: 20px; background: rgba(5, 7, 14, 0.8); backdrop-filter: blur(10px); padding: 8px 20px; border-radius: 30px; font-size: 12px; font-weight: 900; color: #FFF; letter-spacing: 2px; border: 1px solid var(--glass-border-light); z-index: 2; }
+        .fase-content { padding: 35px; flex-grow: 1; position: relative; z-index: 2; background: var(--bg-panel); }
+        .fase-content h3 { font-size: 26px; margin-bottom: 15px; color: #FFF; font-weight: 900; letter-spacing: 1px; }
+        .fase-card:nth-child(1) h3 { color: var(--neon-blue); } .fase-card:nth-child(2) h3 { color: var(--neon-pink); } .fase-card:nth-child(3) h3 { color: var(--neon-gold); }
+        .fase-content p { color: var(--text-muted); font-size: 16px; line-height: 1.7; font-weight: 400; font-family: -apple-system, sans-serif; }
+
+        /* === STORY === */
+        .story-section { padding: 100px 0; position: relative; z-index: 2; }
+        .story-box { background: linear-gradient(135deg, rgba(20, 25, 45, 0.5) 0%, rgba(5, 10, 20, 0.8) 100%); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.2); border-left: 1px solid rgba(255,255,255,0.1); border-radius: 40px; padding: clamp(40px, 6vw, 80px); display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: center; box-shadow: 0 40px 80px rgba(0,0,0,0.8); position: relative; overflow: hidden; }
+        .story-box::after { content: ''; position: absolute; top: -30%; right: -30%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(255,16,122,0.08) 0%, transparent 60%); pointer-events: none; }
+        @media (max-width: 900px) { .story-box { grid-template-columns: 1fr; } }
         
-        .loader-ring::after {
-            width: 75%; height: 75%; border-left-color: #ff007f; border-right-color: #ff007f;
-            animation: spinArc 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite reverse;
-            box-shadow: 0 0 25px rgba(255, 0, 127, 0.4), inset 0 0 15px rgba(255, 0, 127, 0.2);
-        }
+        .story-text h3 { font-size: clamp(30px, 5vw, 45px); color: var(--neon-pink); margin-bottom: 30px; line-height: 1.2; font-weight: 900; }
+        .story-text p { font-size: 18px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.8; font-family: -apple-system, sans-serif; }
+        .story-text strong { color: #FFF; font-weight: 600; }
+        .story-galeria { display: flex; flex-direction: column; gap: 25px; position: relative; z-index: 2; }
+        .foto-lore { width: 100%; height: 280px; border-radius: 25px; background-size: cover; background-position: center; border: 1px solid var(--glass-border-light); box-shadow: 0 20px 40px rgba(0,0,0,0.7); transition: transform 0.4s ease; }
+        .foto-lore:hover { transform: scale(1.03); }
+        .foto-isadora { background-image: url('seu_personagem.png'); background-size: contain; background-repeat: no-repeat; background-color: rgba(5,7,14,0.8); }
+        .foto-casa { background-image: url('casa_sorrir.png'); }
 
-        .loader-text {
-            font-size: clamp(16px, 4vw, 24px); letter-spacing: 6px; text-transform: uppercase; font-weight: 900;
-            background: linear-gradient(90deg, #444 0%, #FFF 50%, #444 100%);
-            background-size: 200% auto; color: transparent;
-            -webkit-background-clip: text; background-clip: text;
-            animation: shimmerText 2s linear infinite;
-        }
-        
-        .loader-tip {
-            position: absolute; bottom: clamp(30px, 6vh, 50px);
-            color: #64748B; font-size: clamp(11px, 2.5vw, 15px);
-            letter-spacing: 2px; font-weight: 600; text-align: center; max-width: 80%;
-            text-transform: uppercase; animation: fadeInTip 1s ease-in-out forwards;
-        }
+        /* === APOIO PIX === */
+        .support-section { padding: 100px 0 140px; text-align: center; position: relative; z-index: 2; }
+        .support-card { max-width: 750px; margin: 0 auto; background: rgba(15, 20, 35, 0.5); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 200, 0, 0.2); border-top: 1px solid rgba(255, 200, 0, 0.5); border-radius: 40px; padding: 60px 40px; box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 80px rgba(255, 200, 0, 0.08); position: relative; }
+        .support-card h3 { font-size: clamp(28px, 5vw, 40px); color: var(--neon-gold); margin-bottom: 20px; font-weight: 900; letter-spacing: 1px; }
+        .support-card p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; font-family: -apple-system, sans-serif; }
+        .pix-box { background: rgba(5, 7, 14, 0.8); padding: 35px 25px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 35px; box-shadow: inset 0 5px 20px rgba(0,0,0,0.6); }
+        .pix-title { font-size: 13px; color: #64748B; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+        .pix-key { font-size: clamp(16px, 3.5vw, 26px); font-weight: 700; color: #FFF; margin: 20px 0; word-break: break-all; letter-spacing: 1px; }
+        .btn-pix { background: linear-gradient(135deg, rgba(255, 200, 0, 0.1), rgba(255, 150, 0, 0.15)); color: var(--neon-gold); border: 1px solid rgba(255, 200, 0, 0.5); padding: 20px 50px; font-size: 16px; font-weight: 900; border-radius: 50px; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: 'Fredoka', sans-serif; text-transform: uppercase; letter-spacing: 2px; }
+        .btn-pix:hover { background: var(--neon-gold); color: #000; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(255, 200, 0, 0.3); border-color: var(--neon-gold); }
 
-        @keyframes spinArc { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.05); } 100% { transform: rotate(360deg) scale(1); } }
-        @keyframes pulseCore { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
-        @keyframes shimmerText { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
-        @keyframes fadeInTip { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-        
-        /* Overlay de Impacto (AAA Game Feel) */
-        #damage-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            box-shadow: inset 0 0 80px rgba(255, 0, 0, 0); pointer-events: none;
-            z-index: 80; transition: box-shadow 0.1s ease-out; will-change: box-shadow;
-        }
-        .damage-active { box-shadow: inset 0 0 120px rgba(255, 0, 50, 0.8) !important; }
-
-        /* ========================================================
-           HUD DO JOGO
-           ======================================================== */
-        #ui-layer {
-            position: absolute; top: 15px; left: 5vw; 
-            background: rgba(15, 25, 40, 0.65);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;
-            padding: clamp(10px, 2vmin, 15px) clamp(15px, 4vmin, 25px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 2px 10px rgba(255,255,255,0.1);
-            color: #FFF; font-weight: 700; pointer-events: none; z-index: 20; display: flex; flex-direction: column;
-            max-width: 75vw; margin-top: clamp(45px, 9vmin, 60px); 
-            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            will-change: transform;
-        }
-        .hud-punch { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4), inset 0 2px 15px rgba(255,255,255,0.3) !important; }
-
-        .progress-bar-container {
-            width: 100%; height: clamp(6px, 1.5vmin, 10px); 
-            background: rgba(0, 0, 0, 0.5); border-radius: 10px; margin-top: 8px; overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%; width: 0%; border-radius: 10px;
-            background: linear-gradient(90deg, #FF69B4, #FFD700);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: width;
-        }
-
-        @keyframes comboFirePulse { 0% { transform: scaleX(1); opacity: 0.8; } 100% { transform: scaleX(1.02); opacity: 1; } }
-        .combo-ativo {
-            background: linear-gradient(90deg, #FFD700, #FF4500) !important;
-            animation: comboFirePulse 0.4s infinite alternate ease-in-out !important;
-            transform-origin: left center;
-        }
-        .texto-combo-ativo {
-            text-shadow: 0 0 10px #FF4500 !important;
-            animation: pulseComboTextOpt 0.5s infinite alternate ease-in-out !important;
-        }
-
-        .btn-corner {
-            position: absolute; top: 15px; background: rgba(15, 25, 40, 0.5); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3); color: #FFF; border-radius: 50%; width: 50px; height: 50px;
-            display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 35;
-        }
-        #btn-pause { right: 5vw; }
-        #btn-som { right: calc(5vw + 65px); border-radius: 30px; width: auto; padding: 0 15px; }
-
-        /* ========================================================
-           MENUS PS5
-           ======================================================== */
-        #start-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: row; align-items: center; z-index: 100;
-            background: linear-gradient(90deg, rgba(15, 20, 30, 0.95) 0%, rgba(15, 20, 30, 0.8) 40%, rgba(15, 20, 30, 0) 100%);
-            backdrop-filter: blur(8px); transition: opacity 0.5s ease-out;
-        }
-        .ps5-sidebar { width: 50%; padding-left: 8vw; display: flex; flex-direction: column; justify-content: center; }
-        .ps5-title { font-size: clamp(28px, 6vw, 80px); color: #FFF; font-weight: 700; line-height: 1; margin: 0; }
-        .ps5-subtitle { font-size: clamp(14px, 3vw, 40px); color: #FF69B4; font-weight: 900; text-transform: uppercase; }
-        
-        .ps5-menu-options { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
-        .ps5-btn {
-            background: transparent; border: none; color: rgba(255, 255, 255, 0.6);
-            font-size: clamp(14px, 2.5vw, 24px); font-family: 'Fredoka'; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 1px; cursor: pointer; text-align: left;
-            padding: 8px 20px; border-radius: 8px; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .ps5-btn:hover, .ps5-btn.active { color: #1a1a1a; background: #FFF; transform: translateX(20px); box-shadow: 0 0 30px rgba(255,255,255,0.5); }
-
-        .ps5-hero-area { width: 50%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
-        .ps5-hero-mascot {
-            width: clamp(200px, 40vw, 550px); height: clamp(250px, 50vw, 700px);
-            background-image: url('seu_personagem.png'); background-size: 300% 100%;
-            filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)); animation: breatheMascot 4s ease-in-out infinite;
-        }
-        
-        @keyframes breatheMascot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes idleChamada {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            30% { transform: scale(1.05) rotate(-3deg); filter: brightness(1.2); }
-            60% { transform: scale(1.05) rotate(3deg); filter: brightness(1.2); }
-        }
-        .idle-active { animation: idleChamada 1.5s ease-in-out !important; }
-
-        @media screen and (max-height: 500px) {
-            .ps5-sidebar { padding-left: 5vw; }
-            #ui-layer { margin-top: 0; top: 10px; }
-        }
+        footer { text-align: center; padding: 40px 0; color: #475569; font-size: 15px; font-weight: 600; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(5,7,14,0.5); position: relative; z-index: 2; }
+        @media (max-width: 600px) { .hero { padding: 80px 0 40px; } .fase-content { padding: 25px; } .support-card { padding: 40px 20px; } .hero-buttons { flex-direction: column; align-items: center; } }
     </style>
 </head>
 <body>
 
-<div id="loading-screen">
-    <div class="loader-ring"></div>
-    <div class="loader-text">A CARREGAR...</div>
-    <div class="loader-tip" id="loader-tip-text">DICA: Use fones de ouvido para uma experiência AAA!</div>
-</div>
-
-<div id="damage-overlay"></div>
-
-<div id="game-container">
-    <div id="aviso-rotacao" style="display:none; position:fixed; width:100%; height:100%; background:#1a252f; z-index:10000; flex-direction:column; justify-content:center; align-items:center; color:white; text-align:center;">
-        <div style="font-size:50px;">🔄</div>
-        <h2>Vire o telemóvel</h2>
-        <p>Este jogo é melhor jogado deitado.</p>
-        <button id="btn-forcar-giro" class="btn-pause-ui">GIRAR TELA</button>
-    </div>
-
-    <button id="btn-som" class="btn-corner">♪ SOM</button>
-    <div id="btn-pause" class="btn-corner">||</div>
-
-    <div id="ui-layer" style="display: none;">
-        <span id="meta-alfabeto">COLETE O ALFABETO</span>
-        <span id="letra-ui">A preparar a jornada...</span>
-        <div class="progress-bar-container">
-            <div id="progress-fill" class="progress-bar-fill"></div>
-        </div>
-    </div>
-
-    <div id="tutorial-ui">
-        <div class="ps5-tutorial-box">
-            <span class="ps5-btn-hint" id="txt-tutorial">TOQUE PARA SALTAR</span>
-        </div>
-    </div>
-    
-    <div id="start-screen">
-        <div class="ps5-sidebar">
-            <div class="ps5-title-area">
-                <h1 class="ps5-title">O ALFABETO</h1>
-                <h2 class="ps5-subtitle">DA ISADORA</h2>
+    <div class="container">
+        <section class="hero">
+            <div class="hero-badge">⭐ Jogo Educativo de Alta Performance</div>
+            <h1>O Alfabeto da Isadora</h1>
+            <h2>Domine as letras, sílabas e palavras em uma jornada imersiva e mágica.</h2>
+            
+            <div class="hero-buttons">
+                <button onclick="window.location.href='jogo.html'" class="btn-ps5-play" style="font-family: 'Fredoka', sans-serif;">▶ Jogar Grátis</button>
+                
+                <button id="btnInstalar" class="btn-ps5-install" style="display: none; font-family: 'Fredoka', sans-serif;">
+                    ⬇ Instalar Jogo
+                </button>
             </div>
-            <div class="ps5-menu-options">
-                <button id="btn-jogar" class="ps5-btn active">▶ INICIAR JOGO</button>
-                <button id="btn-modo" class="ps5-btn">✦ MODO: CAMPANHA</button>
-                <button id="btn-historia" class="ps5-btn">≡ HISTÓRIA</button>
-                <button id="btn-som-menu" class="ps5-btn">♪ ÁUDIO: LIGADO</button>
-                <button id="btn-sair-menu" class="ps5-btn">✖ SAIR</button>
+        </section>
+
+        <section class="showcase-section">
+            <h2 class="section-title">Uma Jornada em <span>3 Atos</span></h2>
+            <div class="fases-grid">
+                <div class="fase-card">
+                    <div class="fase-img img-ato1"><div class="fase-tag">ATO I</div></div>
+                    <div class="fase-content">
+                        <h3>O Resgate das Letras</h3>
+                        <p>Acelere por uma estrada mágica! Ajude Isadora a saltar sobre obstáculos no tempo exato para coletar letras de cristal. Uma introdução dinâmica que treina reflexos e o reconhecimento do alfabeto completo.</p>
+                    </div>
+                </div>
+                <div class="fase-card">
+                    <div class="fase-img img-ato2"><div class="fase-tag">ATO II</div></div>
+                    <div class="fase-content">
+                        <h3>O Enigma Cognitivo</h3>
+                        <p>O desafio evolui. O jogo testa o conhecimento absorvido exigindo decisões em frações de segundo. Duas letras flutuantes caem do céu: escolha a correta para completar a palavra e provar sua genialidade.</p>
+                    </div>
+                </div>
+                <div class="fase-card">
+                    <div class="fase-img img-ato3"><div class="fase-tag">ATO III</div></div>
+                    <div class="fase-content">
+                        <h3>O Voo da Vitória</h3>
+                        <p>A grande consagração! Assuma o controle total de um balão de ar quente em um voo 3D imersivo. Domine a física da gravidade, voe pelos céus e forme as palavras do sucesso. O prêmio final espera por você!</p>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="ps5-hero-area">
-            <div class="ps5-hero-mascot"></div>
-        </div>
-    </div>
+        </section>
 
-    <div id="pause-screen">
-        <h1 style="color:white; font-size:40px;">PAUSA</h1>
-        <button id="btn-continuar" class="btn-pause-ui">CONTINUAR</button>
-        <button id="btn-reiniciar" class="btn-pause-ui">REINICIAR</button>
-        <button id="btn-voltar-menu" class="btn-pause-ui sair">MENU PRINCIPAL</button>
-    </div>
-
-    <div id="victory-screen">
-        <div class="trophy-icon">🏆</div>
-        <h1 class="victory-title">PLATINA!</h1>
-        <h2 class="victory-subtitle">DOMINASTE O ALFABETO</h2>
-        <button id="btn-vitoria-menu" class="btn-pause-ui">VOLTAR AO MENU</button>
-    </div>
-
-    <div id="modal-historia">
-        <button id="btn-fechar-historia">✖</button>
-        <div id="livro-container">
-            <div class="pagina ativa" id="livro-p1">
-                <div class="foto-isadora-livro"></div>
-                <h2>Um Presente de Mirandiba</h2>
-                <p>A Isadora trouxe o sorriso mais doce do mundo para a sua família.</p>
+        <section class="story-section">
+            <div class="story-box">
+                <div class="story-text">
+                    <h3>A Nossa História Real</h3>
+                    <p>Em Mirandiba, nasceu a pequena Isadora. Ela chegou trazendo um sorriso único, com uma marquinha especial chamada lábio leporino. Desde o primeiro dia, ela mostrou que tinha a força de uma gigante.</p>
+                    <p>Quando chegou a hora da primeira cirurgia, a família viajou para Recife e encontrou a <strong>Casa Sorrir</strong>. Mais que um abrigo, nós encontramos um verdadeiro lar de Acolhimento, Cuidado e Amor.</p>
+                    <p><strong>Este jogo foi desenvolvido do zero pelo papai da Isadora.</strong> O objetivo? Criar uma ferramenta de ponta para ajudá-la a aprender o alfabeto. Hoje, decidimos abrir o jogo gratuitamente para o mundo, para que qualquer criança possa aprender brincando.</p>
+                </div>
+                <div class="story-galeria">
+                    <div class="foto-lore foto-isadora" title="Isadora, nossa protagonista"></div>
+                    <div class="foto-lore foto-casa" title="O apoio da Casa Sorrir"></div>
+                </div>
             </div>
-            <div class="controles-livro">
-                <button id="prevBtnLivro" class="btn-livro" disabled>Ant.</button>
-                <div id="paginacaoLivro">1 / 4</div>
-                <button id="nextBtnLivro" class="btn-livro">Próx.</button>
+        </section>
+
+        <section class="support-section">
+            <div class="support-card">
+                <h3>Desbloqueie o Futuro</h3>
+                <p>Nós não usamos anúncios irritantes e não cobramos pelo jogo. Acreditamos no acesso livre à educação. Se você ficou impressionado com a qualidade do projeto, <strong>ajude a financiar o "Módulo 2: O Vale dos Números"</strong> doando qualquer valor!</p>
+                <div class="pix-box">
+                    <div class="pix-title">CHAVE PIX OFICIAL (E-MAIL)</div>
+                    <div class="pix-key" id="chave-pix-texto">pagar.jmarcelo@gmail.com</div> 
+                    <button class="btn-pix" onclick="copiarPix()">📋 Copiar Chave PIX</button>
+                </div>
+                <p style="font-size: 15px; margin-bottom: 0;">Sua doação vai direto para o desenvolvedor (Papai da Isadora) para manter os servidores no ar.</p>
             </div>
-        </div>
+        </section>
+
+        <footer>
+            <p>Criado com ♥ por José Marcelo &middot; Motor de Jogo Exclusivo &middot; 2026</p>
+        </footer>
     </div>
 
-    <canvas id="gameCanvas"></canvas>
-</div>
-
-<script>
-    // --- ENGINE DE ÁUDIO AAA (REESCRITA PS5) ---
-    const AudioManager = {
-        somAtivo: localStorage.getItem('isadora_som') !== 'false', 
-        audioCtx: null, masterCompressor: null,
-        bgmMenu: new Audio('musica_menu.mp3'), bgmJogo: new Audio('musica_jogo.mp3'), 
-        sfxRisada: new Audio('risada.mp3'), musicaAtual: null,
-        ultimaVoz: "", fadeReqId: null,
-
-        init() { 
-            try { 
-                if (!this.audioCtx) { 
-                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
-                    this.masterCompressor = this.audioCtx.createDynamicsCompressor();
-                    this.masterCompressor.threshold.setValueAtTime(-15, this.audioCtx.currentTime);
-                    this.masterCompressor.knee.setValueAtTime(10, this.audioCtx.currentTime);
-                    this.masterCompressor.ratio.setValueAtTime(12, this.audioCtx.currentTime);
-                    this.masterCompressor.attack.setValueAtTime(0.003, this.audioCtx.currentTime);
-                    this.masterCompressor.release.setValueAtTime(0.25, this.audioCtx.currentTime);
-                    this.masterCompressor.connect(this.audioCtx.destination);
-                } 
-                if (this.audioCtx.state === 'suspended') this.audioCtx.resume(); 
-                this.bgmMenu.loop = true; this.bgmJogo.loop = true; 
-            } catch(e) {} 
-        },
-
-        toggle() { 
-            this.somAtivo = !this.somAtivo; localStorage.setItem('isadora_som', this.somAtivo); 
-            if (!this.somAtivo) { if(this.musicaAtual) this.fadeVolume(this.musicaAtual, 0, 500); } 
-            else { this.init(); if(this.musicaAtual) { this.musicaAtual.play().catch(()=>{}); this.fadeVolume(this.musicaAtual, 0.4, 500); } } 
-            this.updateUI(); return this.somAtivo; 
-        },
-
-        updateUI() { 
-            const btn = document.getElementById('btn-som');
-            const btnM = document.getElementById('btn-som-menu');
-            if(btn) btn.innerText = this.somAtivo ? '♪ SOM' : 'x MUDO'; 
-            if(btnM) btnM.innerHTML = this.somAtivo ? '♪ ÁUDIO: LIGADO' : 'x ÁUDIO: MUDO'; 
-        },
-
-        fadeVolume(audioObj, targetVol, duration) { 
-            if(!audioObj) return; 
-            if(this.fadeReqId) cancelAnimationFrame(this.fadeReqId);
-            let startVol = audioObj.volume; let startTime = performance.now();
-            const step = (t) => {
-                let elapsed = t - startTime; let progress = Math.min(elapsed / duration, 1);
-                let ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
-                audioObj.volume = startVol + (targetVol - startVol) * ease;
-                if (progress < 1) this.fadeReqId = requestAnimationFrame(step);
-                else { audioObj.volume = targetVol; if(targetVol === 0) audioObj.pause(); }
-            };
-            this.fadeReqId = requestAnimationFrame(step);
-        },
-
-        playBGM(track) { 
-            let next = (track === 'menu') ? this.bgmMenu : this.bgmJogo; 
-            if (this.musicaAtual === next) return; 
-            if (this.musicaAtual) this.fadeVolume(this.musicaAtual, 0, 800); 
-            this.musicaAtual = next; this.musicaAtual.volume = 0; 
-            if (this.somAtivo) { this.init(); this.musicaAtual.play().catch(()=>{}); this.fadeVolume(this.musicaAtual, 0.4, 800); } 
-        },
-
-        playHoverTick() { 
-            if (!this.somAtivo || !this.audioCtx) return; 
-            const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); 
-            gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.08, now + 0.01);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-            const osc = this.audioCtx.createOscillator(); osc.frequency.setValueAtTime(1500, now);
-            osc.connect(gain); osc.start(now); osc.stop(now + 0.15); 
-        },
-
-        playMagicSFX() { 
-            if (!this.somAtivo || !this.audioCtx) return; 
-            const now = this.audioCtx.currentTime;
-            const gainL = this.audioCtx.createGain(); const gainR = this.audioCtx.createGain();
-            const pannerL = this.audioCtx.createStereoPanner(); const pannerR = this.audioCtx.createStereoPanner();
-            pannerL.pan.value = -0.5; pannerR.pan.value = 0.5;
-            gainL.connect(pannerL); pannerL.connect(this.masterCompressor);
-            gainR.connect(pannerR); pannerR.connect(this.masterCompressor);
-            [gainL, gainR].forEach(g => {
-                g.gain.setValueAtTime(0.001, now); g.gain.exponentialRampToValueAtTime(0.15, now + 0.05);
-                g.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+    <script>
+        function copiarPix() {
+            const textoPix = document.getElementById('chave-pix-texto').innerText;
+            navigator.clipboard.writeText(textoPix).then(() => {
+                const btn = document.querySelector('.btn-pix');
+                btn.innerText = "✅ COPIADO COM SUCESSO!";
+                btn.style.background = "#FFC800";
+                btn.style.color = "#000";
+                setTimeout(() => {
+                    btn.innerText = "📋 Copiar Chave PIX";
+                    btn.style.background = "linear-gradient(135deg, rgba(255, 200, 0, 0.1), rgba(255, 150, 0, 0.15))";
+                    btn.style.color = "#FFC800";
+                }, 3000);
             });
-            [880, 1108, 1318].forEach((f, i) => {
-                let o1 = this.audioCtx.createOscillator(); let o2 = this.audioCtx.createOscillator();
-                o1.frequency.setValueAtTime(f, now + (i*0.05)); o2.frequency.setValueAtTime(f * 1.005, now + (i*0.05));
-                o1.connect(gainL); o2.connect(gainR); o1.start(now + (i*0.05)); o2.start(now + (i*0.05));
-                o1.stop(now + 0.8); o2.stop(now + 0.8);
+        }
+
+        // MOTOR DE INSTALAÇÃO PWA
+        let eventoInstalacao;
+        const botaoInstalar = document.getElementById('btnInstalar');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            eventoInstalacao = e;
+            botaoInstalar.style.display = 'inline-flex';
+        });
+
+        botaoInstalar.addEventListener('click', async () => {
+            if (eventoInstalacao !== null) {
+                eventoInstalacao.prompt();
+                const { outcome } = await eventoInstalacao.userChoice;
+                if (outcome === 'accepted') { console.log('Isadora App Instalado!'); }
+                eventoInstalacao = null;
+                botaoInstalar.style.display = 'none';
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
             });
-        },
-
-        playErrorSFX() { 
-            if (!this.somAtivo || !this.audioCtx) return; 
-            const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); 
-            gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0.4, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-            const osc = this.audioCtx.createOscillator(); osc.type = 'sine';
-            osc.frequency.setValueAtTime(160, now);
-            osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
-            osc.connect(gain); osc.start(now); osc.stop(now + 0.4); 
-        },
-
-        playVoice(texto) { 
-            if (!this.somAtivo || !('speechSynthesis' in window)) return; 
-            window.speechSynthesis.cancel(); this.ultimaVoz = texto;
-            let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR';
-            utter.pitch = 1.1; utter.rate = 0.95; window.speechSynthesis.speak(utter); 
-        },
-
-        playErrorVoice() {
-            if (!this.somAtivo || !('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel();
-            const frases = ["Ops!", "Quase lá!", "Tenta de novo!"];
-            let utterErro = new SpeechSynthesisUtterance(frases[Math.floor(Math.random()*frases.length)]);
-            utterErro.lang = 'pt-BR'; window.speechSynthesis.speak(utterErro);
-            if(this.ultimaVoz) {
-                let utterRegra = new SpeechSynthesisUtterance(this.ultimaVoz);
-                utterRegra.lang = 'pt-BR'; utterRegra.rate = 0.9; window.speechSynthesis.speak(utterRegra);
-            }
         }
-    };
-
-    // --- LÓGICA DO JOGO (DEFINITIVA) ---
-    const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d');
-    let gameActive = false, isPaused = false, lastTime = 0, bgX = 0, estradaOffset = 0;
-    let faseAtual = 1, isInfinite = false, hitStopTime = 0, shakeIntensity = 0;
-    let player, collectibles = [], particulas = [], textosFlutuantes = [], scaleMultiplier = 1, alturaChao = 0;
-    let itemTimer = 0, itemInterval = 2500, lettersColetadas = [];
-
-    class Particula {
-        constructor(x, y, cor, vx, vy, tam) { this.x = x; this.y = y; this.cor = cor; this.vx = vx; this.vy = vy; this.tamanho = tam * scaleMultiplier; this.vida = 1.0; }
-        update(ts) { this.x += (this.vx - gameSpeed) * ts; this.vy += 0.1 * ts; this.y += this.vy * ts; this.vida -= 0.02 * ts; this.tamanho *= Math.pow(0.96, ts); }
-        draw(c) { c.save(); c.globalAlpha = Math.max(0, this.vida); c.fillStyle = this.cor; c.beginPath(); c.arc(this.x, this.y, Math.max(0, this.tamanho), 0, Math.PI*2); c.fill(); c.restore(); }
-    }
-
-    class Player {
-        constructor() { this.width = 80; this.height = 160; this.x = 100; this.y = 0; this.vy = 0; this.gravity = 1.2; this.jumpPower = -22; this.isJumping = false; this.frameX = 0; this.gameFrame = 0; this.tilt = 0; }
-        update(ts) {
-            let groundY = canvas.height / devicePixelRatio - alturaChao - this.height + 20;
-            this.y += this.vy * ts;
-            if (this.y >= groundY) { this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt = 0; }
-            else { this.vy += this.gravity * ts; this.isJumping = true; this.tilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); }
-            if (!this.isJumping) {
-                if (this.gameFrame % 4 === 0) this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0;
-                if (this.gameFrame % 3 === 0) {
-                    particulas.push(new Particula(this.x + 20, groundY + this.height, 'rgba(200,200,220,0.4)', -gameSpeed*1.5, -0.2, 8));
-                }
-                this.gameFrame++;
-            }
-        }
-        draw(c) {
-            c.save(); c.translate(this.x + this.width/2, this.y + this.height); c.rotate(this.tilt);
-            let pisadaY = (!this.isJumping && this.frameX === 1) ? 6 : 0;
-            if(playerSprite.complete) c.drawImage(playerSprite, this.frameX * (playerSprite.width/3), 0, playerSprite.width/3, playerSprite.height, -this.width/2, -this.height + pisadaY, this.width, this.height);
-            c.restore();
-        }
-    }
-
-    const playerSprite = new Image(); playerSprite.src = 'seu_personagem.png';
-    const fundoImg1 = new Image(); fundoImg1.src = 'cenario.png';
-    const fundoImg2 = new Image(); fundoImg2.src = 'cenario2.png';
-
-    function redimensionarCanvas() {
-        let dpr = window.devicePixelRatio || 1;
-        canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr;
-        canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px';
-        ctx.scale(dpr, dpr); ctx.imageSmoothingQuality = "high";
-        alturaChao = window.innerHeight * 0.18;
-        if(!player) player = new Player();
-    }
-
-    function animate(t) {
-        if(!gameActive || isPaused) return;
-        let dt = t - lastTime; if(dt > 100) dt = 16; lastTime = t;
-        let ts = dt / 16.66;
-
-        if(hitStopTime > 0) { hitStopTime -= dt; requestAnimationFrame(animate); return; }
-
-        ctx.clearRect(0,0, canvas.width, canvas.height);
-        ctx.save();
-        if(shakeIntensity > 0) {
-            ctx.translate((Math.random()-0.5)*shakeIntensity, (Math.random()-0.5)*shakeIntensity);
-            shakeIntensity -= dt * 0.05;
-        }
-
-        // Fundo Parallax
-        let fundo = (faseAtual % 2 === 0) ? fundoImg2 : fundoImg1;
-        if(fundo.complete) {
-            bgX -= (gameSpeed * 0.04) * ts;
-            if(bgX <= -window.innerWidth) bgX = 0;
-            ctx.drawImage(fundo, bgX, 0, window.innerWidth, window.innerHeight);
-            ctx.drawImage(fundo, bgX + window.innerWidth, 0, window.innerWidth, window.innerHeight);
-        }
-
-        // Chão
-        ctx.fillStyle = "#2c3e50";
-        ctx.fillRect(0, window.innerHeight - alturaChao, window.innerWidth, alturaChao);
-
-        // Partículas e Player
-        for(let i=particulas.length-1; i>=0; i--) { particulas[i].update(ts); particulas[i].draw(ctx); if(particulas[i].vida <= 0) particulas.splice(i,1); }
-        player.update(ts); player.draw(ctx);
-
-        ctx.restore();
-        requestAnimationFrame(animate);
-    }
-
-    window.onload = () => {
-        redimensionarCanvas();
-        document.getElementById('loading-screen').style.opacity = '0';
-        setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 600);
-    };
-
-    document.getElementById('btn-jogar').onclick = () => {
-        gameActive = true; 
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('ui-layer').style.display = 'flex';
-        AudioManager.init(); AudioManager.playBGM('game');
-        lastTime = performance.now();
-        requestAnimationFrame(animate);
-    };
-
-    document.getElementById('btn-som-menu').onclick = () => AudioManager.toggle();
-    document.querySelectorAll('.ps5-btn').forEach(b => b.onmouseenter = () => AudioManager.playHoverTick());
-
-</script>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  const firebaseConfig = { apiKey: "API_KEY", authDomain: "isadora.firebaseapp.com", projectId: "isadora-game" };
-  const app = initializeApp(firebaseConfig);
-  console.log("🔥 Firebase: Data Persistence Ready.");
-</script>
-
+    </script>
 </body>
 </html>
