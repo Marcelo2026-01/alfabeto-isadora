@@ -142,6 +142,27 @@
             transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
+        /* ==========================================
+           EFEITO AAA: COMBO DE FOGO
+           ========================================== */
+        @keyframes comboFire {
+            0% { box-shadow: 0 0 10px #FFD700, 0 0 20px #FF8C00, inset 0 0 10px #FFD700; background: linear-gradient(90deg, #FFD700, #FF4500); }
+            50% { box-shadow: 0 0 25px #FFF, 0 0 40px #FF4500, inset 0 0 20px #FF8C00; background: linear-gradient(90deg, #FFF, #FFD700); }
+            100% { box-shadow: 0 0 10px #FFD700, 0 0 20px #FF8C00, inset 0 0 10px #FFD700; background: linear-gradient(90deg, #FFD700, #FF4500); }
+        }
+        .combo-ativo {
+            animation: comboFire 0.4s infinite alternate !important;
+        }
+        
+        @keyframes pulseComboText {
+            0% { transform: scale(1); text-shadow: none; }
+            50% { transform: scale(1.15); color: #FFD700; text-shadow: 0 0 20px #FFD700, 0 0 30px #FF4500; }
+            100% { transform: scale(1); text-shadow: none; }
+        }
+        .texto-combo-ativo {
+            animation: pulseComboText 0.5s infinite alternate !important;
+        }
+
         .btn-corner {
             position: absolute; top: 15px; 
             background: rgba(15, 25, 40, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -187,6 +208,17 @@
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes breatheMascot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes pulsarLuz { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(1.1); opacity: 0.6; } }
+
+        /* --- ANIMAÇÃO IDLE MAGICA (GUARDIÃ DAS LETRAS) --- */
+        @keyframes idleChamada {
+            0% { transform: translateY(0) scale(1); filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) brightness(1); }
+            30% { transform: translateY(-15px) scale(1.05) rotate(-3deg); filter: drop-shadow(0 40px 50px rgba(255,105,180,0.6)) brightness(1.2); }
+            60% { transform: translateY(-15px) scale(1.05) rotate(3deg); filter: drop-shadow(0 40px 50px rgba(0,255,255,0.6)) brightness(1.2); }
+            100% { transform: translateY(0) scale(1); filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) brightness(1); }
+        }
+        .idle-active {
+            animation: idleChamada 1.5s ease-in-out !important;
+        }
 
         /* ========================================================
            TELA DE PAUSE & VITÓRIA (GRAND FINALE)
@@ -467,6 +499,36 @@
 
     let isHolding = false; 
 
+    // ==========================================
+    // SISTEMA IDLE DO MENU (NÍVEL PS5)
+    // ==========================================
+    let idleTime = 0;
+    
+    function resetIdleTimer() {
+        idleTime = 0;
+        const mascot = document.querySelector('.ps5-hero-mascot');
+        if(mascot) mascot.classList.remove('idle-active');
+    }
+
+    window.addEventListener('mousemove', resetIdleTimer);
+    window.addEventListener('touchstart', resetIdleTimer, {passive: true});
+    window.addEventListener('keydown', resetIdleTimer);
+
+    setInterval(() => {
+        if (!gameActive && startScreen.style.display !== 'none') {
+            idleTime += 1;
+            if (idleTime >= 5) {
+                const mascot = document.querySelector('.ps5-hero-mascot');
+                if (mascot && !mascot.classList.contains('idle-active')) {
+                    mascot.classList.add('idle-active');
+                    if(AudioManager.somAtivo) AudioManager.playHoverTick(); 
+                    setTimeout(() => mascot.classList.remove('idle-active'), 1500);
+                    idleTime = 0;
+                }
+            }
+        }
+    }, 1000);
+
     const modosDeJogo = [
         { id: 0, nome: "MODO: CAMPANHA (COMPLETA)", icon: "✦", fase: 1, inf: false },
         { id: 1, nome: "ATO I - ALFABETO", icon: "∞", fase: 1, inf: true },
@@ -478,6 +540,27 @@
         { id: 7, nome: "ATO EXTRA - NUMEROS", icon: "★", fase: 7, inf: false }
     ];
     let modoAtualIndex = 0;
+
+    // ==========================================
+    // CÉREBRO DO COMBO DE FOGO
+    // ==========================================
+    let comboAtual = 0; 
+    function gerenciarCombo(acertou) {
+        if (acertou) {
+            comboAtual++;
+            if (comboAtual === 3) {
+                AudioManager.playVoice("Incrível! Você está pegando fogo!");
+            }
+            if (comboAtual >= 3) {
+                progressFill.classList.add('combo-ativo');
+                letraUi.classList.add('texto-combo-ativo');
+            }
+        } else {
+            comboAtual = 0;
+            progressFill.classList.remove('combo-ativo');
+            letraUi.classList.remove('texto-combo-ativo');
+        }
+    }
 
     if(btnModulo) {
         btnModulo.addEventListener('click', (e) => {
@@ -624,7 +707,6 @@
         
         AudioManager.init(); AudioManager.playMagicSFX(); AudioManager.playRisada(); 
         
-        // 1. DESCE A CORTINA DO LOADER PS5
         const loader = document.getElementById('loading-screen');
         if (loader) {
             let numDica = Math.floor(Math.random() * 3);
@@ -645,7 +727,6 @@
         startScreen.style.opacity = '0';
         desafioFase2 = null; desafioFase4 = null; desafioFase5 = null; desafioFase6 = null;
         
-        // 2. TEMPO DE CARREGAMENTO FALSO PARA O JOGO (1.8 Segundos)
         initTimeoutId = setTimeout(() => {
             startScreen.style.display = 'none'; 
             
@@ -657,13 +738,16 @@
             letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = [];
             
             let conf = modosDeJogo[modoAtualIndex]; faseAtual = conf.fase; isInfinite = conf.inf;
-            acertosAtuaisFase2 = 0; palavraAtualIndex = 0; letraVitoriaIndex = 0; acertosFase4 = 0; acertosFase5 = 0; acertosFase6 = 0; numeroAtualIndex = 0;
+            
+            acertosAtuaisFase2 = 0; palavraAtualIndex = 0; letraVitoriaIndex = 0; acertosFase4 = 0; acertosFase5 = 0; acertosFase6 = 0; numeroAtualIndex = 0; comboAtual = 0;
+            
+            progressFill.classList.remove('combo-ativo');
+            letraUi.classList.remove('texto-combo-ativo');
             
             prepararFase(faseAtual);
             gameActive = true; isPaused = false; lastTime = performance.now(); gameSpeed = baseGameSpeed;
             animationId = requestAnimationFrame(animate);
 
-            // 3. SOBE A CORTINA DO LOADER
             if (loader) {
                 loader.style.opacity = '0';
                 loader.style.visibility = 'hidden';
@@ -679,7 +763,6 @@
         e.preventDefault(); e.stopPropagation(); 
         AudioManager.playHoverTick();
         try { window.close(); } catch(err) {} 
-        // Se o navegador travar o fechamento, exibe nossa interface PS5 AAA
         exitScreen.style.display = 'flex'; 
         setTimeout(() => { exitScreen.style.opacity = '1'; }, 50); 
     });
@@ -735,6 +818,7 @@
         
         AudioManager.playBGM('menu'); 
         startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50);
+        resetIdleTimer();
     }
     
     btnReiniciar.addEventListener('click', (e) => { 
@@ -899,17 +983,37 @@
         constructor() { this.baseScale = 0.28; this.width = 100; this.height = 200; this.baseX = canvas.width * 0.15; this.x = this.baseX; this.y = 0; this.vy = 0; this.gravity = 1.2; this.jumpPower = -22; this.isJumping = false; this.frameX = 0; this.staggerFrames = 4; this.gameFrame = 0; this.espacoVazio = 0.25; this.tilt = 0; }
         update() {
             this.scale = this.baseScale * scaleMultiplier; this.baseX = canvas.width * 0.15; this.x = this.baseX; let ajustePe = this.height * this.espacoVazio; 
+            let scl = scaleMultiplier;
+            let groundY = canvas.height - alturaChao - (this.height - ajustePe) + 20;
+
             if (faseAtual === 3) {
                 let thrust = window.innerHeight < 500 ? 0.6 : 0.8; let grav = window.innerHeight < 500 ? 0.2 : 0.3;
                 if (isHolding) { this.vy -= thrust; particulas.push(new Particula(this.x + this.width/2, this.y - this.height*0.6, 'rgba(255, 69, 0, 0.8)', (Math.random()*-1)-0.5, Math.random()*2+1, Math.random()*8+4)); } else { this.vy += grav; }
                 if (this.vy > 8) this.vy = 8; if (this.vy < -8) this.vy = -8; this.y += this.vy;
-                let groundY = canvas.height - alturaChao - this.height + 30; if (this.y > groundY) { this.y = groundY; this.vy = 0; } if (this.y < this.height * 0.5) { this.y = this.height * 0.5; this.vy = 0; }
+                let floorY = canvas.height - alturaChao - this.height + 30; if (this.y > floorY) { this.y = floorY; this.vy = 0; } if (this.y < this.height * 0.5) { this.y = this.height * 0.5; this.vy = 0; }
                 this.isJumping = true; this.frameX = 1; this.tilt = Math.min(Math.max(this.vy * 0.03, -0.15), 0.15);
             } else {
-                let groundY = canvas.height - alturaChao - (this.height - ajustePe) + 20; this.y += this.vy;
-                if (this.y >= groundY) { if (this.isJumping) { for(let i=0;i<12;i++) particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt = 0; } 
-                else { let gravidadeAtual = this.gravity; if (Math.abs(this.vy) < 5) gravidadeAtual *= 0.5; this.vy += gravidadeAtual; this.isJumping = true; this.tilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); }
-                if (!this.isJumping) { if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; if (this.frameX === 1 || this.frameX === 2) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(255, 255, 255, 0.6)', -4, -1, Math.random() * 8 + 4)); } this.gameFrame++; } else { this.frameX = 1; }
+                this.y += this.vy;
+                if (this.y >= groundY) { 
+                    if (this.isJumping) { for(let i=0;i<12;i++) particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } 
+                    this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt = 0; 
+                } else { 
+                    let gravidadeAtual = this.gravity; if (Math.abs(this.vy) < 5) gravidadeAtual *= 0.5; this.vy += gravidadeAtual; this.isJumping = true; this.tilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); 
+                }
+                
+                if (!this.isJumping) { 
+                    if (this.gameFrame % this.staggerFrames === 0) { 
+                        this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; 
+                    } 
+                    
+                    if (this.gameFrame % 3 === 0 && faseAtual !== 3) {
+                        particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4));
+                        if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2));
+                    }
+                    this.gameFrame++; 
+                } else { 
+                    this.frameX = 1; 
+                }
             }
         }
         draw(ctx) {
@@ -928,7 +1032,10 @@
                     ctx.fillStyle = '#444'; ctx.fillRect(-12*scl, envY + bH/2 - 5*scl, 24*scl, 10*scl);
                     if (isHolding) { ctx.shadowColor = '#FF4500'; ctx.shadowBlur = 20*scl; ctx.fillStyle = '#FFA500'; ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 15*scl + Math.random()*5*scl, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#FFFF00'; ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 8*scl + Math.random()*4*scl, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0; }
                 }
-                ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe), this.width, this.height);
+
+                let pisadaY = (!this.isJumping && faseAtual !== 3 && this.frameX === 1) ? (6 * scl) : 0;
+                ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height);
+                
                 if (faseAtual === 3) {
                     let bW = this.width * 1.2; let basketW = this.width * 1.2; let basketH = this.height * 0.35; let basketX = -basketW / 2; let basketY = -this.height * 0.3;
                     let gradCesto = ctx.createLinearGradient(0, basketY, 0, basketY + basketH); gradCesto.addColorStop(0, '#C17D3F'); gradCesto.addColorStop(0.5, '#8B5A2B'); gradCesto.addColorStop(1, '#5C3A21'); ctx.fillStyle = gradCesto; 
@@ -971,12 +1078,32 @@
 
         let fundoAtual = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6) ? fundoImg2 : fundoImg1;
         if (fundoAtual.complete && fundoAtual.naturalWidth !== 0) { 
-            bgX -= gameSpeed * 0.15; let bgW = canvas.width; if (bgX <= -bgW * 2) bgX += bgW * 2; 
-            ctx.drawImage(fundoAtual, bgX, 0, bgW, canvas.height); ctx.save(); ctx.translate(bgX + bgW * 2, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, canvas.height); ctx.restore(); ctx.drawImage(fundoAtual, bgX + bgW * 2, 0, bgW, canvas.height); ctx.save(); ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, canvas.height); ctx.restore();
+            bgX -= gameSpeed * 0.04; 
+            let bgW = canvas.width; if (bgX <= -bgW * 2) bgX += bgW * 2; 
+            ctx.drawImage(fundoAtual, bgX, 0, bgW, canvas.height); 
+            ctx.save(); ctx.translate(bgX + bgW * 2, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, canvas.height); ctx.restore(); 
+            ctx.drawImage(fundoAtual, bgX + bgW * 2, 0, bgW, canvas.height); 
+            ctx.save(); ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, canvas.height); ctx.restore();
         }
         
-        let groundY = canvas.height - alturaChao; if(!isPaused) estradaOffset += gameSpeed * 2.5; if (estradaOffset > 100) estradaOffset -= 100;
-        ctx.save(); ctx.fillStyle = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6) ? 'rgba(40, 20, 70, 0.9)' : 'rgba(230, 150, 70, 0.9)'; ctx.fillRect(0, groundY, canvas.width, alturaChao); ctx.shadowColor = '#FFF'; ctx.shadowBlur = 10; ctx.fillStyle = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6) ? '#00FFFF' : '#FFFFFF'; ctx.beginPath(); ctx.moveTo(0, groundY); for(let i=0; i<=canvas.width; i+=40) { ctx.lineTo(i, groundY + Math.sin(i*0.05 + bgX*0.1) * 5); } ctx.lineTo(canvas.width, groundY + 15); ctx.lineTo(0, groundY + 15); ctx.fill(); ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0, groundY + 15, canvas.width, 6); ctx.fillStyle = 'rgba(0,0,0,0.3)'; for(let x = -150 - estradaOffset; x < canvas.width + 250; x += 100) { ctx.beginPath(); ctx.moveTo(x, groundY + 20); ctx.lineTo(x + 40, groundY + 20); ctx.lineTo(x - 20, canvas.height); ctx.lineTo(x - 60, canvas.height); ctx.fill(); } ctx.restore();
+        let groundY = canvas.height - alturaChao; 
+        if(!isPaused) estradaOffset += gameSpeed * 2.5; 
+        if (estradaOffset > 100) estradaOffset -= 100;
+
+        ctx.save(); 
+        ctx.fillStyle = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6) ? 'rgba(40, 20, 70, 0.9)' : 'rgba(230, 150, 70, 0.9)'; 
+        ctx.fillRect(0, groundY, canvas.width, alturaChao); 
+        ctx.shadowColor = '#FFF'; ctx.shadowBlur = 10; 
+        ctx.fillStyle = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6) ? '#00FFFF' : '#FFFFFF'; 
+        ctx.beginPath(); ctx.moveTo(0, groundY); 
+        for(let i=0; i<=canvas.width; i+=40) { ctx.lineTo(i, groundY + Math.sin(i*0.05 + bgX*0.1) * 5); } 
+        ctx.lineTo(canvas.width, groundY + 15); ctx.lineTo(0, groundY + 15); ctx.fill(); ctx.shadowBlur = 0; 
+        ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0, groundY + 15, canvas.width, 6); 
+        ctx.fillStyle = 'rgba(0,0,0,0.3)'; 
+        for(let x = -150 - estradaOffset; x < canvas.width + 250; x += 100) { 
+            ctx.beginPath(); ctx.moveTo(x, groundY + 20); ctx.lineTo(x + 40, groundY + 20); ctx.lineTo(x - 20, canvas.height); ctx.lineTo(x - 60, canvas.height); ctx.fill(); 
+        } 
+        ctx.restore();
 
         particulas.forEach(p => { p.update(); p.draw(ctx); }); particulas = particulas.filter(p => p.vida > 0);
         player.update(); player.draw(ctx);
@@ -1121,6 +1248,9 @@
                         if(item.isCorrect) {
                             item.isResolvido = true; 
                             
+                            // Vibração Mágica (Acerto)
+                            try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
+
                             if (isFrase) {
                                 acertosFase6++; desafioFase6 = null; 
                                 letraUi.innerText = letraUi.innerText.replace('_____', item.info.palavra);
@@ -1128,6 +1258,7 @@
                             } else {
                                 acertosFase5++; desafioFase5 = null; 
                             }
+                            gerenciarCombo(true);
                             AudioManager.playSuccessSFX(); 
                             textosFlutuantes.push(new TextoFlutuante("PERFEITO!", item.x, item.y - 60, '#FFF', isFrase ? '#00FF7F' : '#8A2BE2'));
                             for(let i=0; i<15; i++) particulas.push(new Particula(item.x, item.y, isFrase ? '#00FF7F' : '#00FFFF', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
@@ -1137,6 +1268,11 @@
                             
                         } else {
                             item.markedForDeletion = true; 
+                            
+                            // Vibração de Aviso (Erro)
+                            try { if(navigator.vibrate) navigator.vibrate([80, 50, 80]); } catch(e){}
+
+                            gerenciarCombo(false);
                             AudioManager.playErrorSFX(); 
                             textosFlutuantes.push(new TextoFlutuante("TENTE DE NOVO!", item.x, item.y - 60, '#FFF', '#FF0000'));
                             for(let i=0; i<10; i++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
@@ -1152,6 +1288,8 @@
                     
                     if (item.tipo === 'letra') {
                         item.markedForDeletion = true; 
+                        try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
+                        gerenciarCombo(true);
                         AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); }
                         for(let i=0; i<6; i++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', (Math.random()*6)-3, (Math.random()*6)-3, Math.random()*10+5));
@@ -1159,10 +1297,12 @@
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
                             item.isResolvido = true; 
+                            try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
                             
                             if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
                             else { acertosFase4++; desafioFase4 = null; }
                             
+                            gerenciarCombo(true);
                             AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
                             for(let i=0; i<15; i++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', (Math.random()*8)-4, (Math.random()*8)-4, Math.random()*15+5));
                             
@@ -1170,6 +1310,8 @@
                             atualizarProgressoHUD();
                         } else {
                             item.markedForDeletion = true; 
+                            try { if(navigator.vibrate) navigator.vibrate([80, 50, 80]); } catch(e){}
+                            gerenciarCombo(false);
                             AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
                             for(let i=0; i<10; i++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
                             
@@ -1178,12 +1320,16 @@
                     }
                     else if (item.tipo === 'estrela_vitoria') {
                         item.markedForDeletion = true; 
+                        try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
+                        gerenciarCombo(true);
                         letraVitoriaIndex++; atualizarHUDVitoria(); AudioManager.playMagicSFX();
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x, item.y - 40, '#FFF', '#FFD700'));
                         for(let i=0; i<15; i++) particulas.push(new Particula(item.x, item.y, '#FFD700', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
                     }
                     else if (item.tipo === 'numero') {
                         item.markedForDeletion = true; 
+                        try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
+                        gerenciarCombo(true);
                         numeroAtualIndex++; AudioManager.playMagicSFX();
                         textosFlutuantes.push(new TextoFlutuante(item.info, item.x, item.y - 40, '#FFF', '#00FFFF'));
                         for(let i=0; i<15; i++) particulas.push(new Particula(item.x, item.y, '#00FFFF', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
