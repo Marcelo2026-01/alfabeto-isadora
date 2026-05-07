@@ -180,10 +180,9 @@
         
         #btn-modo { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.3); font-weight: 700; } 
 
-        .ps5-hero-area { width: 50%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
-        .ps5-hero-glow { position: absolute; width: clamp(150px, 40vw, 500px); height: clamp(150px, 40vw, 500px); background: radial-gradient(circle, rgba(255,105,180,0.3) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; animation: pulsarLuz 4s alternate infinite ease-in-out; }
-        .ps5-hero-mascot { position: relative; z-index: 2; width: clamp(140px, 35vw, 500px); height: clamp(180px, 45vw, 600px); background-image: url('seu_personagem.png'); background-size: 300% 100%; background-position: 0% 0%; background-repeat: no-repeat; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); animation: breatheMascot 4s ease-in-out infinite; }
-        
+        .ps5-hero-area { width: 50%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; perspective: 1000px; }
+        .ps5-hero-glow { position: absolute; width: clamp(250px, 45vw, 600px); height: clamp(250px, 45vw, 600px); background: radial-gradient(circle, rgba(255, 16, 122, 0.4) 0%, rgba(0, 216, 255, 0.2) 40%, transparent 70%); border-radius: 50%; animation: pulsarLuz 3s alternate infinite ease-in-out; filter: blur(20px); }
+        .ps5-hero-mascot { position: relative; z-index: 2; width: clamp(200px, 40vw, 550px); height: clamp(250px, 50vw, 700px); background-image: url('seu_personagem.png'); background-size: 300% 100%; background-position: 0% 0%; background-repeat: no-repeat; filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 20px rgba(255,255,255,0.2)); animation: breatheMascot 4s ease-in-out infinite; }
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes breatheMascot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes pulsarLuz { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(1.1); opacity: 0.6; } }
