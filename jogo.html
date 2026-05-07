@@ -143,24 +143,28 @@
         }
 
         /* ==========================================
-           EFEITO AAA: COMBO DE FOGO
+           EFEITO AAA: COMBO DE FOGO (OTIMIZADO PARA 60FPS)
            ========================================== */
-        @keyframes comboFire {
-            0% { box-shadow: 0 0 10px #FFD700, 0 0 20px #FF8C00, inset 0 0 10px #FFD700; background: linear-gradient(90deg, #FFD700, #FF4500); }
-            50% { box-shadow: 0 0 25px #FFF, 0 0 40px #FF4500, inset 0 0 20px #FF8C00; background: linear-gradient(90deg, #FFF, #FFD700); }
-            100% { box-shadow: 0 0 10px #FFD700, 0 0 20px #FF8C00, inset 0 0 10px #FFD700; background: linear-gradient(90deg, #FFD700, #FF4500); }
+        @keyframes comboFirePulse {
+            0% { transform: scaleX(1); opacity: 0.8; filter: brightness(1); }
+            100% { transform: scaleX(1.02); opacity: 1; filter: brightness(1.3); }
         }
         .combo-ativo {
-            animation: comboFire 0.4s infinite alternate !important;
+            background: linear-gradient(90deg, #FFD700, #FF4500) !important;
+            box-shadow: 0 0 15px #FF8C00 !important;
+            animation: comboFirePulse 0.4s infinite alternate ease-in-out !important;
+            will-change: transform, opacity, filter;
+            transform-origin: left center;
         }
         
-        @keyframes pulseComboText {
-            0% { transform: scale(1); text-shadow: none; }
-            50% { transform: scale(1.15); color: #FFD700; text-shadow: 0 0 20px #FFD700, 0 0 30px #FF4500; }
-            100% { transform: scale(1); text-shadow: none; }
+        @keyframes pulseComboTextOpt {
+            0% { transform: scale(1); color: #FFF; }
+            100% { transform: scale(1.1); color: #FFD700; }
         }
         .texto-combo-ativo {
-            animation: pulseComboText 0.5s infinite alternate !important;
+            text-shadow: 0 0 10px #FF4500 !important;
+            animation: pulseComboTextOpt 0.5s infinite alternate ease-in-out !important;
+            will-change: transform, color;
         }
 
         .btn-corner {
@@ -998,7 +1002,6 @@
                     if (this.isJumping) { for(let i=0;i<12;i++) particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } 
                     this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt = 0; 
                 } else { 
-                    // REMOVIDO: O "hang time" (tempo de suspensão) que causava lentidão
                     this.vy += this.gravity; 
                     this.isJumping = true; 
                     this.tilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); 
@@ -1285,6 +1288,7 @@
                     
                     if (item.tipo === 'letra') {
                         item.markedForDeletion = true; 
+                        
                         gerenciarCombo(true);
                         AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); }
@@ -1305,6 +1309,7 @@
                             atualizarProgressoHUD();
                         } else {
                             item.markedForDeletion = true; 
+                            
                             gerenciarCombo(false);
                             AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
                             for(let i=0; i<10; i++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
@@ -1314,6 +1319,7 @@
                     }
                     else if (item.tipo === 'estrela_vitoria') {
                         item.markedForDeletion = true; 
+                        
                         gerenciarCombo(true);
                         letraVitoriaIndex++; atualizarHUDVitoria(); AudioManager.playMagicSFX();
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x, item.y - 40, '#FFF', '#FFD700'));
@@ -1321,6 +1327,7 @@
                     }
                     else if (item.tipo === 'numero') {
                         item.markedForDeletion = true; 
+                        
                         gerenciarCombo(true);
                         numeroAtualIndex++; AudioManager.playMagicSFX();
                         textosFlutuantes.push(new TextoFlutuante(item.info, item.x, item.y - 40, '#FFF', '#00FFFF'));
