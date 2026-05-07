@@ -1247,9 +1247,6 @@
                         
                         if(item.isCorrect) {
                             item.isResolvido = true; 
-                            
-                            // Vibração Mágica (Acerto)
-                            try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
 
                             if (isFrase) {
                                 acertosFase6++; desafioFase6 = null; 
@@ -1268,9 +1265,6 @@
                             
                         } else {
                             item.markedForDeletion = true; 
-                            
-                            // Vibração de Aviso (Erro)
-                            try { if(navigator.vibrate) navigator.vibrate([80, 50, 80]); } catch(e){}
 
                             gerenciarCombo(false);
                             AudioManager.playErrorSFX(); 
@@ -1288,7 +1282,6 @@
                     
                     if (item.tipo === 'letra') {
                         item.markedForDeletion = true; 
-                        try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
                         gerenciarCombo(true);
                         AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); }
@@ -1297,7 +1290,6 @@
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
                             item.isResolvido = true; 
-                            try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
                             
                             if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
                             else { acertosFase4++; desafioFase4 = null; }
@@ -1310,7 +1302,6 @@
                             atualizarProgressoHUD();
                         } else {
                             item.markedForDeletion = true; 
-                            try { if(navigator.vibrate) navigator.vibrate([80, 50, 80]); } catch(e){}
                             gerenciarCombo(false);
                             AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
                             for(let i=0; i<10; i++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
@@ -1320,7 +1311,6 @@
                     }
                     else if (item.tipo === 'estrela_vitoria') {
                         item.markedForDeletion = true; 
-                        try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
                         gerenciarCombo(true);
                         letraVitoriaIndex++; atualizarHUDVitoria(); AudioManager.playMagicSFX();
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x, item.y - 40, '#FFF', '#FFD700'));
@@ -1328,7 +1318,6 @@
                     }
                     else if (item.tipo === 'numero') {
                         item.markedForDeletion = true; 
-                        try { if(navigator.vibrate) navigator.vibrate([30, 40, 30]); } catch(e){}
                         gerenciarCombo(true);
                         numeroAtualIndex++; AudioManager.playMagicSFX();
                         textosFlutuantes.push(new TextoFlutuante(item.info, item.x, item.y - 40, '#FFF', '#00FFFF'));
