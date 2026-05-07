@@ -143,7 +143,7 @@
         }
 
         /* ==========================================
-           EFEITO AAA: COMBO DE FOGO (OTIMIZADO PARA 60FPS)
+           EFEITO AAA: COMBO DE FOGO (OTIMIZADO)
            ========================================== */
         @keyframes comboFirePulse {
             0% { transform: scaleX(1); opacity: 0.8; filter: brightness(1); }
@@ -637,6 +637,41 @@
                 window.speechSynthesis.speak(utter); 
             } catch(e) {} 
         },
+
+        // ==========================================
+        // NOVO: SISTEMA DE VOZES CARINHOSAS DE ERRO
+        // ==========================================
+        playErrorVoice() {
+            if (!this.somAtivo || !('speechSynthesis' in window)) return;
+            try {
+                window.speechSynthesis.cancel(); // Limpa as vozes anteriores
+                
+                // 1. Sorteia uma frase carinhosa
+                const frasesErro = ["Ops!", "Quase la!", "Tente de novo!"];
+                const frase = frasesErro[Math.floor(Math.random() * frasesErro.length)];
+                
+                let vozes = window.speechSynthesis.getVoices();
+                let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium')));
+                
+                let utterErro = new SpeechSynthesisUtterance(frase);
+                utterErro.lang = 'pt-BR';
+                if(vozPremium) utterErro.voice = vozPremium;
+                utterErro.pitch = 1.1; utterErro.rate = 1.0;
+                
+                // Fala a frase carinhosa
+                window.speechSynthesis.speak(utterErro);
+
+                // 2. Logo depois, repete a instrução (a regra)
+                if (this.ultimaVoz !== "") {
+                    let utterRegra = new SpeechSynthesisUtterance(this.ultimaVoz);
+                    utterRegra.lang = 'pt-BR';
+                    if(vozPremium) utterRegra.voice = vozPremium;
+                    utterRegra.pitch = 1.1; utterRegra.rate = 0.95;
+                    window.speechSynthesis.speak(utterRegra);
+                }
+            } catch(e) {}
+        },
+
         repeatVoice() {
             if (this.ultimaVoz !== "") { this.playVoice(this.ultimaVoz); }
         },
@@ -1277,7 +1312,8 @@
                             textosFlutuantes.push(new TextoFlutuante("TENTE DE NOVO!", item.x, item.y - 60, '#FFF', '#FF0000'));
                             for(let i=0; i<10; i++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
                             
-                            setTimeout(() => { AudioManager.repeatVoice(); }, 800);
+                            // Aciona as vozes carinhosas de erro
+                            setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
                         }
                     }
                     return; 
@@ -1314,7 +1350,8 @@
                             AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
                             for(let i=0; i<10; i++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
                             
-                            setTimeout(() => { AudioManager.repeatVoice(); }, 800);
+                            // Aciona as vozes carinhosas de erro
+                            setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
                         }
                     }
                     else if (item.tipo === 'estrela_vitoria') {
