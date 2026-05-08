@@ -239,18 +239,10 @@
             will-change: transform, opacity, filter;
         }
 
-        .cinematic-active .cinematic-text { 
-            opacity: 1; transform: scale(1) translateY(0); filter: blur(0); 
-        }
-        .cinematic-active .cinematic-subtext { 
-            opacity: 1; transform: translateY(0); filter: blur(0); 
-        }
-        .cinematic-fadeout .cinematic-text { 
-            opacity: 0; transform: scale(0.95); filter: blur(15px); transition: all 0.8s ease-in; 
-        }
-        .cinematic-fadeout .cinematic-subtext { 
-            opacity: 0; transform: scale(0.95); filter: blur(15px); transition: all 0.6s ease-in; 
-        }
+        .cinematic-active .cinematic-text { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        .cinematic-active .cinematic-subtext { opacity: 1; transform: translateY(0); filter: blur(0); }
+        .cinematic-fadeout .cinematic-text { opacity: 0; transform: scale(0.95); filter: blur(15px); transition: all 0.8s ease-in; }
+        .cinematic-fadeout .cinematic-subtext { opacity: 0; transform: scale(0.95); filter: blur(15px); transition: all 0.6s ease-in; }
 
         /* ========================================================
            HUD DO JOGO
@@ -878,6 +870,7 @@
             .ps5-subtitle { font-size: clamp(12px, 3vmin, 18px); margin-bottom: 5px; }
             .ps5-btn { font-size: clamp(12px, 3vmin, 16px); padding: 5px 12px; } 
             .ps5-hero-mascot { width: clamp(120px, 28vw, 220px); height: clamp(140px, 35vw, 250px); }
+            
             #ui-layer { margin-top: 0; top: 10px; left: 3vw; padding: 8px 15px; border-radius: 12px; max-width: 60vw; } 
             #meta-alfabeto { font-size: 11px; margin-bottom: 2px; } 
             #letra-ui { font-size: 16px; } 
@@ -885,8 +878,16 @@
             .btn-corner { top: 10px; } 
             #btn-pause { width: 35px; height: 35px; font-size: 14px; right: 3vw; } 
             #btn-som { height: 35px; font-size: 10px; padding: 0 10px; right: calc(3vw + 45px); }
+            .ps5-tutorial-box { padding: 6px 12px; font-size: 11px; border-radius: 10px; }
+            
             .btn-pause-ui { font-size: 13px; padding: 8px 15px; margin: 3px 0; width: 220px; } 
             .titulo-jogo { font-size: 28px !important; margin-bottom: 5px; }
+            .trophy-icon { font-size: 45px; margin-bottom: 5px; }
+            .victory-title { font-size: 30px; margin-bottom: 2px; }
+            .victory-subtitle { font-size: 13px; margin-bottom: 10px; }
+            .credits { font-size: 11px; margin-bottom: 15px; line-height: 1.4; }
+            .foto-isadora-livro { height: clamp(120px, 35vmin, 160px); width: clamp(60px, 18vmin, 80px); margin-bottom: 5px; } 
+            .foto-casa-livro { height: clamp(100px, 25vmin, 140px); margin-bottom: 10px; }
         }
     </style>
 </head>
@@ -1514,7 +1515,7 @@
         else if (faseAtual === 6) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase6 / dadosFase6.length) * 100) + '%'; }
     }
 
-    // --- NOVO: SISTEMA DE APRESENTAÇÃO CINEMATOGRÁFICA AAA ---
+    // --- SISTEMA DE APRESENTAÇÃO CINEMATOGRÁFICA AAA ---
     function mostrarCinematica(titulo, subtitulo, corBase) {
         cinematicTitle.innerText = titulo;
         cinematicSubtitle.innerText = subtitulo;
@@ -1545,10 +1546,9 @@
             mostrarCinematica("ATO I", "O ALFABETO", "#FFD700");
         }
         else if (fase === 2) { 
-            metaAlfabeto.innerText = isInfinite ? "ATO 2: ENIGMA" : "DESAFIO: ACHE A LETRA!"; 
+            metaAlfabeto.innerText = isInfinite ? "ATO 2: ENIGMA" : "DESAFIO DAS LETRAS!"; 
             metaAlfabeto.style.color = "#FF1493"; 
             letraUi.innerText = "Prepare-se..."; 
-            AudioManager.playVoice("Pule na letra certa!");
             mostrarCinematica("ATO II", "O ENIGMA", "#FF1493");
         }
         else if (fase === 3) { 
@@ -1561,7 +1561,7 @@
             metaAlfabeto.innerText = isInfinite ? "ATO 4: SILABAS" : "CASTELO DAS SILABAS"; 
             metaAlfabeto.style.color = "#00FFFF"; 
             letraUi.innerText = "Junte as silabas..."; 
-            mostrarCinematica("ATO IV", "SÍLABAS MAGICAS", "#00FFFF");
+            mostrarCinematica("ATO IV", "SÍLABAS MÁGICAS", "#00FFFF");
         }
         else if (fase === 5) { 
             metaAlfabeto.innerText = isInfinite ? "ATO 5: MEMORIA" : "VALE DAS SOMBRAS"; 
@@ -1576,7 +1576,7 @@
             mostrarCinematica("ATO VI", "PONTE DAS FRASES", "#00FF7F");
         }
         else if (fase === 7) { 
-            metaAlfabeto.innerText = "PROLOGO DOS NUMEROS"; 
+            metaAlfabeto.innerText = "PRÓLOGO DOS NÚMEROS"; 
             metaAlfabeto.style.color = "#FFD700"; 
             letraUi.innerText = "1, 2, 3..."; 
             mostrarCinematica("PRÓLOGO", "OS NÚMEROS", "#FFD700");
@@ -1587,6 +1587,7 @@
         player.y = 0; 
         isHolding = false;
         
+        // Pacing Delay
         itemTimer = -2500; 
     }
 
@@ -1620,8 +1621,10 @@
         function renderVictory() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height);
-            particulas.forEach(p => { p.update(1); p.draw(ctx); }); 
-            particulas = particulas.filter(p => p.vida > 0);
+            for (let i = particulas.length - 1; i >= 0; i--) {
+                particulas[i].update(1); particulas[i].draw(ctx);
+                if (particulas[i].vida <= 0) particulas.splice(i, 1);
+            }
             if (particulas.length > 0 && !gameActive) { requestAnimationFrame(renderVictory); }
         }
         renderVictory();
@@ -1916,9 +1919,12 @@
             else if (this.tipo === 'estrela_vitoria') { 
                 this.radius = 65 * scaleMultiplier; 
                 this.x = xOverride; 
-                let limT = 100 * scaleMultiplier; 
-                let limC = ch - alturaChao - 150; 
-                this.y = Math.random() * (limC - limT) + limT; 
+                
+                // CORREÇÃO AAA: Clamp do Topo para o Balão alcançar
+                let safeTop = ch * 0.35; // Nascem em 35% do topo (Alcançável)
+                let safeBottom = ch - alturaChao - (150 * scaleMultiplier);
+                if (safeTop > safeBottom) safeTop = safeBottom - 50; 
+                this.y = Math.random() * (safeBottom - safeTop) + safeTop; 
             } 
             else { 
                 this.radius = 45 * scaleMultiplier; 
@@ -2183,7 +2189,8 @@
                 
                 let floorY = ch - alturaChao - this.height + 30; 
                 if (this.y > floorY) { this.y = floorY; this.vy = 0; } 
-                if (this.y < this.height * 0.5) { this.y = this.height * 0.5; this.vy = 0; }
+                // CORREÇÃO AAA: Teto mais generoso no balão
+                if (this.y < this.height * 0.2) { this.y = this.height * 0.2; this.vy = 0; }
                 this.isJumping = true; 
                 this.frameX = 1; 
                 this.tilt = Math.min(Math.max(this.vy * 0.03, -0.15), 0.15);
@@ -2382,7 +2389,7 @@
 
     let lastTime = 0;
     
-    // --- LAÇO PRINCIPAL (ANIMATE) COM O CHÃO 3D ---
+    // --- LAÇO PRINCIPAL (ANIMATE) ---
     function animate(timeStamp) {
         if (!gameActive) return; 
         if (isPaused) return; 
@@ -2428,17 +2435,11 @@
             ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore();
         }
         
-        // ==========================================
-        // RENDERIZAÇÃO DO CHÃO AAA (EXPANDIDO)
-        // ==========================================
         let groundY = ch - alturaChao; 
-        
         if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; 
         if (estradaOffset > 120) estradaOffset -= 120;
         
         ctx.save(); 
-        
-        // 1. Base Gradient Depth
         let groundGrad = ctx.createLinearGradient(0, groundY, 0, ch);
         if (isDarkPhase) {
             groundGrad.addColorStop(0, '#2a164b'); 
@@ -2450,7 +2451,6 @@
         ctx.fillStyle = groundGrad;
         ctx.fillRect(0, groundY, cw, alturaChao); 
 
-        // 2. Horizon Rim Light
         ctx.fillStyle = isDarkPhase ? '#00FFFF' : '#FFF5EE'; 
         ctx.beginPath(); 
         ctx.moveTo(0, groundY); 
@@ -2461,11 +2461,9 @@
         ctx.lineTo(0, groundY + 15); 
         ctx.fill(); 
         
-        // Sombra Contato
         ctx.fillStyle = 'rgba(0,0,0,0.3)'; 
         ctx.fillRect(0, groundY + 15, cw, 4); 
 
-        // 3. Speed Lines Parallax (Pseudo-3D)
         ctx.fillStyle = isDarkPhase ? 'rgba(0, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.15)'; 
         for(let x = -150 - estradaOffset; x < cw + 300; x += 120) { 
             ctx.beginPath(); 
@@ -2476,19 +2474,18 @@
             ctx.fill(); 
         } 
 
-        // 4. Ambient Occlusion (Ancoragem na tela)
         let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch);
         aoGrad.addColorStop(0, 'rgba(0,0,0,0)');
         aoGrad.addColorStop(1, 'rgba(0,0,0,0.6)');
         ctx.fillStyle = aoGrad;
         ctx.fillRect(0, ch - 60, cw, 60);
-
         ctx.restore();
-        // ==========================================
 
+        // OTIMIZAÇÃO AAA: Limpeza de array (Garbage Collection seguro)
         for (let i = particulas.length - 1; i >= 0; i--) { 
             let p = particulas[i]; 
-            p.update(timeScale); p.draw(ctx); 
+            p.update(timeScale); 
+            p.draw(ctx); 
             if (p.vida <= 0) particulas.splice(i, 1); 
         }
         
@@ -2497,6 +2494,7 @@
 
         if (itemTimer > itemInterval) { 
             let podeSpawnar = true;
+            
             if (faseAtual === 1) {
                 let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
                 if (letrasFaltantes.length > 0 || isInfinite) { 
@@ -2521,6 +2519,11 @@
                         while (errada.letra === certa.letra) errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)]; 
                         desafioFase2 = {certa, errada, ordem: Math.random() > 0.5}; 
                     }
+                    
+                    // CORREÇÃO UX INFANTIL: FASE 2
+                    letraUi.innerText = `ACHE A LETRA: ${desafioFase2.certa.letra} DE ${desafioFase2.certa.palavra.toUpperCase()}`;
+                    AudioManager.playVoice(`Ache a letra ${desafioFase2.certa.letra}, de ${desafioFase2.certa.palavra}`);
+                    
                     collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.certa : desafioFase2.errada, cw + 100, desafioFase2.ordem)); 
                     collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.errada : desafioFase2.certa, cw + 700, !desafioFase2.ordem)); 
                 } 
@@ -2553,6 +2556,10 @@
                         let errada = obj.w[Math.floor(Math.random() * obj.w.length)]; 
                         desafioFase4 = {obj, errada, ordem: Math.random() > 0.5}; 
                     }
+                    // CORREÇÃO UX INFANTIL: FASE 4
+                    letraUi.innerText = `PEGUE A SÍLABA: ${desafioFase4.obj.s} DE ${desafioFase4.obj.p}`;
+                    AudioManager.playVoice(`Pegue a sílaba ${desafioFase4.obj.s}, de ${desafioFase4.obj.p}`);
+                    
                     collectibles.push(new Collectible('silaba', {s: desafioFase4.ordem ? desafioFase4.obj.s : desafioFase4.errada}, cw + 100, desafioFase4.ordem)); 
                     collectibles.push(new Collectible('silaba', {s: desafioFase4.ordem ? desafioFase4.errada : desafioFase4.obj.s}, cw + 700, !desafioFase4.ordem));
                 } 
@@ -2569,6 +2576,10 @@
                         opcoes.sort(() => Math.random() - 0.5); 
                         desafioFase5 = {obj, opcoes}; 
                     }
+                    // CORREÇÃO UX INFANTIL: FASE 5
+                    letraUi.innerText = `ACHE A LETRA: ${desafioFase5.obj.l} DE ${desafioFase5.obj.p}`;
+                    AudioManager.playVoice(`Ache a caixa com a letra ${desafioFase5.obj.l}, de ${desafioFase5.obj.p}`);
+                    
                     collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[0].l}, cw + 200, desafioFase5.opcoes[0].c)); 
                     collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[1].l}, cw + 600, desafioFase5.opcoes[1].c)); 
                     collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[2].l}, cw + 1000, desafioFase5.opcoes[2].c));
@@ -2586,6 +2597,11 @@
                         opcoes.sort(() => Math.random() - 0.5); 
                         desafioFase6 = {obj, opcoes}; 
                     }
+                    letraUi.innerText = desafioFase6.obj.f; 
+                    AudioManager.playVoice("Complete a frase!");
+                    hudLayer.classList.add('hud-punch'); 
+                    setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
+                    
                     collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[0].p}, cw + 200, desafioFase6.opcoes[0].c)); 
                     collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[1].p}, cw + 650, desafioFase6.opcoes[1].c)); 
                     collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[2].p}, cw + 1100, desafioFase6.opcoes[2].c));
@@ -2596,6 +2612,7 @@
                 if (collectibles.length === 0) { 
                     if (numeroAtualIndex < numerosVitoria.length) { 
                         let n = numerosVitoria[numeroAtualIndex]; 
+                        letraUi.innerText = `COLETE O NÚMERO: ${n}`;
                         collectibles.push(new Collectible('numero', n)); 
                     } else { 
                         dispararGrandFinale(); 
@@ -2617,7 +2634,9 @@
                 item.draw(ctx);
                 const dx = (player.x + player.width/2) - item.x; 
                 let ajustePe = player.height * player.espacoVazio; 
-                let posYPersonagem = faseAtual === 3 ? (player.y + player.height/2) : (player.y + (player.height - ajustePe)/2);
+                
+                // CORREÇÃO DE COLISÃO DO BALÃO: Alinha com o centro visual superior do jogador na fase 3
+                let posYPersonagem = faseAtual === 3 ? (player.y + player.height * 0.3) : (player.y + (player.height - ajustePe)/2);
                 
                 if (item.tipo === 'caixa_memoria' || item.tipo === 'caixa_frase') {
                     let isFrase = item.tipo === 'caixa_frase'; 
@@ -2771,6 +2790,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  
   const firebaseConfig = { 
       apiKey: "COLE_SUA_API_KEY_AQUI", 
       authDomain: "seu-projeto.firebaseapp.com", 
@@ -2779,6 +2799,7 @@
       messagingSenderId: "123456789", 
       appId: "1:123456789:web:abcdef" 
   };
+  
   const app = initializeApp(firebaseConfig); 
   const db = getFirestore(app); 
   window.db = db;
