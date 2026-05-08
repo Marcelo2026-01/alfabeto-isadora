@@ -55,8 +55,7 @@
         
         .loader-ring {
             width: clamp(80px, 15vw, 120px); height: clamp(80px, 15vw, 120px);
-            position: relative;
-            margin-bottom: 40px;
+            position: relative; margin-bottom: 40px;
             display: flex; justify-content: center; align-items: center;
             background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
             animation: pulseCore 2s ease-in-out infinite alternate;
@@ -99,19 +98,24 @@
         @keyframes fadeInTip { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
         
         /* ========================================================
-           EFEITOS DE IMPACTO AAA (DANO/ERRO)
+           EFEITOS DE IMPACTO AAA (DANO/ERRO PÓS-PROCESSAMENTO)
            ======================================================== */
         #damage-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             box-shadow: inset 0 0 80px rgba(255, 0, 0, 0); pointer-events: none;
-            z-index: 80; transition: box-shadow 0.1s ease-out; will-change: box-shadow;
+            z-index: 80; 
+            /* Transição de Release (Lenta e Suave) */
+            transition: box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            will-change: box-shadow;
         }
-        .damage-active {
-            box-shadow: inset 0 0 120px rgba(255, 0, 50, 0.8) !important;
+        .damage-active { 
+            box-shadow: inset 0 0 150px rgba(255, 0, 40, 0.85) !important; 
+            /* Transição de Ataque (Agressiva e Rápida) */
+            transition: box-shadow 0.05s ease-out; 
         }
 
         /* ========================================================
-           HUD DO JOGO (IN-GAME)
+           HUD DO JOGO
            ======================================================== */
         #ui-layer {
             position: absolute; top: 15px; left: 5vw; 
@@ -125,7 +129,6 @@
             transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             will-change: transform;
         }
-
         .hud-punch { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4), inset 0 2px 15px rgba(255,255,255,0.3) !important; }
 
         #meta-alfabeto { font-size: clamp(12px, 2.5vw, 18px); color: #FFD700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
@@ -144,13 +147,7 @@
             will-change: width;
         }
 
-        /* ==========================================
-           EFEITO AAA: COMBO DE FOGO (OTIMIZADO)
-           ========================================== */
-        @keyframes comboFirePulse {
-            0% { transform: scaleX(1); opacity: 0.8; filter: brightness(1); }
-            100% { transform: scaleX(1.02); opacity: 1; filter: brightness(1.3); }
-        }
+        @keyframes comboFirePulse { 0% { transform: scaleX(1); opacity: 0.8; filter: brightness(1); } 100% { transform: scaleX(1.02); opacity: 1; filter: brightness(1.3); } }
         .combo-ativo {
             background: linear-gradient(90deg, #FFD700, #FF4500) !important;
             box-shadow: 0 0 15px #FF8C00 !important;
@@ -159,10 +156,7 @@
             transform-origin: left center;
         }
         
-        @keyframes pulseComboTextOpt {
-            0% { transform: scale(1); color: #FFF; }
-            100% { transform: scale(1.1); color: #FFD700; }
-        }
+        @keyframes pulseComboTextOpt { 0% { transform: scale(1); color: #FFF; } 100% { transform: scale(1.1); color: #FFD700; } }
         .texto-combo-ativo {
             text-shadow: 0 0 10px #FF4500 !important;
             animation: pulseComboTextOpt 0.5s infinite alternate ease-in-out !important;
@@ -170,8 +164,7 @@
         }
 
         .btn-corner {
-            position: absolute; top: 15px; 
-            background: rgba(15, 25, 40, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            position: absolute; top: 15px; background: rgba(15, 25, 40, 0.5); backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3); color: #FFF;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 35;
             transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
@@ -293,8 +286,8 @@
 
 <div id="loading-screen">
     <div class="loader-ring"></div>
-    <div class="loader-text">CARREGANDO...</div>
-    <div class="loader-tip" id="loader-tip-text">DICA: Para uma melhor experiência, jogue com o som ligado!</div>
+    <div class="loader-text">A CARREGAR...</div>
+    <div class="loader-tip" id="loader-tip-text">DICA: Use fones de ouvido para uma experiência AAA!</div>
 </div>
 
 <div id="damage-overlay"></div>
@@ -609,26 +602,16 @@
     prevBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if(paginaAtual > 1) { paginaAtual--; atualizarLivroUI(); }}); 
     nextBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if(paginaAtual < totalPaginas) { paginaAtual++; atualizarLivroUI(); }});
 
-    // ==========================================
-    // ENGINE DE ÁUDIO AAA (REESCRITA PS5)
-    // ==========================================
     const AudioManager = {
         somAtivo: localStorage.getItem('isadora_som') !== 'false', 
-        audioCtx: null, 
-        masterCompressor: null,
-        bgmMenu: new Audio('musica_menu.mp3'), 
-        bgmJogo: new Audio('musica_jogo.mp3'), 
-        sfxRisada: new Audio('risada.mp3'), 
-        musicaAtual: null,
-        ultimaVoz: "", 
-        fadeReqId: null,
-        
+        audioCtx: null, masterCompressor: null,
+        bgmMenu: new Audio('musica_menu.mp3'), bgmJogo: new Audio('musica_jogo.mp3'), 
+        sfxRisada: new Audio('risada.mp3'), musicaAtual: null, ultimaVoz: "", fadeReqId: null,
+
         init() { 
             try { 
                 if (!this.audioCtx) { 
                     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
-                    
-                    // 1. MASTER BUS COMPRESSOR (Evita Clipping/Distorção Múltipla)
                     this.masterCompressor = this.audioCtx.createDynamicsCompressor();
                     this.masterCompressor.threshold.setValueAtTime(-15, this.audioCtx.currentTime);
                     this.masterCompressor.knee.setValueAtTime(10, this.audioCtx.currentTime);
@@ -639,56 +622,31 @@
                 } 
                 if (this.audioCtx.state === 'suspended') this.audioCtx.resume(); 
                 this.bgmMenu.loop = true; this.bgmJogo.loop = true; 
-                if(this.somAtivo && this.musicaAtual) { this.musicaAtual.play().catch(()=>{}); } 
             } catch(e) {} 
         },
         toggle() { 
-            this.somAtivo = !this.somAtivo; 
-            localStorage.setItem('isadora_som', this.somAtivo); 
-            if (!this.somAtivo) { 
-                if(this.musicaAtual) this.fadeVolume(this.musicaAtual, 0, 500); 
-            } else { 
-                this.init(); 
-                if(this.musicaAtual) { 
-                    this.musicaAtual.play().catch(()=>{}); 
-                    this.fadeVolume(this.musicaAtual, 0.4, 500); 
-                } 
-            } 
-            this.updateUI(); 
-            return this.somAtivo; 
+            this.somAtivo = !this.somAtivo; localStorage.setItem('isadora_som', this.somAtivo); 
+            if (!this.somAtivo) { if(this.musicaAtual) this.fadeVolume(this.musicaAtual, 0, 500); } 
+            else { this.init(); if(this.musicaAtual) { this.musicaAtual.play().catch(()=>{}); this.fadeVolume(this.musicaAtual, 0.4, 500); } } 
+            this.updateUI(); return this.somAtivo; 
         },
         updateUI() { 
             if(btnSom) btnSom.innerText = this.somAtivo ? '♪ SOM' : 'x MUDO'; 
             if(btnSomMenu) btnSomMenu.innerHTML = this.somAtivo ? '<span class="ps5-icon">♪</span> AUDIO: LIGADO' : '<span class="ps5-icon">x</span> AUDIO: MUDO'; 
         },
-        
-        // 2. TRANSIÇÕES MANTEIGA (Otimização WebAudio API)
         fadeVolume(audioObj, targetVol, duration) { 
             if(!audioObj) return; 
-            try { 
-                if(this.fadeReqId) cancelAnimationFrame(this.fadeReqId);
-                let startVol = audioObj.volume; 
-                let startTime = performance.now();
-                
-                const step = (currentTime) => {
-                    let elapsed = currentTime - startTime;
-                    let progress = Math.min(elapsed / duration, 1);
-                    // Curva de Fade Suave
-                    let easeProgress = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
-                    
-                    audioObj.volume = startVol + (targetVol - startVol) * easeProgress;
-                    
-                    if (progress < 1) {
-                        this.fadeReqId = requestAnimationFrame(step);
-                    } else {
-                        audioObj.volume = targetVol; 
-                        if(targetVol === 0) audioObj.pause();
-                    }
-                };
-                this.fadeReqId = requestAnimationFrame(step);
-            } catch(e) {} 
+            if(this.fadeReqId) cancelAnimationFrame(this.fadeReqId);
+            let startVol = audioObj.volume; let startTime = performance.now();
+            const step = (t) => {
+                let elapsed = t - startTime; let progress = Math.min(elapsed / duration, 1);
+                let ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+                audioObj.volume = startVol + (targetVol - startVol) * ease;
+                if (progress < 1) this.fadeReqId = requestAnimationFrame(step);
+                else { audioObj.volume = targetVol; if(targetVol === 0) audioObj.pause(); }
+            };
+            this.fadeReqId = requestAnimationFrame(step);
         },
-        
         playBGM(trackName) { 
             let nextTrack = trackName === 'menu' ? this.bgmMenu : this.bgmJogo; 
             if (this.musicaAtual === nextTrack) return; 
@@ -696,88 +654,42 @@
             this.musicaAtual = nextTrack; this.musicaAtual.volume = 0; 
             if (this.somAtivo) { this.init(); this.musicaAtual.play().catch(()=>{}); this.fadeVolume(this.musicaAtual, 0.4, 800); } 
         },
-        
-        // 3. MENU HOVER PS5 (Vidro/Cristal Pluck duplo)
         playHoverTick() { 
-            if (!this.somAtivo || !this.audioCtx || !this.masterCompressor) return; 
-            try { 
-                const now = this.audioCtx.currentTime;
-                const gain = this.audioCtx.createGain(); 
-                gain.connect(this.masterCompressor); 
-                
-                // Attack rápido, Exponential Decay natural
-                gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(0.08, now + 0.01);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-
-                const osc1 = this.audioCtx.createOscillator(); 
-                osc1.type = 'sine'; osc1.frequency.setValueAtTime(1200 + (Math.random()*20), now); 
-                osc1.connect(gain); osc1.start(now); osc1.stop(now + 0.15); 
-                
-                const osc2 = this.audioCtx.createOscillator(); 
-                osc2.type = 'sine'; osc2.frequency.setValueAtTime(2400 + (Math.random()*40), now); 
-                osc2.connect(gain); osc2.start(now); osc2.stop(now + 0.15);
-            } catch(e) {} 
+            if (!this.somAtivo || !this.audioCtx) return; 
+            const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); 
+            gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.08, now + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+            const osc = this.audioCtx.createOscillator(); osc.frequency.setValueAtTime(1500, now);
+            osc.connect(gain); osc.start(now); osc.stop(now + 0.15); 
         },
-        
-        // 4. ÁUDIO ESPACIAL E SINTESE ORGÂNICA (Coleta de item)
         playMagicSFX() { 
-            if (!this.somAtivo || !this.audioCtx || !this.masterCompressor) return; 
-            try { 
-                const now = this.audioCtx.currentTime;
-                
-                // Simula Spread Stereo dividindo em 2 osciladores desafinados (Unison Detune)
-                const gainL = this.audioCtx.createGain(); const gainR = this.audioCtx.createGain();
-                const pannerL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
-                const pannerR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
-                
-                if(pannerL && pannerR) {
-                    pannerL.pan.value = -0.4; pannerR.pan.value = 0.4;
-                    gainL.connect(pannerL); pannerL.connect(this.masterCompressor);
-                    gainR.connect(pannerR); pannerR.connect(this.masterCompressor);
-                } else {
-                    gainL.connect(this.masterCompressor); gainR.connect(this.masterCompressor);
-                }
-
-                // Envelope suave logaritmico
-                [gainL, gainR].forEach(g => {
-                    g.gain.setValueAtTime(0, now);
-                    g.gain.linearRampToValueAtTime(0.12, now + 0.05);
-                    g.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-                });
-
-                const freqs = [659.25, 880.00, 1108.73, 1318.51];
-                let timeOffset = 0;
-                
-                freqs.forEach((f, i) => {
-                    let osc1 = this.audioCtx.createOscillator(); osc1.type = 'sine';
-                    let osc2 = this.audioCtx.createOscillator(); osc2.type = 'sine';
-                    
-                    osc1.frequency.setValueAtTime(f, now + timeOffset);
-                    osc2.frequency.setValueAtTime(f * 1.005, now + timeOffset); // 5 cents detune
-                    
-                    osc1.connect(gainL); osc2.connect(gainR);
-                    
-                    osc1.start(now + timeOffset); osc1.stop(now + 0.6);
-                    osc2.start(now + timeOffset); osc2.stop(now + 0.6);
-                    timeOffset += 0.06;
-                });
-            } catch (e) {} 
+            if (!this.somAtivo || !this.audioCtx) return; 
+            const now = this.audioCtx.currentTime;
+            const gainL = this.audioCtx.createGain(); const gainR = this.audioCtx.createGain();
+            const pannerL = this.audioCtx.createStereoPanner(); const pannerR = this.audioCtx.createStereoPanner();
+            pannerL.pan.value = -0.5; pannerR.pan.value = 0.5;
+            gainL.connect(pannerL); pannerL.connect(this.masterCompressor);
+            gainR.connect(pannerR); pannerR.connect(this.masterCompressor);
+            [gainL, gainR].forEach(g => {
+                g.gain.setValueAtTime(0.001, now); g.gain.exponentialRampToValueAtTime(0.15, now + 0.05);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+            });
+            [880, 1108, 1318].forEach((f, i) => {
+                let o1 = this.audioCtx.createOscillator(); let o2 = this.audioCtx.createOscillator();
+                o1.frequency.setValueAtTime(f, now + (i*0.05)); o2.frequency.setValueAtTime(f * 1.005, now + (i*0.05));
+                o1.connect(gainL); o2.connect(gainR); o1.start(now + (i*0.05)); o2.start(now + (i*0.05));
+                o1.stop(now + 0.8); o2.stop(now + 0.8);
+            });
         },
-        
         playSuccessSFX() { 
-            if (!this.somAtivo || !this.audioCtx || !this.masterCompressor) return; 
+            if (!this.somAtivo || !this.audioCtx) return; 
             try { 
-                const now = this.audioCtx.currentTime;
-                const gain = this.audioCtx.createGain(); 
-                gain.connect(this.masterCompressor); 
-                
-                gain.gain.setValueAtTime(0, now); 
+                const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); 
+                gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); 
                 gain.gain.linearRampToValueAtTime(0.15, now + 0.1); 
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
-                
-                const freqs = [523.25, 659.25, 783.99, 1046.50];
-                let timeOffset = 0;
+                const freqs = [523.25, 659.25, 783.99, 1046.50]; let timeOffset = 0;
                 freqs.forEach(f => {
                     let osc = this.audioCtx.createOscillator(); osc.type = 'sine';
                     osc.frequency.setValueAtTime(f, now + timeOffset);
@@ -786,76 +698,43 @@
                 });
             } catch (e) {} 
         },
-        
-        // 5. IMPACTO DE ERRO (Cinematográfico Sub-bass)
         playErrorSFX() { 
-            if (!this.somAtivo || !this.audioCtx || !this.masterCompressor) return; 
-            try { 
-                const now = this.audioCtx.currentTime;
-                const gain = this.audioCtx.createGain(); 
-                gain.connect(this.masterCompressor); 
-                
-                // Envelope de Impacto Rápido
-                gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(0.4, now + 0.02);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-
-                const osc = this.audioCtx.createOscillator(); 
-                osc.type = 'sine'; // Senoidal pesada no lugar do sawtooth cortante
-                
-                // Pitch Drop Rápido (Sensação de borracha pesada/baque)
-                osc.frequency.setValueAtTime(150, now); 
-                osc.frequency.exponentialRampToValueAtTime(40, now + 0.2); 
-                
-                osc.connect(gain); 
-                osc.start(now); osc.stop(now + 0.4); 
-            } catch (e) {} 
+            if (!this.somAtivo || !this.audioCtx) return; 
+            const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); 
+            gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            const osc = this.audioCtx.createOscillator(); osc.type = 'sine';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
+            osc.connect(gain); osc.start(now); osc.stop(now + 0.4); 
         },
-        
         playRisada() { if (this.somAtivo && this.sfxRisada) { this.sfxRisada.currentTime = 0; this.sfxRisada.play().catch(()=>{}); } },
-        
         playVoice(texto) { 
             if (!this.somAtivo || !('speechSynthesis' in window)) return; 
-            try { 
-                window.speechSynthesis.cancel(); 
-                this.ultimaVoz = texto; 
-                let utter = new SpeechSynthesisUtterance(texto); 
-                utter.lang = 'pt-BR'; 
-                let vozes = window.speechSynthesis.getVoices(); 
-                let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium'))); 
-                if(vozPremium) utter.voice = vozPremium; 
-                utter.pitch = 1.1; utter.rate = 0.95; 
-                window.speechSynthesis.speak(utter); 
-            } catch(e) {} 
+            window.speechSynthesis.cancel(); this.ultimaVoz = texto;
+            let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR';
+            let vozes = window.speechSynthesis.getVoices(); 
+            let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium'))); 
+            if(vozPremium) utter.voice = vozPremium;
+            utter.pitch = 1.1; utter.rate = 0.95; window.speechSynthesis.speak(utter); 
         },
-
         playErrorVoice() {
             if (!this.somAtivo || !('speechSynthesis' in window)) return;
-            try {
-                window.speechSynthesis.cancel(); 
-                const frasesErro = ["Ops!", "Quase la!", "Tente de novo!"];
-                const frase = frasesErro[Math.floor(Math.random() * frasesErro.length)];
-                
-                let vozes = window.speechSynthesis.getVoices();
-                let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium')));
-                
-                let utterErro = new SpeechSynthesisUtterance(frase);
-                utterErro.lang = 'pt-BR';
-                if(vozPremium) utterErro.voice = vozPremium;
-                utterErro.pitch = 1.1; utterErro.rate = 1.0;
-                
-                window.speechSynthesis.speak(utterErro);
-
-                if (this.ultimaVoz !== "") {
-                    let utterRegra = new SpeechSynthesisUtterance(this.ultimaVoz);
-                    utterRegra.lang = 'pt-BR';
-                    if(vozPremium) utterRegra.voice = vozPremium;
-                    utterRegra.pitch = 1.1; utterRegra.rate = 0.95;
-                    window.speechSynthesis.speak(utterRegra);
-                }
-            } catch(e) {}
+            window.speechSynthesis.cancel();
+            const frases = ["Ops!", "Quase lá!", "Tente de novo!"];
+            let utterErro = new SpeechSynthesisUtterance(frases[Math.floor(Math.random()*frases.length)]);
+            utterErro.lang = 'pt-BR'; 
+            let vozes = window.speechSynthesis.getVoices(); 
+            let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium'))); 
+            if(vozPremium) utterErro.voice = vozPremium;
+            window.speechSynthesis.speak(utterErro);
+            if(this.ultimaVoz) {
+                let utterRegra = new SpeechSynthesisUtterance(this.ultimaVoz);
+                utterRegra.lang = 'pt-BR'; utterRegra.rate = 0.9; 
+                if(vozPremium) utterRegra.voice = vozPremium;
+                window.speechSynthesis.speak(utterRegra);
+            }
         },
-
         repeatVoice() {
             if (this.ultimaVoz !== "") { this.playVoice(this.ultimaVoz); }
         },
@@ -1091,15 +970,48 @@
     const fundoImg2 = new Image(); fundoImg2.src = 'cenario2.png'; 
     const playerSprite = new Image(); playerSprite.src = 'seu_personagem.png'; 
 
+    /* --- SISTEMA DE PARTÍCULAS E TEXTOS (VFX AAA) --- */
     class Particula {
-        constructor(x, y, cor, vx, vy, tamanho) { this.x = x; this.y = y; this.cor = cor; this.vx = vx; this.vy = vy; this.tamanho = tamanho * scaleMultiplier; this.vida = 1.0; }
-        update(timeScale) { this.x += (this.vx - (faseAtual === 3 ? gameSpeed * 0.5 : gameSpeed * 1.0)) * timeScale; this.vy += 0.1 * timeScale; this.y += this.vy * timeScale; this.vida -= 0.02 * timeScale; this.tamanho *= Math.pow(0.96, timeScale); }
-        draw(ctx) { ctx.save(); ctx.globalAlpha = Math.max(0, this.vida); ctx.fillStyle = this.cor; ctx.beginPath(); ctx.arc(this.x, this.y, Math.max(0, this.tamanho), 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+        constructor(x, y, cor, vx, vy, tamanho) { 
+            this.x = x; this.y = y; this.cor = cor; this.vx = vx; this.vy = vy; 
+            this.tamanho = tamanho * scaleMultiplier; this.vida = 1.0; 
+        }
+        update(timeScale) { 
+            // Inércia e Decaimento
+            this.x += (this.vx - (faseAtual === 3 ? gameSpeed * 0.5 : gameSpeed * 1.0)) * timeScale; 
+            this.vy += 0.1 * timeScale; this.y += this.vy * timeScale; 
+            this.vida -= 0.02 * timeScale; this.tamanho *= Math.pow(0.96, timeScale); 
+        }
+        draw(ctx) { 
+            ctx.save(); 
+            ctx.globalAlpha = Math.max(0, this.vida); 
+            // Additive Blending (Glow Cinematográfico) apenas para luzes, poeira física fica normal
+            if (this.cor !== '#555' && !this.cor.includes('rgba(200')) {
+                ctx.globalCompositeOperation = 'lighter';
+            }
+            ctx.fillStyle = this.cor; 
+            ctx.beginPath(); ctx.arc(this.x, this.y, Math.max(0, this.tamanho), 0, Math.PI * 2); ctx.fill(); 
+            ctx.restore(); 
+        }
     }
     class TextoFlutuante {
-        constructor(texto, x, y, cor = '#FFF', contorno = '#FF1493') { this.texto = texto; this.x = x; this.y = y; this.vida = 1.0; this.cor = cor; this.contorno = contorno; }
-        update(timeScale) { this.y -= 1.5 * timeScale; this.vida -= 0.015 * timeScale; } 
-        draw(ctx) { ctx.save(); ctx.globalAlpha = Math.max(0, this.vida); ctx.fillStyle = this.cor; ctx.font = `bold ${40 * scaleMultiplier}px 'Fredoka', sans-serif`; ctx.strokeStyle = this.contorno; ctx.lineWidth = 6 * scaleMultiplier; ctx.strokeText(this.texto, this.x, this.y); ctx.fillText(this.texto, this.x, this.y); ctx.restore(); }
+        constructor(texto, x, y, cor = '#FFF', contorno = '#FF1493') { 
+            this.texto = texto; this.x = x; this.y = y; 
+            this.vida = 1.0; this.cor = cor; this.contorno = contorno; 
+            this.vy = -3; // Impulso inicial
+        }
+        update(timeScale) { 
+            // Ease-Out Physics para o salto do texto
+            this.y += this.vy * timeScale; 
+            this.vy *= Math.pow(0.92, timeScale);
+            this.vida -= 0.015 * timeScale; 
+        } 
+        draw(ctx) { 
+            ctx.save(); ctx.globalAlpha = Math.max(0, this.vida); ctx.fillStyle = this.cor; 
+            ctx.font = `bold ${40 * scaleMultiplier}px 'Fredoka', sans-serif`; ctx.strokeStyle = this.contorno; 
+            ctx.lineWidth = 6 * scaleMultiplier; ctx.strokeText(this.texto, this.x, this.y); ctx.fillText(this.texto, this.x, this.y); 
+            ctx.restore(); 
+        }
     }
     
     class Collectible {
@@ -1365,8 +1277,11 @@
         ctx.clearRect(0, 0, cw, ch);
         ctx.save();
 
+        // 2. OSCILAÇÃO HARMÔNICA DA CÂMERA (Substitui o Math.random)
         if (shakeIntensity > 0) {
-            ctx.translate((Math.random()-0.5) * shakeIntensity, (Math.random()-0.5) * shakeIntensity);
+            let sx = Math.sin(timeStamp * 0.05) * shakeIntensity;
+            let sy = Math.cos(timeStamp * 0.04) * shakeIntensity;
+            ctx.translate(sx, sy);
             shakeIntensity -= deltaTime * 0.05;
             if(shakeIntensity < 0) shakeIntensity = 0;
         }
@@ -1548,7 +1463,7 @@
                         
                         if(item.isCorrect) {
                             item.isResolvido = true; 
-                            shakeIntensity = 3; 
+                            shakeIntensity = 4; 
 
                             if (isFrase) {
                                 acertosFase6++; desafioFase6 = null; 
@@ -1568,8 +1483,8 @@
                         } else {
                             item.markedForDeletion = true; 
                             hitStopTime = 80; shakeIntensity = 12;
-                            damageOverlay.classList.add('damage-active');
-                            setTimeout(() => damageOverlay.classList.remove('damage-active'), 150);
+                            document.getElementById('damage-overlay').classList.add('damage-active');
+                            setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
 
                             gerenciarCombo(false);
                             AudioManager.playErrorSFX(); 
@@ -1596,7 +1511,7 @@
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
                             item.isResolvido = true; 
-                            shakeIntensity = 3;
+                            shakeIntensity = 4;
                             
                             if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
                             else { acertosFase4++; desafioFase4 = null; }
@@ -1610,8 +1525,8 @@
                         } else {
                             item.markedForDeletion = true; 
                             hitStopTime = 80; shakeIntensity = 12;
-                            damageOverlay.classList.add('damage-active');
-                            setTimeout(() => damageOverlay.classList.remove('damage-active'), 150);
+                            document.getElementById('damage-overlay').classList.add('damage-active');
+                            setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
 
                             gerenciarCombo(false);
                             AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
@@ -1630,7 +1545,7 @@
                     }
                     else if (item.tipo === 'numero') {
                         item.markedForDeletion = true; 
-                        shakeIntensity = 2;
+                        shakeIntensity = 3;
                         gerenciarCombo(true);
                         numeroAtualIndex++; AudioManager.playMagicSFX();
                         textosFlutuantes.push(new TextoFlutuante(item.info, item.x, item.y - 40, '#FFF', '#00FFFF'));
