@@ -689,20 +689,14 @@
             } catch(e) {} 
         },
         
-        // CORREÇÃO CRÍTICA 2: Botão Mute com Kill Switch Global
         toggle() { 
             this.somAtivo = !this.somAtivo; 
             localStorage.setItem('isadora_som', this.somAtivo); 
             
             if (!this.somAtivo) { 
-                // Hard Stop em todas as músicas
                 this.fadeVolume(this.bgmMenu, 0, 100); 
                 this.fadeVolume(this.bgmJogo, 0, 100); 
-                
-                // Corta vozes que estejam tocando no momento
                 if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-                
-                // Corta os efeitos WebAudioAPI
                 if (this.audioCtx && this.audioCtx.state === 'running') this.audioCtx.suspend();
             } else { 
                 this.init(); 
@@ -721,7 +715,6 @@
             if(btnSomMenu) btnSomMenu.innerHTML = this.somAtivo ? '♪ ÁUDIO: LIGADO' : 'x ÁUDIO: MUDO'; 
         },
         
-        // CORREÇÃO CRÍTICA 1: ID de Fade anexado ao Objeto (Evita música dupla)
         fadeVolume(audioObj, targetVol, duration) { 
             if(!audioObj) return; 
             if(audioObj.fadeReqId) cancelAnimationFrame(audioObj.fadeReqId); 
@@ -742,7 +735,7 @@
                     audioObj.volume = targetVol; 
                     if(targetVol === 0) {
                         audioObj.pause(); 
-                        audioObj.currentTime = 0; // Rewind obrigatório
+                        audioObj.currentTime = 0; 
                     }
                 } 
             }; 
@@ -753,7 +746,6 @@
             let nextTrack = trackName === 'menu' ? this.bgmMenu : this.bgmJogo; 
             let otherTrack = trackName === 'menu' ? this.bgmJogo : this.bgmMenu;
             
-            // Força fadeout do outro track imediatamente
             this.fadeVolume(otherTrack, 0, 300);
             
             if (this.musicaAtual === nextTrack && nextTrack.volume > 0) return; 
@@ -992,7 +984,6 @@
     function prepararFase(fase) {
         if (gameActive) dispararFlashTransicao();
 
-        // CORREÇÃO CRÍTICA 3: UX Infantil (A voz genérica na Cinematic, a voz específica nas caixas)
         if(fase === 1) { 
             metaAlfabeto.innerText = isInfinite ? "ATO 1: ALFABETO" : "COLETE O ALFABETO"; 
             metaAlfabeto.style.color = "#FFD700"; 
@@ -1296,37 +1287,27 @@
             this.vy = vy;
             this.tamanho = tamanho * scaleMultiplier; 
             this.vida = 1.0;
-            this.atrito = 0.92; // Freio aerodinâmico suave
         }
         update(timeScale) {
-            // Física AAA: explosão rápida que freia no ar
-            this.vx *= Math.pow(this.atrito, timeScale);
-            this.vy *= Math.pow(this.atrito, timeScale);
+            // AAA Friction & Physics (Fogos de artifício reais)
+            this.vx *= Math.pow(0.92, timeScale);
+            this.vy *= Math.pow(0.92, timeScale);
             
-            this.x += (this.vx - (gameSpeed * 1.0)) * timeScale; // Sincronizado com o cenário
-            this.y += (this.vy - 0.5) * timeScale; // Leve anti-gravidade
+            this.x += (this.vx - (gameSpeed * 0.7)) * timeScale; // Drift natural do cenário
+            this.y += (this.vy - 0.5) * timeScale; // Elevação mágica e suave
             
-            this.vida -= 0.018 * timeScale;
-            this.tamanho *= Math.pow(0.96, timeScale);
+            this.vida -= 0.02 * timeScale;
+            this.tamanho *= Math.pow(0.95, timeScale);
         }
         draw(ctx) {
             ctx.save();
             ctx.globalAlpha = Math.max(0, this.vida);
-            // Efeito aditivo para brilho Neon/Glass
-            if (this.cor !== '#555') {
+            if (this.cor !== '#555' && !this.cor.includes('rgba(200')) {
                 ctx.globalCompositeOperation = 'lighter';
             }
-            // Halo colorido
             ctx.fillStyle = this.cor;
             ctx.beginPath();
             ctx.arc(this.x, this.y, Math.max(0, this.tamanho), 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Core branco intenso (dá o aspecto de brilho AAA)
-            ctx.globalAlpha = Math.max(0, this.vida * 0.8);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, Math.max(0, this.tamanho * 0.4), 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
         }
@@ -1344,7 +1325,7 @@
         }
         update(timeScale) {
             this.y += this.vy * timeScale;
-            this.vy *= Math.pow(0.92, timeScale);
+            this.vy *= Math.pow(0.92, timeScale); // Desaceleração suave
             this.vida -= 0.015 * timeScale;
         }
         draw(ctx) {
@@ -1371,6 +1352,7 @@
             this.ignorarColisao = false; 
             this.isResolvido = false; 
             
+            // Variáveis de Animação de Sucesso Pedagógica
             this.resolvidoTempo = 0;
             this.scale = 1;
             this.opacity = 1;
@@ -1404,33 +1386,33 @@
                 this.x = cw + 600 * scaleMultiplier; 
                 this.y = Math.random() > 0.5 ? ch - alturaChao - this.radius - 60 : ch - alturaChao - 260 * scaleMultiplier; 
             }
+            
             this.gradCache = null;
         }
         
         update(timeScale) { 
             if (this.isResolvido) { 
-                // FÍSICA CINEMATOGRÁFICA DE RECOMPENSA (SÍLABA/LETRA)
-                this.resolvidoTempo += 0.015 * timeScale;
+                // SISTEMA PEDAGÓGICO DE RECOMPENSA (AAA)
+                this.resolvidoTempo += 0.02 * timeScale;
                 
-                // Crescimento elegante (Ease-Out)
-                let t = Math.min(this.resolvidoTempo * 2.0, 1);
+                // Easing (easeOutQuart) para crescimento orgânico da Sílaba/Letra
+                let t = Math.min(this.resolvidoTempo * 1.5, 1);
                 let easeOut = 1 - Math.pow(1 - t, 4);
-                this.scale = 1 + (1.6 * easeOut); // Cresce até 2.6x de forma muito suave
+                this.scale = 1 + (1.5 * easeOut); // Cresce até 2.5x o tamanho
                 
-                // Permanece sólida por um tempo para leitura, depois fade-out suave
-                this.opacity = this.resolvidoTempo > 1.0 ? Math.max(0, 1 - ((this.resolvidoTempo - 1.0) * 1.5)) : 1;
+                // Opacidade dissipa suavemente depois de brilhar
+                this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.2));
                 
-                // Trava a gravidade antiga e aplica subida mágica pura
-                this.vy = 0; 
-                this.y -= 1.2 * timeScale; // Subida lenta e imponente
-                this.x -= (gameSpeed * 1.0) * timeScale; // Movimenta exatamente com o fundo
-                this.spin += 0.01 * timeScale; // Rotação mínima de charme
+                // Flutuação mágica orgânica (substitui a "fuga linear artificial")
+                this.y -= 1.0 * timeScale; 
+                this.x -= (gameSpeed * 0.7) * timeScale; // Drift leve acompanhando câmera
+                
+                this.spin += 0.05 * timeScale; // Giro de vitória muito sutil
                 
                 if (this.opacity <= 0) this.markedForDeletion = true; 
                 return; 
             }
             
-            // FÍSICA NORMAL DO JOGO
             this.x -= (gameSpeed * 1.5) * timeScale; 
             this.timerOscilacao += 0.1 * timeScale;
             
@@ -1452,7 +1434,6 @@
                     this.vy += this.gravity * timeScale; 
                     this.y += this.vy * timeScale;
                     if (!this.hasLanded && Math.random() > 0.4) {
-                        // Partículas de poeira ao cair
                         particulas.push(new Particula(this.x + (Math.random()*40-20), this.y - this.radius, 'rgba(0, 255, 255, 0.4)', -gameSpeed * 0.5, -2, Math.random()*8+4));
                     }
                     if (this.y >= groundY) { 
@@ -1462,6 +1443,9 @@
                             this.vy = 0; 
                             if (!this.hasLanded) { 
                                 this.hasLanded = true; 
+                                for(let i=0; i<8; i++) {
+                                    particulas.push(new Particula(this.x, this.y + this.radius, 'rgba(255, 255, 255, 0.7)', (Math.random()*8)-4, (Math.random()*-4)-1, Math.random()*10+5)); 
+                                }
                             } 
                         } 
                     }
@@ -1476,40 +1460,111 @@
             let scl = scaleMultiplier; 
             let displayTexto = this.info ? (this.info.letra || this.info.s || this.info.palavra || this.info) : '?';
             
-            // Controle mestre de opacidade sem causar flickering
-            ctx.globalAlpha = this.isResolvido ? this.opacity : (this.ignorarColisao ? 0.4 : 1.0);
-
-            // RENDERIZAÇÃO 1: Se já foi acertado, NÃO desenhar a casca/bola/caixa, SÓ a sílaba!
-            if (!this.isResolvido) {
-                if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') {
-                    let isFrase = this.tipo === 'caixa_frase'; 
-                    let bWidth = isFrase ? this.radius * 3 : this.radius * 2; 
-                    let bHeight = this.radius * 2; 
-                    let bX = -bWidth / 2; 
-                    let bY = -bHeight / 2;
-                    
-                    ctx.shadowColor = isFrase ? '#00FF7F' : '#8A2BE2'; 
-                    ctx.shadowBlur = this.ignorarColisao ? 0 : 20; 
-                    ctx.fillStyle = isFrase ? 'rgba(10, 30, 20, 0.85)' : 'rgba(20, 10, 40, 0.8)'; 
-                    ctx.strokeStyle = isFrase ? '#00FF7F' : '#00FFFF'; 
-                    ctx.lineWidth = 4;
-                    ctx.beginPath(); 
-                    ctx.roundRect(bX, bY, bWidth, bHeight, 15); 
-                    ctx.fill(); 
-                    ctx.stroke();
-                    ctx.shadowBlur = 0; 
+            // Fatores de Recompensa Pedagógica (Quando Acerta)
+            let bgAlpha = this.isResolvido ? Math.max(0, 1 - (this.resolvidoTempo * 5)) : 1; // A bola/caixa some quase instantaneamente
+            let textAlpha = this.isResolvido ? this.opacity : 1; // A SÍLABA persiste e brilha
+            let currentScale = this.isResolvido ? this.scale : 1; // A SÍLABA cresce na cara da tela
+            
+            if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') {
+                let isFrase = this.tipo === 'caixa_frase'; 
+                let bWidth = isFrase ? this.radius * 3 : this.radius * 2; 
+                let bHeight = this.radius * 2; 
+                let bX = -bWidth / 2; 
+                let bY = -bHeight / 2;
+                
+                ctx.globalAlpha = bgAlpha;
+                ctx.shadowColor = this.isResolvido ? '#FFF' : (this.ignorarColisao ? '#555' : (isFrase ? '#00FF7F' : '#8A2BE2')); 
+                ctx.shadowBlur = this.isResolvido ? 40 : (this.ignorarColisao ? 0 : 20); 
+                ctx.fillStyle = this.isResolvido ? (isFrase ? '#00FF7F' : '#8A2BE2') : (this.ignorarColisao ? 'rgba(50, 50, 50, 0.8)' : (isFrase ? 'rgba(10, 30, 20, 0.85)' : 'rgba(20, 10, 40, 0.8)')); 
+                ctx.strokeStyle = this.isResolvido ? '#FFF' : (this.ignorarColisao ? '#888' : (isFrase ? '#00FF7F' : '#00FFFF')); 
+                ctx.lineWidth = 4;
+                ctx.beginPath(); 
+                ctx.roundRect(bX, bY, bWidth, bHeight, 15); 
+                ctx.fill(); 
+                ctx.stroke();
+                
+                ctx.shadowBlur = 0; 
+                ctx.globalAlpha = textAlpha;
+                ctx.scale(currentScale, currentScale);
+                ctx.fillStyle = this.ignorarColisao && !this.isResolvido ? '#AAA' : '#FFF'; 
+                let fontSize = isFrase ? this.radius * 0.7 : this.radius;
+                ctx.font = `900 ${fontSize}px 'Fredoka', sans-serif`; 
+                ctx.textAlign = 'center'; 
+                ctx.textBaseline = 'middle'; 
+                ctx.fillText(displayTexto, 0, 5);
+            }
+            else if (this.tipo === 'numero') {
+                ctx.globalAlpha = bgAlpha;
+                if(!this.gradCache) { 
+                    this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius); 
+                    this.gradCache.addColorStop(0, '#FFFFFF'); 
+                    this.gradCache.addColorStop(0.7, '#00FFFF'); 
+                    this.gradCache.addColorStop(1, '#0000FF'); 
                 }
-                else if (this.tipo === 'numero') {
+                ctx.shadowColor = '#00FFFF'; 
+                ctx.shadowBlur = 25; 
+                ctx.beginPath(); 
+                ctx.arc(0, 0, Math.max(0, this.radius), 0, Math.PI * 2); 
+                ctx.fillStyle = this.gradCache; 
+                ctx.fill(); 
+                
+                ctx.save(); 
+                ctx.rotate(this.spin); 
+                ctx.beginPath(); 
+                ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 1.5); 
+                ctx.strokeStyle = '#FFF'; 
+                ctx.lineWidth = 3; 
+                ctx.stroke(); 
+                ctx.restore();
+                
+                ctx.shadowBlur = 0; 
+                ctx.globalAlpha = textAlpha;
+                ctx.scale(currentScale, currentScale);
+                ctx.fillStyle = '#000'; 
+                ctx.font = `bold ${this.radius * 1.2}px 'Fredoka', sans-serif`; 
+                ctx.textAlign = 'center'; 
+                ctx.textBaseline = 'middle'; 
+                ctx.fillText(displayTexto, 0, 4); 
+            }
+            else if (this.tipo === 'letra' || this.tipo === 'estrela_vitoria') {
+                ctx.globalAlpha = bgAlpha;
+                ctx.shadowColor = '#FFD700'; 
+                ctx.shadowBlur = this.tipo === 'estrela_vitoria' ? 40 : 25; 
+                if (this.tipo === 'estrela_vitoria') {
+                    if(!this.gradCache) { 
+                        this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius * 1.3); 
+                        this.gradCache.addColorStop(0, '#FFF'); 
+                        this.gradCache.addColorStop(0.4, '#FFD700'); 
+                        this.gradCache.addColorStop(1, '#FF8C00'); 
+                    }
+                    ctx.save(); 
+                    ctx.rotate(this.spin); 
+                    ctx.beginPath(); 
+                    let spikes = 5; 
+                    let oR = this.radius * 1.3; 
+                    let iR = this.radius * 0.6;
+                    for (let i = 0; i < spikes * 2; i++) { 
+                        let r = i % 2 === 0 ? oR : iR; 
+                        let a = (i * Math.PI) / spikes; 
+                        if (i === 0) ctx.moveTo(0, -r); 
+                        else ctx.lineTo(Math.cos(a - Math.PI/2) * r, Math.sin(a - Math.PI/2) * r); 
+                    } 
+                    ctx.closePath();
+                    ctx.fillStyle = this.gradCache; 
+                    ctx.fill(); 
+                    ctx.strokeStyle = '#FFF'; 
+                    ctx.lineWidth = 3*scl; 
+                    ctx.stroke(); 
+                    ctx.restore();
+                } else {
                     if(!this.gradCache) { 
                         this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius); 
-                        this.gradCache.addColorStop(0, '#FFFFFF'); 
-                        this.gradCache.addColorStop(0.7, '#00FFFF'); 
-                        this.gradCache.addColorStop(1, '#0000FF'); 
+                        this.gradCache.addColorStop(0, '#FFFFEE'); 
+                        this.gradCache.addColorStop(0.7, '#FFD700'); 
+                        this.gradCache.addColorStop(1, '#B8860B'); 
                     }
-                    ctx.shadowColor = '#00FFFF'; 
-                    ctx.shadowBlur = this.ignorarColisao ? 0 : 25; 
                     ctx.beginPath(); 
-                    ctx.arc(0, 0, Math.max(0, this.radius), 0, Math.PI * 2); 
+                    ctx.arc(0, 0, this.radius, 0, Math.PI * 2); 
                     ctx.fillStyle = this.gradCache; 
                     ctx.fill(); 
                     ctx.save(); 
@@ -1520,121 +1575,59 @@
                     ctx.lineWidth = 3; 
                     ctx.stroke(); 
                     ctx.restore();
-                    ctx.shadowBlur = 0; 
                 }
-                else if (this.tipo === 'letra' || this.tipo === 'estrela_vitoria') {
-                    ctx.shadowColor = '#FFD700'; 
-                    ctx.shadowBlur = this.ignorarColisao ? 0 : (this.tipo === 'estrela_vitoria' ? 40 : 25); 
-                    if (this.tipo === 'estrela_vitoria') {
-                        if(!this.gradCache) { 
-                            this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius * 1.3); 
-                            this.gradCache.addColorStop(0, '#FFF'); 
-                            this.gradCache.addColorStop(0.4, '#FFD700'); 
-                            this.gradCache.addColorStop(1, '#FF8C00'); 
-                        }
-                        ctx.save(); 
-                        ctx.rotate(this.spin); 
-                        ctx.beginPath(); 
-                        let spikes = 5; 
-                        let oR = this.radius * 1.3; 
-                        let iR = this.radius * 0.6;
-                        for (let i = 0; i < spikes * 2; i++) { 
-                            let r = i % 2 === 0 ? oR : iR; 
-                            let a = (i * Math.PI) / spikes; 
-                            if (i === 0) ctx.moveTo(0, -r); 
-                            else ctx.lineTo(Math.cos(a - Math.PI/2) * r, Math.sin(a - Math.PI/2) * r); 
-                        } 
-                        ctx.closePath();
-                        ctx.fillStyle = this.gradCache; 
-                        ctx.fill(); 
-                        ctx.strokeStyle = '#FFF'; 
-                        ctx.lineWidth = 3*scl; 
-                        ctx.stroke(); 
-                        ctx.restore();
-                    } else {
-                        if(!this.gradCache) { 
-                            this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius); 
-                            this.gradCache.addColorStop(0, '#FFFFEE'); 
-                            this.gradCache.addColorStop(0.7, '#FFD700'); 
-                            this.gradCache.addColorStop(1, '#B8860B'); 
-                        }
-                        ctx.beginPath(); 
-                        ctx.arc(0, 0, this.radius, 0, Math.PI * 2); 
-                        ctx.fillStyle = this.gradCache; 
-                        ctx.fill(); 
-                        ctx.save(); 
-                        ctx.rotate(this.spin); 
-                        ctx.beginPath(); 
-                        ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 1.5); 
-                        ctx.strokeStyle = '#FFF'; 
-                        ctx.lineWidth = 3; 
-                        ctx.stroke(); 
-                        ctx.restore();
-                    }
-                    ctx.shadowBlur = 0; 
-                } 
-                else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                    // Sombra no chão projetada
-                    ctx.fillStyle = 'rgba(0,0,0,0.3)'; 
-                    ctx.beginPath(); 
-                    ctx.ellipse(0, this.radius + 10*scl, this.radius*0.8, 8*scl, 0, 0, Math.PI*2); 
-                    ctx.fill();
-                    
-                    ctx.shadowColor = this.tipo === 'silaba' ? '#FF1493' : '#00FFFF'; 
-                    ctx.shadowBlur = this.ignorarColisao ? 0 : 30;
-                    
-                    if(!this.gradCache) { 
-                        this.gradCache = ctx.createRadialGradient(0, -this.radius*0.3, this.radius*0.1, 0, 0, this.radius); 
-                        this.gradCache.addColorStop(0, this.ignorarColisao ? '#888' : '#FFFFFF'); 
-                        this.gradCache.addColorStop(0.3, this.ignorarColisao ? '#666' : (this.tipo === 'silaba' ? '#FF69B4' : '#00BFFF')); 
-                        this.gradCache.addColorStop(1, this.ignorarColisao ? '#444' : '#8A2BE2'); 
-                    }
-                    ctx.beginPath(); 
-                    ctx.arc(0, 0, this.radius, 0, Math.PI*2); 
-                    ctx.fillStyle = this.gradCache; 
-                    ctx.fill();
-                    
-                    ctx.save(); 
-                    ctx.rotate(this.spin); 
-                    ctx.beginPath(); 
-                    ctx.arc(0, 0, this.radius + 10*scl, 0, Math.PI * 1.5); 
-                    ctx.strokeStyle = this.ignorarColisao ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.8)'; 
-                    ctx.lineWidth = 4*scl; 
-                    ctx.stroke(); 
-                    ctx.restore();
-                    ctx.shadowBlur = 0; 
+                ctx.shadowBlur = 0; 
+                ctx.globalAlpha = textAlpha;
+                ctx.scale(currentScale, currentScale);
+                ctx.fillStyle = this.tipo === 'estrela_vitoria' ? '#FFF' : '#FF1493'; 
+                ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`; 
+                ctx.textAlign = 'center'; 
+                ctx.textBaseline = 'middle'; 
+                ctx.fillText(displayTexto, 0, 4*scl); 
+            } 
+            else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
+                ctx.globalAlpha = bgAlpha * 0.3; // Sombra no chão soma de forma mais suave
+                ctx.fillStyle = '#000'; 
+                ctx.beginPath(); 
+                ctx.ellipse(0, this.radius + 10*scl, this.radius*0.8, 8*scl, 0, 0, Math.PI*2); 
+                ctx.fill();
+                
+                ctx.globalAlpha = bgAlpha;
+                ctx.shadowColor = this.ignorarColisao ? '#555' : (this.tipo === 'silaba' ? '#FF1493' : '#00FFFF'); 
+                ctx.shadowBlur = this.ignorarColisao ? 0 : 30;
+                
+                if(!this.gradCache) { 
+                    this.gradCache = ctx.createRadialGradient(0, -this.radius*0.3, this.radius*0.1, 0, 0, this.radius); 
+                    this.gradCache.addColorStop(0, this.ignorarColisao ? '#888' : '#FFFFFF'); 
+                    this.gradCache.addColorStop(0.3, this.ignorarColisao ? '#666' : (this.tipo === 'silaba' ? '#FF69B4' : '#00BFFF')); 
+                    this.gradCache.addColorStop(1, this.ignorarColisao ? '#444' : '#8A2BE2'); 
                 }
-            }
-
-            // RENDERIZAÇÃO 2: O Texto / Sílaba (O foco pedagógico)
-            ctx.scale(this.scale, this.scale); // Aplica a curva matemática de crescimento
-            
-            if (this.isResolvido) {
-                // Modo Recompensa Pedagógica: Brilha no centro e cresce
-                ctx.shadowColor = '#FFFFFF';
-                ctx.shadowBlur = 15;
-                ctx.fillStyle = '#FFFFFF'; 
-                ctx.strokeStyle = '#FF1493'; // Contorno forte para legibilidade infantil
+                ctx.beginPath(); 
+                ctx.arc(0, 0, this.radius, 0, Math.PI*2); 
+                ctx.fillStyle = this.gradCache; 
+                ctx.fill();
+                
+                ctx.save(); 
+                ctx.rotate(this.spin); 
+                ctx.beginPath(); 
+                ctx.arc(0, 0, this.radius + 10*scl, 0, Math.PI * 1.5); 
+                ctx.strokeStyle = this.ignorarColisao ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.8)'; 
+                ctx.lineWidth = 4*scl; 
+                ctx.stroke(); 
+                ctx.restore();
+                
+                ctx.shadowBlur = 0; 
+                ctx.globalAlpha = textAlpha;
+                ctx.scale(currentScale, currentScale);
+                ctx.fillStyle = this.ignorarColisao && !this.isResolvido ? '#DDD' : '#FFFFFF'; 
+                ctx.strokeStyle = this.ignorarColisao && !this.isResolvido ? '#222' : '#4B0082'; 
                 ctx.lineWidth = 6 * scl; 
-            } else {
-                // Modo Normal
-                ctx.fillStyle = this.tipo === 'caixa_frase' || this.tipo === 'caixa_memoria' ? '#FFF' : (this.tipo === 'numero' ? '#000' : (this.tipo === 'estrela_vitoria' ? '#FFF' : '#FFFFFF')); 
-                ctx.strokeStyle = '#4B0082';
-                ctx.lineWidth = 6 * scl;
-            }
-
-            let baseFontSize = (this.tipo === 'silaba' || this.tipo === 'caixa_frase') ? this.radius * 0.8 : this.radius * 1.1;
-            ctx.font = `900 ${baseFontSize}px 'Fredoka', sans-serif`; 
-            ctx.textAlign = 'center'; 
-            ctx.textBaseline = 'middle'; 
-            
-            // Só aplica o stroke (contorno exterior) se for sílaba/bolhas mágicas ou se estiver no modo pedagógico resolvido
-            if (this.isResolvido || this.tipo === 'silaba' || this.tipo === 'letra_desafio') {
+                ctx.font = `900 ${this.tipo === 'silaba' ? this.radius * 0.9 : this.radius * 1.2}px 'Fredoka', sans-serif`; 
+                ctx.textAlign = 'center'; 
+                ctx.textBaseline = 'middle'; 
                 ctx.strokeText(displayTexto, 0, 5*scl); 
+                ctx.fillText(displayTexto, 0, 5*scl);
             }
-            
-            ctx.fillText(displayTexto, 0, 5*scl);
-
             ctx.restore();
         }
     }
@@ -1684,7 +1677,6 @@
                 let floorY = ch - alturaChao - this.height + 30; 
                 if (this.y > floorY) { this.y = floorY; this.vy = 0; } 
                 
-                // CORREÇÃO CRÍTICA 4: Teto mais generoso e aberto no balão (-10% da altura)
                 let teto = -this.height * 0.1;
                 if (this.y < teto) { this.y = teto; this.vy = 0; }
                 
@@ -2017,7 +2009,6 @@
                         desafioFase2 = {certa, errada, ordem: Math.random() > 0.5}; 
                     }
                     
-                    // CORREÇÃO UX INFANTIL CRÍTICA: Fala clara ao gerar a letra, não apenas no começo da fase
                     letraUi.innerText = `ACHE A LETRA [ ${desafioFase2.certa.letra} ] DE ${desafioFase2.certa.palavra.toUpperCase()}`;
                     AudioManager.playVoice(`Ache a letra ${desafioFase2.certa.letra}, de ${desafioFase2.certa.palavra}`);
                     
@@ -2053,7 +2044,6 @@
                         let errada = obj.w[Math.floor(Math.random() * obj.w.length)]; 
                         desafioFase4 = {obj, errada, ordem: Math.random() > 0.5}; 
                     }
-                    // CORREÇÃO UX INFANTIL
                     letraUi.innerText = `PEGUE A SÍLABA [ ${desafioFase4.obj.s} ] DE ${desafioFase4.obj.p}`;
                     AudioManager.playVoice(`Pegue a sílaba ${desafioFase4.obj.s}, de ${desafioFase4.obj.p}`);
                     
@@ -2073,7 +2063,6 @@
                         opcoes.sort(() => Math.random() - 0.5); 
                         desafioFase5 = {obj, opcoes}; 
                     }
-                    // CORREÇÃO UX INFANTIL
                     letraUi.innerText = `ACHE A LETRA [ ${desafioFase5.obj.l} ] DE ${desafioFase5.obj.p}`;
                     AudioManager.playVoice(`Ache a caixa com a letra ${desafioFase5.obj.l}, de ${desafioFase5.obj.p}`);
                     
@@ -2132,7 +2121,6 @@
                 const dx = (player.x + player.width/2) - item.x; 
                 let ajustePe = player.height * player.espacoVazio; 
                 
-                // Colisão alinhada com o balão na fase 3
                 let posYPersonagem = faseAtual === 3 ? (player.y + player.height * 0.3) : (player.y + (player.height - ajustePe)/2);
                 
                 if (item.tipo === 'caixa_memoria' || item.tipo === 'caixa_frase') {
@@ -2145,7 +2133,10 @@
                     if (player.isJumping && player.vy < 0 && Math.abs(dx) < hitWidth + (player.width/3) && topoPlayer < baseCaixa && centroPlayer > item.y && !item.ignorarColisao && !item.isResolvido) {
                         player.vy = 3; 
                         if(item.isCorrect) {
-                            item.isResolvido = true; shakeIntensity = 4; 
+                            // ACERTO CAIXA (PEDAGÓGICO)
+                            item.isResolvido = true; 
+                            item.ignorarColisao = true;
+                            shakeIntensity = 4; 
                             if (isFrase) { 
                                 acertosFase6++; 
                                 desafioFase6 = null; 
@@ -2159,7 +2150,13 @@
                             gerenciarCombo(true); 
                             AudioManager.playSuccessSFX(); 
                             textosFlutuantes.push(new TextoFlutuante("PERFEITO!", item.x, item.y - 60, '#FFF', isFrase ? '#00FF7F' : '#8A2BE2'));
-                            for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, isFrase ? '#00FF7F' : '#00FFFF', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
+                            
+                            // EXPLOSÃO RADIAL AAA
+                            for(let j=0; j<20; j++) {
+                                let angle = Math.random() * Math.PI * 2;
+                                let speed = Math.random() * 8 + 4;
+                                particulas.push(new Particula(item.x, item.y, isFrase ? '#00FF7F' : '#00FFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5));
+                            }
                             collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; }); 
                             atualizarProgressoHUD();
                         } else {
@@ -2171,7 +2168,10 @@
                             gerenciarCombo(false); 
                             AudioManager.playErrorSFX(); 
                             textosFlutuantes.push(new TextoFlutuante("TENTE DE NOVO!", item.x, item.y - 60, '#FFF', '#FF0000'));
-                            for(let j=0; j<10; j++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5)); 
+                            for(let j=0; j<15; j++) {
+                                let angle = Math.random() * Math.PI * 2;
+                                particulas.push(new Particula(item.x, item.y, '#555', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*10+5)); 
+                            }
                             setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
                         }
                     } 
@@ -2182,7 +2182,9 @@
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 if (distance < item.radius + (player.width/2.5) && !item.ignorarColisao && !item.isResolvido) { 
                     if (item.tipo === 'letra') {
-                        item.markedForDeletion = true; 
+                        // ACERTO ATO 1 (PEDAGÓGICO)
+                        item.isResolvido = true;
+                        item.ignorarColisao = true;
                         shakeIntensity = 2; 
                         gerenciarCombo(true); 
                         AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); 
@@ -2191,11 +2193,19 @@
                             letrasColetadas.push(item.info.letra); 
                             atualizarProgressoHUD(); 
                         } 
-                        for(let j=0; j<6; j++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', (Math.random()*6)-3, (Math.random()*6)-3, Math.random()*10+5));
+                        
+                        // EXPLOSÃO RADIAL AAA
+                        for(let j=0; j<20; j++) {
+                            let angle = Math.random() * Math.PI * 2;
+                            let speed = Math.random() * 8 + 4;
+                            particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5));
+                        }
                     } 
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
+                            // ACERTO SÍLABA/BOLAS (PEDAGÓGICO)
                             item.isResolvido = true; 
+                            item.ignorarColisao = true;
                             shakeIntensity = 4; 
                             if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
                             else { acertosFase4++; desafioFase4 = null; }
@@ -2203,7 +2213,13 @@
                             gerenciarCombo(true); 
                             AudioManager.playSuccessSFX(); 
                             textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
-                            for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', (Math.random()*8)-4, (Math.random()*8)-4, Math.random()*15+5));
+                            
+                            // EXPLOSÃO RADIAL AAA
+                            for(let j=0; j<25; j++) {
+                                let angle = Math.random() * Math.PI * 2;
+                                let speed = Math.random() * 10 + 4;
+                                particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5));
+                            }
                             collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; }); 
                             atualizarProgressoHUD();
                         } else {
@@ -2215,28 +2231,41 @@
                             gerenciarCombo(false); 
                             AudioManager.playErrorSFX(); 
                             textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
-                            for(let j=0; j<10; j++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5)); 
+                            for(let j=0; j<15; j++) {
+                                let angle = Math.random() * Math.PI * 2;
+                                particulas.push(new Particula(item.x, item.y, '#555', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*10+5)); 
+                            }
                             setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
                         }
                     } 
                     else if (item.tipo === 'estrela_vitoria') {
-                        item.markedForDeletion = true; 
+                        item.isResolvido = true;
+                        item.ignorarColisao = true;
                         shakeIntensity = 4; 
                         gerenciarCombo(true); 
                         letraVitoriaIndex++; 
                         atualizarHUDVitoria(); 
                         AudioManager.playMagicSFX(); 
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x, item.y - 40, '#FFF', '#FFD700'));
-                        for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, '#FFD700', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
+                        for(let j=0; j<25; j++) {
+                            let angle = Math.random() * Math.PI * 2;
+                            let speed = Math.random() * 10 + 4;
+                            particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5));
+                        }
                     } 
                     else if (item.tipo === 'numero') {
-                        item.markedForDeletion = true; 
+                        item.isResolvido = true;
+                        item.ignorarColisao = true;
                         shakeIntensity = 3; 
                         gerenciarCombo(true); 
                         numeroAtualIndex++; 
                         AudioManager.playMagicSFX(); 
                         textosFlutuantes.push(new TextoFlutuante(item.info, item.x, item.y - 40, '#FFF', '#00FFFF'));
-                        for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, '#00FFFF', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
+                        for(let j=0; j<25; j++) {
+                            let angle = Math.random() * Math.PI * 2;
+                            let speed = Math.random() * 10 + 4;
+                            particulas.push(new Particula(item.x, item.y, '#00FFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5));
+                        }
                     }
                 } 
                 else if (item.x < -150) { 
