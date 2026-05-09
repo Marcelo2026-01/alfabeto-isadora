@@ -14,9 +14,9 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icone512.png">
     
-    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-    <link href="[https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap](https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap)" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
         /* ========================================================
@@ -1352,7 +1352,7 @@
                 ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 1.5); 
                 ctx.strokeStyle = '#FFF'; 
                 ctx.lineWidth = 3; 
-                ctx.stroke(); 
+                if (!this.isResolvido) ctx.stroke(); 
                 ctx.restore();
                 
                 ctx.shadowBlur = 0; 
@@ -1390,9 +1390,11 @@
                     ctx.closePath();
                     ctx.fillStyle = this.gradCache; 
                     ctx.fill(); 
-                    ctx.strokeStyle = '#FFF'; 
-                    ctx.lineWidth = 3*scl; 
-                    ctx.stroke(); 
+                    if (!this.isResolvido) {
+                        ctx.strokeStyle = '#FFF'; 
+                        ctx.lineWidth = 3*scl; 
+                        ctx.stroke(); 
+                    }
                     ctx.restore();
                 } else {
                     if(!this.gradCache) { 
@@ -1411,7 +1413,7 @@
                     ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 1.5); 
                     ctx.strokeStyle = '#FFF'; 
                     ctx.lineWidth = 3; 
-                    ctx.stroke(); 
+                    if (!this.isResolvido) ctx.stroke(); 
                     ctx.restore();
                 }
                 ctx.shadowBlur = 0; 
@@ -1968,7 +1970,6 @@
                     let baseCaixa = item.y + item.radius; 
                     let centroPlayer = player.y + player.height/2;
                     
-                    // COLISÃO CAIXA AAA (Hitbox Perdoadora)
                     if (player.isJumping && player.vy < 0 && Math.abs(dx) < hitWidth + (player.width * 0.5) && centroPlayer > item.y - item.radius && !item.ignorarColisao && !item.isResolvido) {
                         player.vy = 3; 
                         if(item.isCorrect) {
@@ -2017,8 +2018,6 @@
                 
                 const dy = posYPersonagem - item.y; 
                 const distance = Math.sqrt(dx * dx + dy * dy);
-                // COLISÃO ESFERAS AAA (Hitbox Dinâmica Fase 3)
-                const hitboxRadius = item.radius + (faseAtual === 3 ? player.width * 0.8 : player.width / 2.5);
 
                 if (distance < hitboxRadius && !item.ignorarColisao && !item.isResolvido) { 
                     if (item.tipo === 'letra') {
@@ -2149,8 +2148,8 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "[https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js](https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js)";
-  import { getFirestore } from "[https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js](https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js)";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
   
   const firebaseConfig = { 
       apiKey: "COLE_SUA_API_KEY_AQUI", 
