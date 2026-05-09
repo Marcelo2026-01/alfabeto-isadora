@@ -2017,9 +2017,13 @@
                 }
                 
                 const dy = posYPersonagem - item.y; 
-                const distance = Math.sqrt(dx * dx + dy * dy);
 
-                if (distance < hitboxRadius && !item.ignorarColisao && !item.isResolvido) { 
+                // COLISÃO AAA PERDOADORA (Hitbox Retangular Inteligente)
+                // Substituímos a colisão circular que ignorava a cabeça/pés por uma área total:
+                let margemX = faseAtual === 3 ? player.width * 0.8 : player.width * 0.5;
+                let margemY = faseAtual === 3 ? player.height * 0.6 : player.height * 0.45;
+
+                if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
                     if (item.tipo === 'letra') {
                         item.isResolvido = true;
                         item.ignorarColisao = true;
