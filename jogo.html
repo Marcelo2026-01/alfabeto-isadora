@@ -238,7 +238,7 @@
             Protagonista: <strong>Isadora</strong><br>
             Diretor Criativo: <strong>Papai Jose Marcelo</strong><br>
             Apoio Especial: <strong>Casa Sorrir</strong><br><br>
-            <em>O Vale dos Numeros chegara na proxima atualizacao!</em>
+            <em>A jornada continua!</em>
         </div>
         <button id="btn-vitoria-menu" class="btn-pause-ui">VOLTAR AO MENU</button>
     </div>
@@ -346,6 +346,7 @@
     let initTimeoutId = null; 
     let hitStopTime = 0; 
     let shakeIntensity = 0;
+    let pontuacao = 0; // NOVA VARIÁVEL: Pontuação Arcade
     
     let desafioFase2 = null; 
     let desafioFase4 = null; 
@@ -432,6 +433,7 @@
         } 
     }, 1000);
 
+    // ADICIONADO: NOVO MODO 8 (CORRIDA INFINITA)
     const modosDeJogo = [ 
         { id: 0, nome: "MODO: CAMPANHA (COMPLETA)", icon: "✦", fase: 1, inf: false }, 
         { id: 1, nome: "ATO I - ALFABETO", icon: "∞", fase: 1, inf: true }, 
@@ -440,7 +442,8 @@
         { id: 4, nome: "ATO IV - AS SILABAS", icon: "∞", fase: 4, inf: true }, 
         { id: 5, nome: "ATO V - MEMORIA", icon: "∞", fase: 5, inf: true }, 
         { id: 6, nome: "ATO VI - FRASES", icon: "∞", fase: 6, inf: true }, 
-        { id: 7, nome: "ATO EXTRA - NUMEROS", icon: "★", fase: 7, inf: false } 
+        { id: 7, nome: "ATO EXTRA - NUMEROS", icon: "★", fase: 7, inf: false },
+        { id: 8, nome: "MODO EXTRA: CORRIDA INFINITA", icon: "🚀", fase: 8, inf: true } 
     ]; 
     let modoAtualIndex = 0;
 
@@ -810,6 +813,7 @@
         else if (faseAtual === 4) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase4 / dadosFase4.length) * 100) + '%'; }
         else if (faseAtual === 5) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase5 / dadosFase5.length) * 100) + '%'; }
         else if (faseAtual === 6) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase6 / dadosFase6.length) * 100) + '%'; }
+        else if (faseAtual === 8) { progressFill.style.width = Math.min(100, ((gameSpeed - baseGameSpeed) / (12 - baseGameSpeed)) * 100) + '%'; } // Velocímetro Arcade
     }
 
     // --- SISTEMA DE APRESENTAÇÃO CINEMATOGRÁFICA AAA ---
@@ -881,6 +885,13 @@
             metaAlfabeto.style.color = "#FFD700"; 
             letraUi.innerText = "1, 2, 3..."; 
             mostrarCinematica("PRÓLOGO", "OS NÚMEROS", "#FFD700");
+        }
+        else if (fase === 8) { 
+            metaAlfabeto.innerText = "PONTUAÇÃO: 0"; 
+            metaAlfabeto.style.color = "#FF4500"; 
+            letraUi.innerText = "Desvie e Colete Estrelas!"; 
+            pontuacao = 0;
+            mostrarCinematica("MODO EXTRA", "CORRIDA INFINITA", "#FF4500");
         }
         
         atualizarProgressoHUD();
@@ -981,7 +992,7 @@
             
             acertosAtuaisFase2 = 0; palavraAtualIndex = 0; letraVitoriaIndex = 0; 
             acertosFase4 = 0; acertosFase5 = 0; acertosFase6 = 0; 
-            numeroAtualIndex = 0; comboAtual = 0;
+            numeroAtualIndex = 0; comboAtual = 0; pontuacao = 0;
             
             progressFill.classList.remove('combo-ativo'); 
             letraUi.classList.remove('texto-combo-ativo');
@@ -1228,6 +1239,18 @@
                 if (safeTop > safeBottom) safeTop = safeBottom - 20; 
                 this.y = Math.random() * (safeBottom - safeTop) + safeTop; 
             } 
+            else if (this.tipo === 'moeda') { 
+                this.radius = 35 * scaleMultiplier; 
+                this.x = cw + 100 * scaleMultiplier; 
+                let groundY = ch - alturaChao;
+                this.y = Math.random() > 0.5 ? groundY - 60 * scaleMultiplier : groundY - 220 * scaleMultiplier; 
+            }
+            else if (this.tipo === 'obstaculo') { 
+                this.radius = 45 * scaleMultiplier; 
+                this.x = cw + 100 * scaleMultiplier; 
+                let groundY = ch - alturaChao;
+                this.y = groundY - this.radius - 15 * scaleMultiplier; 
+            }
             else { 
                 this.radius = 45 * scaleMultiplier; 
                 this.x = cw + 600 * scaleMultiplier; 
@@ -1255,9 +1278,9 @@
             this.x -= (gameSpeed * 1.5) * timeScale; 
             this.timerOscilacao += 0.1 * timeScale;
             
-            if(this.tipo === 'letra' || this.tipo === 'numero') { 
-                this.spin += 0.05 * timeScale; 
-                this.y += Math.sin(this.spin*2) * 1.5 * timeScale; 
+            if(this.tipo === 'letra' || this.tipo === 'numero' || this.tipo === 'moeda' || this.tipo === 'obstaculo') { 
+                this.spin += (this.tipo === 'obstaculo' ? -0.08 : 0.05) * timeScale; 
+                if(this.tipo !== 'obstaculo') this.y += Math.sin(this.spin*2) * 1.5 * timeScale; 
             } 
             else if (this.tipo === 'estrela_vitoria') { 
                 this.spin += 0.02 * timeScale; 
@@ -1330,6 +1353,35 @@
                 ctx.textAlign = 'center'; 
                 ctx.textBaseline = 'middle'; 
                 ctx.fillText(displayTexto, 0, 5);
+            }
+            else if (this.tipo === 'moeda') {
+                ctx.globalAlpha = bgAlpha;
+                ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 20;
+                ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2);
+                ctx.fillStyle = '#FFD700'; ctx.fill();
+                ctx.fillStyle = '#FFA500'; ctx.beginPath(); ctx.arc(0,0, this.radius*0.7, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0; 
+                ctx.globalAlpha = textAlpha;
+                ctx.scale(currentScale, currentScale);
+                ctx.fillStyle = '#FFF'; ctx.font = `bold ${this.radius*1.2}px 'Fredoka'`; ctx.textAlign='center'; ctx.textBaseline='middle';
+                ctx.fillText('★', 0, 2*scl);
+            }
+            else if (this.tipo === 'obstaculo') {
+                ctx.globalAlpha = bgAlpha;
+                ctx.shadowColor = '#FF0000'; ctx.shadowBlur = 25;
+                ctx.save(); ctx.rotate(this.spin); 
+                ctx.beginPath();
+                let spikes = 7; let oR = this.radius; let iR = this.radius * 0.4;
+                for(let i=0; i<spikes*2; i++){
+                    let r = i%2===0 ? oR : iR;
+                    let a = (i*Math.PI)/spikes;
+                    if(i===0) ctx.moveTo(0,-r); else ctx.lineTo(Math.cos(a - Math.PI/2)*r, Math.sin(a - Math.PI/2)*r);
+                }
+                ctx.closePath();
+                ctx.fillStyle = '#8B0000'; ctx.fill();
+                ctx.strokeStyle = '#FF4500'; ctx.lineWidth = 4*scl; 
+                if (!this.isResolvido) ctx.stroke();
+                ctx.restore();
             }
             else if (this.tipo === 'numero') {
                 ctx.globalAlpha = bgAlpha;
@@ -1751,7 +1803,7 @@
             if(shakeIntensity < 0) shakeIntensity = 0;
         }
 
-        let isDarkPhase = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6);
+        let isDarkPhase = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6 || faseAtual === 8);
         let fundoAtual = isDarkPhase ? fundoImg2 : fundoImg1;
         
         if (fundoAtual.complete && fundoAtual.naturalWidth !== 0) { 
@@ -1951,6 +2003,25 @@
         } else { 
             itemTimer += deltaTime; 
         }
+
+        // LÓGICA DA FASE 8: CORRIDA INFINITA E SPAWN DINÂMICO
+        if (faseAtual === 8) {
+            pontuacao += (gameSpeed * 0.05) * timeScale;
+            metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao);
+            atualizarProgressoHUD();
+
+            let spawnRate = Math.max(800, 2000 - ((gameSpeed - baseGameSpeed) * 200));
+            
+            if (itemTimer > spawnRate) {
+                let isObstacle = Math.random() < 0.35;
+                collectibles.push(new Collectible(isObstacle ? 'obstaculo' : 'moeda'));
+                itemTimer = 0;
+            }
+            
+            if (gameSpeed < 12) {
+                gameSpeed += 0.001 * timeScale;
+            }
+        }
         
         try {
             for (let i = collectibles.length - 1; i >= 0; i--) {
@@ -2019,12 +2090,36 @@
                 const dy = posYPersonagem - item.y; 
 
                 // COLISÃO AAA PERDOADORA (Hitbox Retangular Inteligente)
-                // Substituímos a colisão circular que ignorava a cabeça/pés por uma área total:
                 let margemX = faseAtual === 3 ? player.width * 0.8 : player.width * 0.5;
                 let margemY = faseAtual === 3 ? player.height * 0.6 : player.height * 0.45;
 
                 if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
-                    if (item.tipo === 'letra') {
+                    
+                    if (item.tipo === 'moeda') {
+                        item.isResolvido = true; item.ignorarColisao = true;
+                        shakeIntensity = 1;
+                        pontuacao += 100;
+                        AudioManager.playSuccessSFX();
+                        textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
+                        for(let j=0;j<10;j++){
+                            let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2;
+                            particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5));
+                        }
+                    }
+                    else if (item.tipo === 'obstaculo') {
+                        item.isResolvido = true; item.ignorarColisao = true;
+                        pontuacao = Math.max(0, pontuacao - 50);
+                        hitStopTime = 50; shakeIntensity = 12;
+                        document.getElementById('damage-overlay').classList.add('damage-active');
+                        setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
+                        AudioManager.playErrorSFX();
+                        textosFlutuantes.push(new TextoFlutuante("-50", item.x, item.y - 50, '#FFF', '#FF0000'));
+                        for(let j=0;j<15;j++){
+                            let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4;
+                            particulas.push(new Particula(item.x, item.y, '#FF4500', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5));
+                        }
+                    }
+                    else if (item.tipo === 'letra') {
                         item.isResolvido = true;
                         item.ignorarColisao = true;
                         shakeIntensity = 2; 
