@@ -1,4 +1,818 @@
-// --- SISTEMA DE APRESENTAÇÃO CINEMATOGRÁFICA AAA ---
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="theme-color" content="#1a252f">
+    <title>O Sonho Doce de Isadora - O Alfabeto</title>
+
+    <meta property="og:title" content="O Alfabeto da Isadora - Jogo AAA">
+    <meta property="og:description" content="Acelere por uma estrada mágica! Ajude Isadora nesta jornada épica para aprender o alfabeto e as sílabas. Jogue grátis!">
+    <meta property="og:image" content="Isadora.png">
+    <meta property="og:type" content="website">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icone512.png">
+    
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap](https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap)" rel="stylesheet">
+
+    <style>
+        /* ========================================================
+           BASE & RESET AAA
+           ======================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #1a252f; overflow: hidden; font-family: 'Fredoka', 'Segoe UI', sans-serif; user-select: none; touch-action: none; -webkit-touch-callout: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        #game-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%); }
+        canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+
+        /* ========================================================
+           TELA DE CARREGAMENTO SUPREMA (LOADER PS5 NEXT-GEN)
+           ======================================================== */
+        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #050811; background-image: radial-gradient(circle at 20% 30%, rgba(0, 243, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 0, 127, 0.08) 0%, transparent 50%); z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s; will-change: opacity, visibility; }
+        .loader-ring { width: clamp(80px, 15vw, 120px); height: clamp(80px, 15vw, 120px); position: relative; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%); animation: pulseCore 2s ease-in-out infinite alternate; }
+        .loader-ring::before, .loader-ring::after { content: ''; position: absolute; border-radius: 50%; border: 4px solid transparent; }
+        .loader-ring::before { width: 100%; height: 100%; border-top-color: #00f3ff; border-bottom-color: #00f3ff; animation: spinArc 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; box-shadow: 0 0 25px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2); }
+        .loader-ring::after { width: 75%; height: 75%; border-left-color: #ff007f; border-right-color: #ff007f; animation: spinArc 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite reverse; box-shadow: 0 0 25px rgba(255, 0, 127, 0.4), inset 0 0 15px rgba(255, 0, 127, 0.2); }
+        .loader-text { font-size: clamp(16px, 4vw, 24px); letter-spacing: 6px; text-transform: uppercase; font-weight: 900; background: linear-gradient(90deg, #444 0%, #FFF 50%, #444 100%); background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text; animation: shimmerText 2s linear infinite; }
+        .loader-tip { position: absolute; bottom: clamp(30px, 6vh, 50px); color: #64748B; font-size: clamp(11px, 2.5vw, 15px); letter-spacing: 2px; font-weight: 600; text-align: center; max-width: 80%; text-transform: uppercase; animation: fadeInTip 1s ease-in-out forwards; }
+        @keyframes spinArc { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.05); } 100% { transform: rotate(360deg) scale(1); } }
+        @keyframes pulseCore { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
+        @keyframes shimmerText { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+        @keyframes fadeInTip { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+        
+        /* ========================================================
+           EFEITOS DE IMPACTO E TRANSIÇÕES AAA
+           ======================================================== */
+        #damage-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 80px rgba(255, 0, 0, 0); pointer-events: none; z-index: 80; transition: box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); will-change: box-shadow; }
+        .damage-active { box-shadow: inset 0 0 150px rgba(255, 0, 40, 0.85) !important; transition: box-shadow 0.05s ease-out; }
+        #flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; pointer-events: none; z-index: 85; opacity: 0; transition: opacity 0.8s ease-out; will-change: opacity; }
+        .flash-active { opacity: 1 !important; transition: opacity 0.05s ease-out !important; }
+
+        /* --- SISTEMA DE TÍTULOS CINEMATOGRÁFICOS (PS5 STYLE) --- */
+        #cinematic-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 75; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .cinematic-text { color: #FFF; font-family: 'Fredoka', sans-serif; font-weight: 900; font-size: clamp(35px, 8vw, 90px); letter-spacing: clamp(10px, 4vw, 25px); text-transform: uppercase; text-shadow: 0 10px 30px rgba(0,0,0,0.8); margin: 0; padding-left: clamp(10px, 4vw, 25px); opacity: 0; transform: scale(1.1) translateY(-20px); filter: blur(10px); transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform, opacity, filter; text-align: center; }
+        .cinematic-subtext { color: #FFD700; font-family: 'Fredoka', sans-serif; font-size: clamp(16px, 4vw, 35px); letter-spacing: clamp(5px, 2vw, 15px); font-weight: 700; text-transform: uppercase; text-shadow: 0 5px 20px rgba(0,0,0,0.8); margin: 5px 0 0 0; padding-left: clamp(5px, 2vw, 15px); opacity: 0; transform: translateY(20px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0.1s; will-change: transform, opacity, filter; }
+        .cinematic-active .cinematic-text { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        .cinematic-active .cinematic-subtext { opacity: 1; transform: translateY(0); filter: blur(0); }
+        .cinematic-fadeout .cinematic-text { opacity: 0; transform: scale(0.95); filter: blur(15px); transition: all 0.8s ease-in; }
+        .cinematic-fadeout .cinematic-subtext { opacity: 0; transform: scale(0.95); filter: blur(15px); transition: all 0.6s ease-in; }
+
+        /* ========================================================
+           HUD DO JOGO
+           ======================================================== */
+        #ui-layer { position: absolute; top: 15px; left: 5vw; background: rgba(15, 25, 40, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: clamp(10px, 2vmin, 15px) clamp(15px, 4vmin, 25px); box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 2px 10px rgba(255,255,255,0.1); color: #FFF; font-weight: 700; pointer-events: none; z-index: 20; display: flex; flex-direction: column; max-width: 75vw; margin-top: clamp(45px, 9vmin, 60px); transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); will-change: transform; }
+        .hud-punch { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4), inset 0 2px 15px rgba(255,255,255,0.3) !important; }
+        #meta-alfabeto { font-size: clamp(12px, 2.5vw, 18px); color: #FFD700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+        #letra-ui { display: block; font-size: clamp(18px, 4.5vw, 28px); color: #FFF; line-height: 1.2; letter-spacing: 2px; }
+        .progress-bar-container { width: 100%; height: clamp(6px, 1.5vmin, 10px); background: rgba(0, 0, 0, 0.5); border-radius: 10px; margin-top: 8px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+        .progress-bar-fill { height: 100%; width: 0%; border-radius: 10px; background: linear-gradient(90deg, #FF69B4, #FFD700); box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); will-change: width; }
+        @keyframes comboFirePulse { 0% { transform: scaleX(1); opacity: 0.8; filter: brightness(1); } 100% { transform: scaleX(1.02); opacity: 1; filter: brightness(1.3); } }
+        .combo-ativo { background: linear-gradient(90deg, #FFD700, #FF4500) !important; box-shadow: 0 0 15px #FF8C00 !important; animation: comboFirePulse 0.4s infinite alternate ease-in-out !important; will-change: transform, opacity, filter; transform-origin: left center; }
+        @keyframes pulseComboTextOpt { 0% { transform: scale(1); color: #FFF; } 100% { transform: scale(1.1); color: #FFD700; } }
+        .texto-combo-ativo { text-shadow: 0 0 10px #FF4500 !important; animation: pulseComboTextOpt 0.5s infinite alternate ease-in-out !important; will-change: transform, color; }
+        .btn-corner { position: absolute; top: 15px; background: rgba(15, 25, 40, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); color: #FFF; box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 35; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
+        .btn-corner:active { transform: scale(0.9); background: rgba(255, 255, 255, 0.3); }
+        #btn-pause { right: 5vw; border-radius: 50%; width: clamp(35px, 9vw, 55px); height: clamp(35px, 9vw, 55px); display: flex; justify-content: center; align-items: center; font-size: clamp(16px, 4vw, 24px); font-weight: 900; }
+        #btn-som { right: calc(5vw + clamp(45px, 11vw, 70px)); border-radius: 30px; padding: 0 clamp(10px, 2.5vw, 20px); height: clamp(35px, 9vw, 55px); display: flex; align-items: center; font-size: clamp(12px, 2.5vw, 16px); font-weight: 700; letter-spacing: 1px; }
+
+        /* ========================================================
+           MENUS PS5 E TUTORIAL
+           ======================================================== */
+        #tutorial-ui { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 40; pointer-events: none; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+        .ps5-tutorial-box { background: rgba(15, 20, 30, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(10px, 3vw, 25px) clamp(20px, 5vw, 40px); color: #FFF; font-size: clamp(14px, 3vw, 24px); letter-spacing: 2px; text-transform: uppercase; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: pulseTutorial 1.5s infinite alternate ease-in-out; will-change: transform; }
+        .ps5-btn-hint { background: #FFF; color: #000; padding: 4px 10px; border-radius: 8px; font-weight: 900; margin: 0 5px; display: inline-block; box-shadow: 0 4px 0 #CCC; transform: translateY(-2px); }
+        @keyframes pulseTutorial { 0% { transform: scale(1) translateY(0); opacity: 0.85; } 100% { transform: scale(1.05) translateY(-5px); opacity: 1; } }
+
+        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: row; align-items: center; z-index: 100; background: linear-gradient(90deg, rgba(15, 20, 30, 0.95) 0%, rgba(15, 20, 30, 0.8) 40%, rgba(15, 20, 30, 0) 100%); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: opacity 0.5s ease-out; }
+        .ps5-sidebar { width: 50%; padding-left: 8vw; display: flex; flex-direction: column; justify-content: center; z-index: 10; }
+        .ps5-title-area { margin-bottom: clamp(15px, 4vmin, 30px); animation: slideInLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        .ps5-title { font-size: clamp(28px, 6vw, 80px); color: #FFF; font-weight: 700; letter-spacing: 3px; line-height: 1; margin: 0; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .ps5-subtitle { font-size: clamp(14px, 3vw, 40px); color: #FF69B4; font-weight: 900; letter-spacing: 2px; margin: 0; text-transform: uppercase; text-shadow: 0 2px 10px rgba(255,105,180,0.4); }
+        .ps5-menu-options { display: flex; flex-direction: column; gap: clamp(6px, 1.5vmin, 12px); align-items: flex-start; }
+        .ps5-btn { background: transparent; border: none; outline: none; color: rgba(255, 255, 255, 0.6); font-size: clamp(13px, 2.5vw, 26px); font-family: 'Fredoka', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(5px, 1.2vw, 8px) clamp(12px, 2.5vw, 20px); border-radius: 8px; display: flex; align-items: center; gap: clamp(8px, 2vw, 15px); transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); position: relative; overflow: hidden; animation: slideInLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        .ps5-btn:nth-child(1) { animation-delay: 0.1s; } .ps5-btn:nth-child(2) { animation-delay: 0.2s; } .ps5-btn:nth-child(3) { animation-delay: 0.3s; } .ps5-btn:nth-child(4) { animation-delay: 0.4s; } .ps5-btn:nth-child(5) { animation-delay: 0.5s; }
+        .ps5-icon { font-size: 0.8em; opacity: 0.5; transition: opacity 0.3s; }
+        .ps5-btn:hover, .ps5-btn:active, .ps5-btn.highlight { color: #1a1a1a; background: #FFF; transform: translateX(20px) scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
+        .ps5-btn:hover .ps5-icon, .ps5-btn.highlight .ps5-icon { opacity: 1; color: #FF1493; }
+        .ps5-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); transition: left 0.5s ease; }
+        .ps5-btn:hover::before { left: 100%; }
+        #btn-modo { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.3); font-weight: 700; } 
+        .ps5-hero-area { width: 50%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; perspective: 1000px; }
+        .ps5-hero-glow { position: absolute; width: clamp(250px, 45vw, 600px); height: clamp(250px, 45vw, 600px); background: radial-gradient(circle, rgba(255, 16, 122, 0.4) 0%, rgba(0, 216, 255, 0.2) 40%, transparent 70%); border-radius: 50%; animation: pulsarLuz 3s alternate infinite ease-in-out; filter: blur(20px); will-change: transform, opacity; }
+        .ps5-hero-mascot { position: relative; z-index: 2; width: clamp(200px, 40vw, 550px); height: clamp(250px, 50vw, 700px); background-image: url('seu_personagem.png'); background-size: 300% 100%; background-position: 0% 0%; background-repeat: no-repeat; filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 20px rgba(255,255,255,0.2)); animation: breatheMascot 4s ease-in-out infinite; will-change: transform; }
+        
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes breatheMascot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulsarLuz { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(1.1); opacity: 0.6; } }
+        @keyframes idleChamada { 0% { transform: translateY(0) scale(1); filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) brightness(1); } 30% { transform: translateY(-15px) scale(1.05) rotate(-3deg); filter: drop-shadow(0 40px 50px rgba(255,105,180,0.6)) brightness(1.2); } 60% { transform: translateY(-15px) scale(1.05) rotate(3deg); filter: drop-shadow(0 40px 50px rgba(0,255,255,0.6)) brightness(1.2); } 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) brightness(1); } }
+        .idle-active { animation: idleChamada 1.5s ease-in-out !important; }
+
+        /* ========================================================
+           TELA DE PAUSE, VITÓRIA & HISTÓRIA (OTIMIZADO MOBILE AAA)
+           ======================================================== */
+        #pause-screen, #victory-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
+        .btn-pause-ui { background: #FFF; color: #1a1a1a; border: none; border-radius: 8px; padding: clamp(8px, 2vmin, 12px) clamp(20px, 5vmin, 30px); font-size: clamp(16px, 4vmin, 22px); font-weight: bold; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s; text-transform: uppercase; width: clamp(250px, 60vw, 350px); margin: 5px 0; }
+        .btn-pause-ui:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.5); } .btn-pause-ui.sair { background: #FF6347; color: #FFF; }
+        .trophy-icon { font-size: clamp(60px, 15vw, 100px); margin-bottom: 10px; animation: flutuarLore 3s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); }
+        .victory-title { color: #FFD700; font-size: clamp(35px, 8vw, 70px); font-weight: 900; margin-bottom: 5px; text-transform: uppercase; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .victory-subtitle { color: #00FFFF; font-size: clamp(16px, 4vw, 24px); margin-bottom: 25px; font-weight: 700; letter-spacing: 1px; }
+        .credits { color: #A0AAB5; font-size: clamp(12px, 3vw, 16px); margin-bottom: 30px; line-height: 1.8; } .credits strong { color: #FF69B4; }
+
+        #modal-historia { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 25, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
+        #btn-fechar-historia { position: absolute; top: 25px; right: 35px; background: rgba(255,255,255,0.1); color: #FFF; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 50px; height: 50px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10001; transition: all 0.3s; }
+        #btn-fechar-historia:hover { background: #FF1493; border-color: #FF1493; transform: scale(1.1) rotate(90deg); box-shadow: 0 0 20px rgba(255,20,147,0.6); }
+        #livro-container { width: 90vw; max-width: 600px; background: rgba(20, 25, 35, 0.7); border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); padding: clamp(15px, 4vmin, 40px); text-align: center; color: #E0E0E0; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;}
+        #livro-container .pagina { display: none; animation: fadeInLore 0.8s; flex-grow: 1; } #livro-container .pagina.ativa { display: flex; flex-direction: column; justify-content: center; }
+        @keyframes fadeInLore { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .foto-isadora-livro { width: clamp(90px, 20vmin, 140px); height: clamp(180px, 40vmin, 280px); margin: 0 auto 10px; background-image: url('seu_personagem.png'); background-size: 300% 100%; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.8)); animation: flutuarLore 4s infinite; }
+        .foto-casa-livro { width: 100%; height: clamp(120px, 30vmin, 220px); margin-bottom: 15px; border-radius: 12px; background-image: url('casa_sorrir.png'); background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); }
+        #livro-container h2 { color: #FFF; font-size: clamp(20px, 5vmin, 32px); margin-bottom: 8px; text-transform: uppercase; color: #FF69B4; } 
+        #livro-container p { font-size: clamp(14px, 3.5vmin, 18px); margin-bottom: 10px; line-height: 1.4;}
+        .controles-livro { display: flex; justify-content: space-between; margin-top: auto; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+        .btn-livro { background: transparent; color: #FFF; border: 1px solid rgba(255,105,180,0.5); padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; font-family: 'Fredoka', sans-serif; font-size: clamp(12px, 3vmin, 15px); text-transform: uppercase; transition: all 0.3s; } 
+        .btn-livro:hover:not(:disabled) { background: rgba(255,105,180,0.15); border-color: #FF1493; } .btn-livro:disabled { border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); }
+        @keyframes flutuarLore { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        #aviso-rotacao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 37, 47, 0.95); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: #FFF; }
+        #aviso-rotacao h2 { font-size: 35px; color: #FFD700; margin-bottom: 10px; }
+        .icone-celular { font-size: 80px; margin-bottom: 20px; animation: girarCelular 2.5s infinite ease-in-out; font-weight: bold; }
+        @keyframes girarCelular { 0%, 100% { transform: rotate(0deg); } 40%, 60% { transform: rotate(-90deg); } }
+
+        @media screen and (max-height: 500px) {
+            #start-screen { flex-direction: row; } .ps5-sidebar { width: 55%; padding-left: 5vw; align-items: flex-start; } .ps5-hero-area { width: 45%; }
+            .ps5-title { font-size: clamp(26px, 6vmin, 40px); } .ps5-subtitle { font-size: clamp(12px, 3vmin, 18px); margin-bottom: 5px; }
+            .ps5-btn { font-size: clamp(12px, 3vmin, 16px); padding: 5px 12px; } .ps5-hero-mascot { width: clamp(120px, 28vw, 220px); height: clamp(140px, 35vw, 250px); }
+            #ui-layer { margin-top: 0; top: 10px; left: 3vw; padding: 8px 15px; border-radius: 12px; max-width: 60vw; } 
+            #meta-alfabeto { font-size: 11px; margin-bottom: 2px; } #letra-ui { font-size: 16px; } .progress-bar-container { height: 5px; margin-top: 4px; }
+            .btn-corner { top: 10px; } #btn-pause { width: 35px; height: 35px; font-size: 14px; right: 3vw; } #btn-som { height: 35px; font-size: 10px; padding: 0 10px; right: calc(3vw + 45px); }
+            .btn-pause-ui { font-size: 13px; padding: 8px 15px; margin: 3px 0; width: 220px; } .titulo-jogo { font-size: 28px !important; margin-bottom: 5px; }
+            
+            /* Ajustes Finos Mobile Landscape AAA */
+            #victory-screen { gap: 5px; }
+            .trophy-icon { font-size: clamp(40px, 10vw, 60px); margin-bottom: 0; }
+            .victory-title { font-size: clamp(25px, 6vw, 40px); margin-bottom: 0; }
+            .victory-subtitle { font-size: clamp(12px, 3vw, 16px); margin-bottom: 10px; }
+            .credits { font-size: clamp(10px, 2.5vw, 14px); margin-bottom: 10px; line-height: 1.4; }
+            #livro-container { padding: 15px; }
+            .foto-casa-livro { height: clamp(100px, 25vmin, 150px); margin-bottom: 10px; }
+            #modal-historia { padding: 10px; }
+            #btn-fechar-historia { top: 10px; right: 10px; width: 40px; height: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-screen">
+    <div class="loader-ring"></div>
+    <div class="loader-text">A CARREGAR...</div>
+    <div class="loader-tip" id="loader-tip-text">DICA: Use fones de ouvido para uma experiência AAA!</div>
+</div>
+
+<div id="flash-overlay"></div>
+<div id="damage-overlay"></div>
+
+<div id="cinematic-overlay">
+    <h1 class="cinematic-text" id="cinematic-title"></h1>
+    <h2 class="cinematic-subtext" id="cinematic-subtitle"></h2>
+</div>
+
+<div id="game-container">
+    <div id="aviso-rotacao">
+        <div class="icone-celular">🔄</div>
+        <h2>Vire o Celular</h2>
+        <p>Para brincar, o celular precisa estar deitado.</p>
+        <button id="btn-forcar-giro" class="btn-pause-ui">GIRAR TELA</button>
+    </div>
+
+    <button id="btn-som" class="btn-corner" style="display: none;">♪ SOM</button>
+    <div id="btn-pause" class="btn-corner" style="display: none;">||</div>
+
+    <div id="ui-layer" aria-live="polite" style="display: none;">
+        <span id="meta-alfabeto">COLETE O ALFABETO</span>
+        <span id="letra-ui">A preparar a jornada...</span>
+        <div class="progress-bar-container">
+            <div id="progress-fill" class="progress-bar-fill"></div>
+        </div>
+    </div>
+    
+    <div id="tutorial-ui">
+        <div class="ps5-tutorial-box">
+            <span class="ps5-btn-hint" id="txt-tutorial">ESPACO OU TOQUE PARA PULAR</span>
+        </div>
+    </div>
+
+    <div id="start-screen">
+        <div class="ps5-sidebar">
+            <div class="ps5-title-area">
+                <h1 class="ps5-title">O ALFABETO</h1>
+                <h2 class="ps5-subtitle">DA ISADORA</h2>
+            </div>
+            <div class="ps5-menu-options" style="max-height: 50vh; overflow-y: auto; padding-right: 15px;">
+                <button id="btn-jogar" class="ps5-btn active"><span class="ps5-icon">▶</span> INICIAR JOGO</button>
+                <button id="btn-modo" class="ps5-btn"><span class="ps5-icon">✦</span> MODO: CAMPANHA (COMPLETA)</button>
+                <button id="btn-historia" class="ps5-btn"><span class="ps5-icon">≡</span> HISTÓRIA</button>
+                <button id="btn-som-menu" class="ps5-btn"><span class="ps5-icon">♪</span> ÁUDIO: LIGADO</button>
+                <button id="btn-sair-menu" class="ps5-btn"><span class="ps5-icon">✖</span> SAIR DO JOGO</button>
+            </div>
+        </div>
+        <div class="ps5-hero-area">
+            <div class="ps5-hero-glow"></div>
+            <div class="ps5-hero-mascot"></div>
+        </div>
+    </div>
+
+    <div id="pause-screen">
+        <h1 class="titulo-jogo" style="font-size: clamp(30px, 8vmin, 60px); color: #FFF; font-family: 'Fredoka', sans-serif; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">PAUSADO</h1>
+        <button id="btn-continuar" class="btn-pause-ui">CONTINUAR</button>
+        <button id="btn-reiniciar" class="btn-pause-ui">REINICIAR FASE</button>
+        <button id="btn-voltar-menu" class="btn-pause-ui sair">MENU PRINCIPAL</button>
+    </div>
+
+    <div id="victory-screen">
+        <div class="trophy-icon">🏆</div>
+        <h1 class="victory-title">PLATINA!</h1>
+        <h2 class="victory-subtitle">VOCE DOMINOU O ALFABETO E AS SILABAS</h2>
+        <div class="credits">
+            Protagonista: <strong>Isadora</strong><br>
+            Diretor Criativo: <strong>Papai Jose Marcelo</strong><br>
+            Apoio Especial: <strong>Casa Sorrir</strong><br><br>
+            <em>O Vale dos Numeros chegara na proxima atualizacao!</em>
+        </div>
+        <button id="btn-vitoria-menu" class="btn-pause-ui">VOLTAR AO MENU</button>
+    </div>
+
+    <div id="modal-historia">
+        <button id="btn-fechar-historia" aria-label="Fechar Livro">✖</button>
+        <div id="livro-container">
+            <div class="pagina ativa" id="livro-p1">
+                <div class="foto-isadora-livro pose-1"></div>
+                <h2>Um Presente do Ceu</h2>
+                <p>Em Mirandiba, nasceu a pequena Isadora. Ela chegou trazendo um sorriso unico, com uma marquinha especial chamada labio leporino.</p>
+            </div>
+            <div class="pagina" id="livro-p2">
+                <div class="foto-casa-livro"></div>
+                <h2>Um Lar em Recife</h2>
+                <p>Quando chegou a hora da primeira cirurgia, a familia viajou para Recife e encontrou a <strong>Casa Sorrir</strong>. Mais que um abrigo, cuidado e amor.</p>
+            </div>
+            <div class="pagina" id="livro-p3">
+                <div class="foto-isadora-livro pose-2"></div>
+                <h2>Maos de Fada</h2>
+                <p>Com o apoio da Casa Sorrir e o carinho de todos, Isadora enfrentou sua primeira jornada no hospital.</p>
+            </div>
+            <div class="pagina" id="livro-p4">
+                <div class="foto-isadora-livro pose-3"></div>
+                <h2>O Sorriso que Venceu</h2>
+                <p>Hoje, aquela marquinha e o simbolo de uma grande vitoria. Isadora cresce feliz e brincando.</p>
+            </div>
+            <div class="controles-livro">
+                <button id="prevBtnLivro" class="btn-livro" disabled><span class="ps5-icon">◀</span> Anterior</button>
+                <div class="numero-pagina" id="paginacaoLivro">1 / 4</div>
+                <button id="nextBtnLivro" class="btn-livro">Proxima <span class="ps5-icon">▶</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="exit-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; opacity: 0; transition: opacity 0.5s ease; text-align: center;">
+        <div style="background: rgba(15, 20, 35, 0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 80%; display: flex; flex-direction: column; align-items: center;">
+            <h1 style="color: #FF107A; font-size: clamp(24px, 6vw, 35px); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-family: 'Fredoka', sans-serif;">Sistema</h1>
+            <p style="color: #A0AAB5; font-size: clamp(14px, 3.5vw, 18px); margin-bottom: 25px; line-height: 1.5; font-family: 'Fredoka', sans-serif;">Para encerrar sua sessao, minimize ou feche este aplicativo no seu celular.</p>
+            <button id="btn-cancelar-sair" class="btn-pause-ui">VOLTAR AO JOGO</button>
+        </div>
+    </div>
+
+    <canvas id="gameCanvas" role="img" aria-label="Area do jogo interativo da Isadora"></canvas>
+</div>
+
+<script>
+    // --- VARIÁVEIS GLOBAIS DE CONTROLE ---
+    const canvas = document.getElementById('gameCanvas'); 
+    const ctx = canvas.getContext('2d');
+    
+    const startScreen = document.getElementById('start-screen'); 
+    const victoryScreen = document.getElementById('victory-screen');
+    const btnJogar = document.getElementById('btn-jogar'); 
+    const btnSomMenu = document.getElementById('btn-som-menu');
+    const btnSairMenu = document.getElementById('btn-sair-menu'); 
+    const exitScreen = document.getElementById('exit-screen');
+    const btnCancelarSair = document.getElementById('btn-cancelar-sair'); 
+    const btnHistoria = document.getElementById('btn-historia');
+    const modalHistoria = document.getElementById('modal-historia'); 
+    const btnFecharHistoria = document.getElementById('btn-fechar-historia');
+    const prevBtnLivro = document.getElementById('prevBtnLivro'); 
+    const nextBtnLivro = document.getElementById('nextBtnLivro');
+    const paginacaoLivro = document.getElementById('paginacaoLivro'); 
+    
+    let paginaAtual = 1; 
+    const totalPaginas = 4;
+    
+    const btnModulo = document.getElementById('btn-modo'); 
+    const pauseScreen = document.getElementById('pause-screen');
+    const btnPause = document.getElementById('btn-pause'); 
+    const btnContinuar = document.getElementById('btn-continuar');
+    const btnReiniciar = document.getElementById('btn-reiniciar'); 
+    const btnVoltarMenu = document.getElementById('btn-voltar-menu');
+    const btnVitoriaMenu = document.getElementById('btn-vitoria-menu'); 
+    const btnSom = document.getElementById('btn-som');
+    const avisoRotacao = document.getElementById('aviso-rotacao'); 
+    const btnForcarGiro = document.getElementById('btn-forcar-giro');
+    const metaAlfabeto = document.getElementById('meta-alfabeto'); 
+    const letraUi = document.getElementById('letra-ui');
+    const tutorialUI = document.getElementById('tutorial-ui'); 
+    const txtTutorial = document.getElementById('txt-tutorial');
+    const hudLayer = document.getElementById('ui-layer'); 
+    const progressFill = document.getElementById('progress-fill');
+    const damageOverlay = document.getElementById('damage-overlay'); 
+    const flashOverlay = document.getElementById('flash-overlay');
+    const cinematicOverlay = document.getElementById('cinematic-overlay'); 
+    const cinematicTitle = document.getElementById('cinematic-title'); 
+    const cinematicSubtitle = document.getElementById('cinematic-subtitle');
+
+    let alturaChao = 0; 
+    let baseGameSpeed = 4.5; 
+    let gameSpeed = baseGameSpeed; 
+    let scaleMultiplier = 1; 
+    
+    let gameActive = false; 
+    let isPaused = false; 
+    let bgX = 0; 
+    let estradaOffset = 0;
+    
+    let tutorialAtivo = false; 
+    let faseAtual = 1; 
+    let isInfinite = false;
+    let animationId = null; 
+    let initTimeoutId = null; 
+    let hitStopTime = 0; 
+    let shakeIntensity = 0;
+    
+    let desafioFase2 = null; 
+    let desafioFase4 = null; 
+    let desafioFase5 = null; 
+    let desafioFase6 = null;
+
+    // --- DADOS DO JOGO ---
+    const AlfabetoIsadora = [ 
+        { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, 
+        { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, 
+        { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, 
+        { letra: 'J', palavra: 'Jacare' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leao' }, 
+        { letra: 'M', palavra: 'Macaco' }, { letra: 'N', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, 
+        { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, 
+        { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, 
+        { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xicara' }, 
+        { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } 
+    ];
+    let letrasParaVencerFase1 = 26; 
+    let letrasColetadas = [];
+    
+    let acertosParaVencerFase2 = 8; 
+    let acertosAtuaisFase2 = 0;
+    
+    const palavrasVitoria = ["ISADORA", "AMOR", "VITORIA"]; 
+    let palavraAtualIndex = 0; 
+    let letraVitoriaIndex = 0;
+    
+    const dadosFase4 = [ 
+        {s:'BO', p:'BOLA', w:['BA','BE','BI','BU']}, {s:'MA', p:'MACACO', w:['ME','MI','MO','MU']}, 
+        {s:'CA', p:'CASA', w:['CE','CI','CO','CU']}, {s:'DA', p:'DADO', w:['DE','DI','DO','DU']}, 
+        {s:'PA', p:'PATO', w:['PE','PI','PO','PU']}, {s:'VA', p:'VACA', w:['VE','VI','VO','VU']}, 
+        {s:'FA', p:'FADA', w:['FE','FI','FO','FU']}, {s:'SA', p:'SAPO', w:['SE','SI','SO','SU']}, 
+        {s:'LA', p:'LATA', w:['LE','LI','LO','LU']}, {s:'GA', p:'GATO', w:['GE','GI','GO','GU']} 
+    ]; 
+    let acertosFase4 = 0;
+    
+    const dadosFase5 = [ 
+        {l:'M', p:'MACACO', w:['N','W']}, {l:'F', p:'FADA', w:['V','T']}, {l:'S', p:'SAPO', w:['Z','C']}, 
+        {l:'B', p:'BOLA', w:['P','D']}, {l:'P', p:'PATO', w:['B','Q']}, {l:'V', p:'VACA', w:['F','U']}, 
+        {l:'L', p:'LEAO', w:['I','R']}, {l:'D', p:'DADO', w:['B','T']}, {l:'G', p:'GATO', w:['C','J']}, 
+        {l:'R', p:'RATO', w:['H','L']} 
+    ]; 
+    let acertosFase5 = 0;
+    
+    const dadosFase6 = [ 
+        {f: 'O _____ BEBE LEITE', p: 'GATO', w: ['PATO', 'RATO']}, 
+        {f: 'A _____ BOTA OVO', p: 'AVE', w: ['UVA', 'PIA']}, 
+        {f: 'O MACACO COME _____', p: 'MACA', w: ['MOLA', 'MATA']}, 
+        {f: 'O _____ LATE MUITO', p: 'CAO', w: ['PAO', 'MAO']}, 
+        {f: 'EU MORO NA _____', p: 'CASA', w: ['CAMA', 'MESA']} 
+    ]; 
+    let acertosFase6 = 0;
+    
+    const numerosVitoria = ['1', '2', '3']; 
+    let numeroAtualIndex = 0;
+
+    let isHolding = false; 
+
+    // --- IDLE MENU SYSTEM ---
+    let idleTime = 0;
+    function resetIdleTimer() { 
+        idleTime = 0; 
+        const mascot = document.querySelector('.ps5-hero-mascot'); 
+        if(mascot) mascot.classList.remove('idle-active'); 
+    }
+    
+    window.addEventListener('mousemove', resetIdleTimer); 
+    window.addEventListener('touchstart', resetIdleTimer, {passive: true}); 
+    window.addEventListener('keydown', resetIdleTimer);
+    
+    setInterval(() => { 
+        if (!gameActive && startScreen.style.display !== 'none') { 
+            idleTime += 1; 
+            if (idleTime >= 5) { 
+                const mascot = document.querySelector('.ps5-hero-mascot'); 
+                if (mascot && !mascot.classList.contains('idle-active')) { 
+                    mascot.classList.add('idle-active'); 
+                    if(AudioManager.somAtivo) AudioManager.playHoverTick(); 
+                    setTimeout(() => mascot.classList.remove('idle-active'), 1500); 
+                    idleTime = 0; 
+                } 
+            } 
+        } 
+    }, 1000);
+
+    const modosDeJogo = [ 
+        { id: 0, nome: "MODO: CAMPANHA (COMPLETA)", icon: "✦", fase: 1, inf: false }, 
+        { id: 1, nome: "ATO I - ALFABETO", icon: "∞", fase: 1, inf: true }, 
+        { id: 2, nome: "ATO II - O ENIGMA", icon: "∞", fase: 2, inf: true }, 
+        { id: 3, nome: "ATO III - O VOO", icon: "∞", fase: 3, inf: true }, 
+        { id: 4, nome: "ATO IV - AS SILABAS", icon: "∞", fase: 4, inf: true }, 
+        { id: 5, nome: "ATO V - MEMORIA", icon: "∞", fase: 5, inf: true }, 
+        { id: 6, nome: "ATO VI - FRASES", icon: "∞", fase: 6, inf: true }, 
+        { id: 7, nome: "ATO EXTRA - NUMEROS", icon: "★", fase: 7, inf: false } 
+    ]; 
+    let modoAtualIndex = 0;
+
+    let comboAtual = 0; 
+    function gerenciarCombo(acertou) {
+        if (acertou) { 
+            comboAtual++; 
+            if (comboAtual === 3) { 
+                AudioManager.playVoice("Incrível! Você está pegando fogo!"); 
+            } 
+            if (comboAtual >= 3) { 
+                progressFill.classList.add('combo-ativo'); 
+                letraUi.classList.add('texto-combo-ativo'); 
+            }
+        } else { 
+            comboAtual = 0; 
+            progressFill.classList.remove('combo-ativo'); 
+            letraUi.classList.remove('texto-combo-ativo'); 
+        }
+    }
+
+    if(btnModulo) { 
+        btnModulo.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            e.stopPropagation(); 
+            modoAtualIndex++; 
+            if (modoAtualIndex >= modosDeJogo.length) modoAtualIndex = 0; 
+            let conf = modosDeJogo[modoAtualIndex]; 
+            btnModulo.innerHTML = `<span class="ps5-icon">${conf.icon}</span> ${conf.nome}`; 
+            AudioManager.playHoverTick(); 
+        }); 
+    }
+    
+    function atualizarLivroUI() { 
+        for(let i = 1; i <= totalPaginas; i++) { 
+            document.getElementById(`livro-p${i}`).classList.remove('ativa'); 
+        } 
+        document.getElementById(`livro-p${paginaAtual}`).classList.add('ativa'); 
+        prevBtnLivro.disabled = (paginaAtual === 1); 
+        nextBtnLivro.disabled = (paginaAtual === totalPaginas); 
+        paginacaoLivro.innerText = `${paginaAtual} / ${totalPaginas}`; 
+    }
+    
+    btnHistoria.addEventListener('click', (e) => { 
+        e.preventDefault(); e.stopPropagation(); 
+        paginaAtual = 1; 
+        atualizarLivroUI(); 
+        modalHistoria.style.display = 'flex'; 
+        setTimeout(() => { modalHistoria.style.opacity = '1'; }, 50); 
+    });
+    
+    btnFecharHistoria.addEventListener('click', (e) => { 
+        e.preventDefault(); e.stopPropagation(); 
+        modalHistoria.style.opacity = '0'; 
+        setTimeout(() => { modalHistoria.style.display = 'none'; }, 300); 
+    });
+    
+    prevBtnLivro.addEventListener('click', (e) => { 
+        e.preventDefault(); e.stopPropagation(); 
+        if(paginaAtual > 1) { paginaAtual--; atualizarLivroUI(); }
+    }); 
+    
+    nextBtnLivro.addEventListener('click', (e) => { 
+        e.preventDefault(); e.stopPropagation(); 
+        if(paginaAtual < totalPaginas) { paginaAtual++; atualizarLivroUI(); }
+    });
+
+    // --- ENGINE DE ÁUDIO AAA ---
+    if ('speechSynthesis' in window) { 
+        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; 
+    }
+
+    const AudioManager = {
+        somAtivo: localStorage.getItem('isadora_som') !== 'false', 
+        audioCtx: null, 
+        masterCompressor: null, 
+        bgmMenu: new Audio('musica_menu.mp3'), 
+        bgmJogo: new Audio('musica_jogo.mp3'), 
+        sfxRisada: new Audio('risada.mp3'), 
+        musicaAtual: null, 
+        ultimaVoz: "", 
+        
+        init() { 
+            try { 
+                if (!this.audioCtx) { 
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+                    this.masterCompressor = this.audioCtx.createDynamicsCompressor(); 
+                    this.masterCompressor.threshold.setValueAtTime(-15, this.audioCtx.currentTime); 
+                    this.masterCompressor.knee.setValueAtTime(10, this.audioCtx.currentTime); 
+                    this.masterCompressor.ratio.setValueAtTime(12, this.audioCtx.currentTime); 
+                    this.masterCompressor.attack.setValueAtTime(0.003, this.audioCtx.currentTime); 
+                    this.masterCompressor.release.setValueAtTime(0.25, this.audioCtx.currentTime); 
+                    this.masterCompressor.connect(this.audioCtx.destination); 
+                } 
+                if (this.audioCtx.state === 'suspended') this.audioCtx.resume(); 
+                this.bgmMenu.loop = true; 
+                this.bgmJogo.loop = true; 
+            } catch(e) {} 
+        },
+        
+        toggle() { 
+            this.somAtivo = !this.somAtivo; 
+            localStorage.setItem('isadora_som', this.somAtivo); 
+            
+            if (!this.somAtivo) { 
+                this.fadeVolume(this.bgmMenu, 0, 100); 
+                this.fadeVolume(this.bgmJogo, 0, 100); 
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                if (this.audioCtx && this.audioCtx.state === 'running') this.audioCtx.suspend();
+            } else { 
+                this.init(); 
+                if (this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
+                if(this.musicaAtual) { 
+                    this.musicaAtual.play().catch(()=>{}); 
+                    this.fadeVolume(this.musicaAtual, 0.4, 500); 
+                } 
+            } 
+            this.updateUI(); 
+            return this.somAtivo; 
+        },
+        
+        updateUI() { 
+            if(btnSom) btnSom.innerText = this.somAtivo ? '♪ SOM' : 'x MUDO'; 
+            if(btnSomMenu) btnSomMenu.innerHTML = this.somAtivo ? '♪ ÁUDIO: LIGADO' : 'x ÁUDIO: MUDO'; 
+        },
+        
+        fadeVolume(audioObj, targetVol, duration) { 
+            if(!audioObj) return; 
+            if(audioObj.fadeReqId) cancelAnimationFrame(audioObj.fadeReqId); 
+            
+            let startVol = audioObj.volume; 
+            let startTime = performance.now(); 
+            
+            const step = (t) => { 
+                let elapsed = t - startTime; 
+                let progress = Math.min(elapsed / duration, 1); 
+                let ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; 
+                
+                audioObj.volume = Math.max(0, Math.min(1, startVol + (targetVol - startVol) * ease)); 
+                
+                if (progress < 1) { 
+                    audioObj.fadeReqId = requestAnimationFrame(step); 
+                } else { 
+                    audioObj.volume = targetVol; 
+                    if(targetVol === 0) {
+                        audioObj.pause(); 
+                        audioObj.currentTime = 0; 
+                    }
+                } 
+            }; 
+            audioObj.fadeReqId = requestAnimationFrame(step); 
+        },
+        
+        playBGM(trackName) { 
+            let nextTrack = trackName === 'menu' ? this.bgmMenu : this.bgmJogo; 
+            let otherTrack = trackName === 'menu' ? this.bgmJogo : this.bgmMenu;
+            
+            this.fadeVolume(otherTrack, 0, 300);
+            
+            if (this.musicaAtual === nextTrack && nextTrack.volume > 0) return; 
+            
+            this.musicaAtual = nextTrack; 
+            this.musicaAtual.volume = 0; 
+            if (this.somAtivo) { 
+                this.init(); 
+                this.musicaAtual.play().catch(()=>{}); 
+                this.fadeVolume(this.musicaAtual, 0.4, 800); 
+            } 
+        },
+        
+        playHoverTick() { 
+            if (!this.somAtivo || !this.audioCtx) return; 
+            try {
+                const now = this.audioCtx.currentTime; 
+                const gain = this.audioCtx.createGain(); 
+                gain.connect(this.masterCompressor); 
+                gain.gain.setValueAtTime(0, now); 
+                gain.gain.linearRampToValueAtTime(0.08, now + 0.01); 
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); 
+                const osc = this.audioCtx.createOscillator(); 
+                osc.frequency.setValueAtTime(1500, now); 
+                osc.connect(gain); 
+                osc.start(now); 
+                osc.stop(now + 0.15); 
+            } catch(e) {}
+        },
+        
+        playCinematicSweep() { 
+            if (!this.somAtivo || !this.audioCtx) return; 
+            try { 
+                const now = this.audioCtx.currentTime; 
+                const gain = this.audioCtx.createGain(); 
+                gain.connect(this.masterCompressor); 
+                gain.gain.setValueAtTime(0, now); 
+                gain.gain.linearRampToValueAtTime(0.15, now + 0.5); 
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5); 
+                const osc = this.audioCtx.createOscillator(); 
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(200, now); 
+                osc.frequency.exponentialRampToValueAtTime(800, now + 2.5); 
+                osc.connect(gain); 
+                osc.start(now); 
+                osc.stop(now + 2.5); 
+            } catch(e){} 
+        },
+        
+        playMagicSFX() { 
+            if (!this.somAtivo || !this.audioCtx) return; 
+            try {
+                const now = this.audioCtx.currentTime; 
+                const gainL = this.audioCtx.createGain(); 
+                const gainR = this.audioCtx.createGain(); 
+                const pannerL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; 
+                const pannerR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; 
+                
+                if(pannerL && pannerR) { 
+                    pannerL.pan.value = -0.5; 
+                    pannerR.pan.value = 0.5; 
+                    gainL.connect(pannerL); 
+                    pannerL.connect(this.masterCompressor); 
+                    gainR.connect(pannerR); 
+                    pannerR.connect(this.masterCompressor); 
+                } else { 
+                    gainL.connect(this.masterCompressor); 
+                    gainR.connect(this.masterCompressor); 
+                } 
+                
+                [gainL, gainR].forEach(g => { 
+                    g.gain.setValueAtTime(0.001, now); 
+                    g.gain.exponentialRampToValueAtTime(0.15, now + 0.05); 
+                    g.gain.exponentialRampToValueAtTime(0.001, now + 0.8); 
+                }); 
+                
+                [880, 1108, 1318].forEach((f, i) => { 
+                    let o1 = this.audioCtx.createOscillator(); 
+                    let o2 = this.audioCtx.createOscillator(); 
+                    o1.frequency.setValueAtTime(f, now + (i*0.05)); 
+                    o2.frequency.setValueAtTime(f * 1.005, now + (i*0.05)); 
+                    o1.connect(gainL); 
+                    o2.connect(gainR); 
+                    o1.start(now + (i*0.05)); 
+                    o2.start(now + (i*0.05)); 
+                    o1.stop(now + 0.8); 
+                    o2.stop(now + 0.8); 
+                }); 
+            } catch(e) {}
+        },
+        
+        playSuccessSFX() { 
+            if (!this.somAtivo || !this.audioCtx) return; 
+            try { 
+                const now = this.audioCtx.currentTime; 
+                const gain = this.audioCtx.createGain(); 
+                gain.connect(this.masterCompressor); 
+                gain.gain.setValueAtTime(0, now); 
+                gain.gain.linearRampToValueAtTime(0.15, now + 0.1); 
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); 
+                const freqs = [523.25, 659.25, 783.99, 1046.50]; 
+                let timeOffset = 0; 
+                freqs.forEach(f => { 
+                    let osc = this.audioCtx.createOscillator(); 
+                    osc.type = 'sine'; 
+                    osc.frequency.setValueAtTime(f, now + timeOffset); 
+                    osc.connect(gain); 
+                    osc.start(now + timeOffset); 
+                    osc.stop(now + 0.8); 
+                    timeOffset += 0.1; 
+                }); 
+            } catch (e) {} 
+        },
+        
+        playErrorSFX() { 
+            if (!this.somAtivo || !this.audioCtx) return; 
+            try {
+                const now = this.audioCtx.currentTime; 
+                const gain = this.audioCtx.createGain(); 
+                gain.connect(this.masterCompressor); 
+                gain.gain.setValueAtTime(0.4, now); 
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4); 
+                const osc = this.audioCtx.createOscillator(); 
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(160, now); 
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.3); 
+                osc.connect(gain); 
+                osc.start(now); 
+                osc.stop(now + 0.4); 
+            } catch(e) {}
+        },
+        
+        playRisada() { 
+            if (this.somAtivo && this.sfxRisada) { 
+                this.sfxRisada.currentTime = 0; 
+                this.sfxRisada.play().catch(()=>{}); 
+            } 
+        },
+        
+        playVoice(texto) { 
+            if (!this.somAtivo || !('speechSynthesis' in window)) return; 
+            try {
+                window.speechSynthesis.cancel(); 
+                this.ultimaVoz = texto; 
+                let utter = new SpeechSynthesisUtterance(texto); 
+                utter.lang = 'pt-BR'; 
+                let vozes = window.speechSynthesis.getVoices(); 
+                let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium'))); 
+                if(vozPremium) utter.voice = vozPremium; 
+                utter.pitch = 1.1; 
+                utter.rate = 0.95; 
+                window.speechSynthesis.speak(utter); 
+            } catch(e) {}
+        },
+        
+        playErrorVoice() { 
+            if (!this.somAtivo || !('speechSynthesis' in window)) return; 
+            try {
+                window.speechSynthesis.cancel(); 
+                const frases = ["Ops!", "Quase lá!", "Tente de novo!"]; 
+                let utterErro = new SpeechSynthesisUtterance(frases[Math.floor(Math.random()*frases.length)]); 
+                utterErro.lang = 'pt-BR'; 
+                let vozes = window.speechSynthesis.getVoices(); 
+                let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium'))); 
+                if(vozPremium) utterErro.voice = vozPremium; 
+                window.speechSynthesis.speak(utterErro); 
+                
+                if(this.ultimaVoz) { 
+                    let utterRegra = new SpeechSynthesisUtterance(this.ultimaVoz); 
+                    utterRegra.lang = 'pt-BR'; 
+                    utterRegra.rate = 0.9; 
+                    if(vozPremium) utterRegra.voice = vozPremium; 
+                    window.speechSynthesis.speak(utterRegra); 
+                } 
+            } catch(e) {}
+        },
+        
+        repeatVoice() { 
+            if (this.ultimaVoz !== "") { this.playVoice(this.ultimaVoz); } 
+        },
+        
+        playColetaLetra(frase) { 
+            this.playMagicSFX(); 
+            setTimeout(() => this.playVoice(frase), 150); 
+        }
+    };
+    
+    AudioManager.updateUI();
+
+    document.querySelectorAll('.ps5-btn, .btn-livro, .btn-corner').forEach(btn => { 
+        btn.addEventListener('mouseenter', () => AudioManager.playHoverTick()); 
+    });
+    
+    btnSom.addEventListener('click', (e) => { 
+        e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); 
+    }); 
+    
+    btnSomMenu.addEventListener('click', (e) => { 
+        e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); 
+    });
+    
+    document.body.addEventListener('click', function initMenuMusic() { 
+        AudioManager.playBGM('menu'); 
+        document.body.removeEventListener('click', initMenuMusic); 
+    }, { once: true });
+
+    function atualizarProgressoHUD() {
+        if (faseAtual === 1) { progressFill.style.width = isInfinite ? '100%' : ((letrasColetadas.length / letrasParaVencerFase1) * 100) + '%'; }
+        else if (faseAtual === 2) { progressFill.style.width = isInfinite ? '100%' : ((acertosAtuaisFase2 / acertosParaVencerFase2) * 100) + '%'; }
+        else if (faseAtual === 4) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase4 / dadosFase4.length) * 100) + '%'; }
+        else if (faseAtual === 5) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase5 / dadosFase5.length) * 100) + '%'; }
+        else if (faseAtual === 6) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase6 / dadosFase6.length) * 100) + '%'; }
+    }
+
+    // --- SISTEMA DE APRESENTAÇÃO CINEMATOGRÁFICA AAA ---
     function mostrarCinematica(titulo, subtitulo, corBase) {
         cinematicTitle.innerText = titulo;
         cinematicSubtitle.innerText = subtitulo;
@@ -1335,8 +2149,8 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  import { initializeApp } from "[https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js](https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js)";
+  import { getFirestore } from "[https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js](https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js)";
   
   const firebaseConfig = { 
       apiKey: "COLE_SUA_API_KEY_AQUI", 
