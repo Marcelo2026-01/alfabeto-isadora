@@ -22,7 +22,7 @@
         /* ========================================================
            BASE & RESET AAA
            ======================================================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background-color: #1a252f; overflow: hidden; font-family: 'Fredoka', 'Segoe UI', sans-serif; user-select: none; touch-action: none; -webkit-touch-callout: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         #game-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%); }
         canvas { display: block; width: 100%; height: 100%; touch-action: none; }
@@ -71,8 +71,8 @@
         @keyframes comboFirePulse { 0% { transform: scaleX(1); opacity: 0.8; filter: brightness(1); } 100% { transform: scaleX(1.02); opacity: 1; filter: brightness(1.3); } }
         .combo-ativo { background: linear-gradient(90deg, #FFD700, #FF4500) !important; box-shadow: 0 0 15px #FF8C00 !important; animation: comboFirePulse 0.4s infinite alternate ease-in-out !important; will-change: transform, opacity, filter; transform-origin: left center; }
         @keyframes pulseComboTextOpt { 0% { transform: scale(1); color: #FFF; } 100% { transform: scale(1.1); color: #FFD700; } }
-        .texto-combo-ativo { text-shadow: 0 0 10px #FF4500 !important; animation: pulseComboTextOpt 0.5s infinite alternate ease-in-out !important; will-change: transform, color; }
-        .btn-corner { position: absolute; top: 15px; background: rgba(15, 25, 40, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); color: #FFF; box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 35; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
+        .texto-combo-ativo { text-shadow: 0 0 15px #00FFFF !important; animation: pulseComboTextOpt 0.5s infinite alternate ease-in-out !important; will-change: transform, color; }
+        .btn-corner { position: absolute; top: 15px; background: rgba(15, 25, 40, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); color: #FFF; box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 35; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); outline: none; }
         .btn-corner:active { transform: scale(0.9); background: rgba(255, 255, 255, 0.3); }
         #btn-pause { right: 5vw; border-radius: 50%; width: clamp(35px, 9vw, 55px); height: clamp(35px, 9vw, 55px); display: flex; justify-content: center; align-items: center; font-size: clamp(16px, 4vw, 24px); font-weight: 900; }
         #btn-som { right: calc(5vw + clamp(45px, 11vw, 70px)); border-radius: 30px; padding: 0 clamp(10px, 2.5vw, 20px); height: clamp(35px, 9vw, 55px); display: flex; align-items: center; font-size: clamp(12px, 2.5vw, 16px); font-weight: 700; letter-spacing: 1px; }
@@ -94,8 +94,10 @@
         .ps5-btn { background: transparent; border: none; outline: none; color: rgba(255, 255, 255, 0.6); font-size: clamp(13px, 2.5vw, 26px); font-family: 'Fredoka', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(5px, 1.2vw, 8px) clamp(12px, 2.5vw, 20px); border-radius: 8px; display: flex; align-items: center; gap: clamp(8px, 2vw, 15px); transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); position: relative; overflow: hidden; animation: slideInLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
         .ps5-btn:nth-child(1) { animation-delay: 0.1s; } .ps5-btn:nth-child(2) { animation-delay: 0.2s; } .ps5-btn:nth-child(3) { animation-delay: 0.3s; } .ps5-btn:nth-child(4) { animation-delay: 0.4s; } .ps5-btn:nth-child(5) { animation-delay: 0.5s; }
         .ps5-icon { font-size: 0.8em; opacity: 0.5; transition: opacity 0.3s; }
-        .ps5-btn:hover, .ps5-btn:active, .ps5-btn.highlight { color: #1a1a1a; background: #FFF; transform: translateX(20px) scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
-        .ps5-btn:hover .ps5-icon, .ps5-btn.highlight .ps5-icon { opacity: 1; color: #FF1493; }
+        /* Correção Mobile Highlight: Remover o active quadrado e usar apenas CSS controlado */
+        .ps5-btn:hover { color: #1a1a1a; background: #FFF; transform: translateX(20px) scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
+        .ps5-btn:active { background: #CCC; transform: translateX(10px) scale(1.0); }
+        .ps5-btn:hover .ps5-icon { opacity: 1; color: #FF1493; }
         .ps5-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); transition: left 0.5s ease; }
         .ps5-btn:hover::before { left: 100%; }
         #btn-modo { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.3); font-weight: 700; } 
@@ -113,7 +115,7 @@
            TELA DE PAUSE, VITÓRIA & HISTÓRIA (OTIMIZADO MOBILE AAA)
            ======================================================== */
         #pause-screen, #victory-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
-        .btn-pause-ui { background: #FFF; color: #1a1a1a; border: none; border-radius: 8px; padding: clamp(8px, 2vmin, 12px) clamp(20px, 5vmin, 30px); font-size: clamp(16px, 4vmin, 22px); font-weight: bold; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s; text-transform: uppercase; width: clamp(250px, 60vw, 350px); margin: 5px 0; }
+        .btn-pause-ui { background: #FFF; color: #1a1a1a; border: none; border-radius: 8px; padding: clamp(8px, 2vmin, 12px) clamp(20px, 5vmin, 30px); font-size: clamp(16px, 4vmin, 22px); font-weight: bold; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s; text-transform: uppercase; width: clamp(250px, 60vw, 350px); margin: 5px 0; outline: none; }
         .btn-pause-ui:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.5); } .btn-pause-ui.sair { background: #FF6347; color: #FFF; }
         .trophy-icon { font-size: clamp(60px, 15vw, 100px); margin-bottom: 10px; animation: flutuarLore 3s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); }
         .victory-title { color: #FFD700; font-size: clamp(35px, 8vw, 70px); font-weight: 900; margin-bottom: 5px; text-transform: uppercase; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
@@ -121,7 +123,7 @@
         .credits { color: #A0AAB5; font-size: clamp(12px, 3vw, 16px); margin-bottom: 30px; line-height: 1.8; } .credits strong { color: #FF69B4; }
 
         #modal-historia { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 25, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
-        #btn-fechar-historia { position: absolute; top: 25px; right: 35px; background: rgba(255,255,255,0.1); color: #FFF; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 50px; height: 50px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10001; transition: all 0.3s; }
+        #btn-fechar-historia { position: absolute; top: 25px; right: 35px; background: rgba(255,255,255,0.1); color: #FFF; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 50px; height: 50px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10001; transition: all 0.3s; outline: none;}
         #btn-fechar-historia:hover { background: #FF1493; border-color: #FF1493; transform: scale(1.1) rotate(90deg); box-shadow: 0 0 20px rgba(255,20,147,0.6); }
         #livro-container { width: 90vw; max-width: 600px; background: rgba(20, 25, 35, 0.7); border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); padding: clamp(15px, 4vmin, 40px); text-align: center; color: #E0E0E0; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;}
         #livro-container .pagina { display: none; animation: fadeInLore 0.8s; flex-grow: 1; } #livro-container .pagina.ativa { display: flex; flex-direction: column; justify-content: center; }
@@ -131,7 +133,7 @@
         #livro-container h2 { color: #FFF; font-size: clamp(20px, 5vmin, 32px); margin-bottom: 8px; text-transform: uppercase; color: #FF69B4; } 
         #livro-container p { font-size: clamp(14px, 3.5vmin, 18px); margin-bottom: 10px; line-height: 1.4;}
         .controles-livro { display: flex; justify-content: space-between; margin-top: auto; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
-        .btn-livro { background: transparent; color: #FFF; border: 1px solid rgba(255,105,180,0.5); padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; font-family: 'Fredoka', sans-serif; font-size: clamp(12px, 3vmin, 15px); text-transform: uppercase; transition: all 0.3s; } 
+        .btn-livro { background: transparent; color: #FFF; border: 1px solid rgba(255,105,180,0.5); padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; font-family: 'Fredoka', sans-serif; font-size: clamp(12px, 3vmin, 15px); text-transform: uppercase; transition: all 0.3s; outline: none; } 
         .btn-livro:hover:not(:disabled) { background: rgba(255,105,180,0.15); border-color: #FF1493; } .btn-livro:disabled { border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); }
         @keyframes flutuarLore { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
@@ -155,10 +157,16 @@
             .victory-title { font-size: clamp(25px, 6vw, 40px); margin-bottom: 0; }
             .victory-subtitle { font-size: clamp(12px, 3vw, 16px); margin-bottom: 10px; }
             .credits { font-size: clamp(10px, 2.5vw, 14px); margin-bottom: 10px; line-height: 1.4; }
-            #livro-container { padding: 15px; }
-            .foto-casa-livro { height: clamp(100px, 25vmin, 150px); margin-bottom: 10px; }
-            #modal-historia { padding: 10px; }
-            #btn-fechar-historia { top: 10px; right: 10px; width: 40px; height: 40px; }
+            
+            /* CORREÇÃO DO MENU HISTÓRIA MOBILE */
+            #modal-historia { padding: 5px; }
+            #livro-container { padding: 10px 15px; max-height: 88vh; width: 95vw; }
+            .foto-isadora-livro { height: clamp(80px, 25vmin, 120px); width: clamp(40px, 12vmin, 60px); margin-bottom: 5px;}
+            .foto-casa-livro { height: clamp(80px, 25vmin, 100px); margin-bottom: 5px; }
+            #livro-container h2 { font-size: clamp(16px, 4.5vmin, 22px); margin-bottom: 4px; } 
+            #livro-container p { font-size: clamp(11px, 3vmin, 14px); margin-bottom: 5px;}
+            .controles-livro { padding-top: 8px; }
+            #btn-fechar-historia { top: 5px; right: 10px; width: 35px; height: 35px; font-size: 16px; }
         }
     </style>
 </head>
@@ -199,7 +207,7 @@
     
     <div id="tutorial-ui">
         <div class="ps5-tutorial-box">
-            <span class="ps5-btn-hint" id="txt-tutorial">ESPACO OU TOQUE PARA PULAR</span>
+            <span class="ps5-btn-hint" id="txt-tutorial">ESPACO PARA PULAR</span>
         </div>
     </div>
 
@@ -347,8 +355,9 @@
     let hitStopTime = 0; 
     let shakeIntensity = 0;
     
+    // SISTEMA DINO
     let pontuacao = 0; 
-    let milestoneAtual = 0; // Controla os "beeps" a cada 100 pontos
+    let milestoneAtual = 0; 
     
     let desafioFase2 = null; 
     let desafioFase4 = null; 
@@ -891,14 +900,22 @@
         else if (fase === 8) { 
             metaAlfabeto.innerText = "MODO CORRIDA INFINITA"; 
             metaAlfabeto.style.color = "#00FFFF"; 
-            letraUi.innerText = "SCORE: 00000"; 
+            let highScore = localStorage.getItem('isadora_hi') || 0;
+            letraUi.innerText = "HI " + highScore.toString().padStart(5, '0') + "  SCORE 00000"; 
             pontuacao = 0;
             milestoneAtual = 0;
             mostrarCinematica("MODO EXTRA", "CORRIDA INFINITA", "#00FFFF");
+            
+            // Ajuste no tutorial para Fase 8
+            tutorialUI.style.display = 'flex';
+            setTimeout(() => tutorialUI.style.opacity = '1', 100);
+            txtTutorial.innerHTML = "CIMA/ESPAÇO: PULAR &nbsp;&nbsp;&nbsp; BAIXO: ABAIXAR<br><br><span style='font-size:0.7em; color:#FFD700;'>NO CELULAR: TOQUE ACIMA PARA PULAR, TOQUE ABAIXO PARA ABAIXAR</span>";
+            setTimeout(() => { tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); }, 4000);
         }
         
         atualizarProgressoHUD();
         player.isJumping = true; 
+        player.isDucking = false;
         player.y = 0; 
         isHolding = false;
         
@@ -1067,7 +1084,7 @@
             setTimeout(() => loader.style.display = 'none', 800); 
         }
         
-        gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0;
+        gameActive = false; isHolding = false; player.isJumping = false; player.isDucking = false; player.y = 0; player.vy = 0;
         cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout');
         hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none';
         ctx.clearRect(0, 0, canvas.width, canvas.height); 
@@ -1220,6 +1237,7 @@
             
             let cw = window.innerWidth; 
             let ch = window.innerHeight;
+            let groundY = ch - alturaChao;
             
             if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') { 
                 this.radius = (cw < 600 || ch < 500) ? 65 * scaleMultiplier : 75 * scaleMultiplier; 
@@ -1232,32 +1250,38 @@
             else if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') { 
                 this.radius = 60 * scaleMultiplier; 
                 this.x = xOverride; 
-                this.y = ch - alturaChao - 280 * scaleMultiplier; 
+                this.y = groundY - 280 * scaleMultiplier; 
             }
             else if (this.tipo === 'estrela_vitoria') { 
                 this.radius = 65 * scaleMultiplier; 
                 this.x = xOverride; 
                 let safeTop = ch * 0.40; 
-                let safeBottom = ch - alturaChao - (120 * scaleMultiplier);
+                let safeBottom = groundY - (120 * scaleMultiplier);
                 if (safeTop > safeBottom) safeTop = safeBottom - 20; 
                 this.y = Math.random() * (safeBottom - safeTop) + safeTop; 
             } 
             else if (this.tipo === 'moeda') { 
                 this.radius = 35 * scaleMultiplier; 
                 this.x = cw + 100 * scaleMultiplier; 
-                let groundY = ch - alturaChao;
                 this.y = groundY - 180 * scaleMultiplier; 
             }
-            else if (this.tipo === 'obstaculo') { 
-                this.radius = 45 * scaleMultiplier; 
+            else if (this.tipo === 'obstaculo_cacto') { 
+                this.radius = (30 + Math.random() * 20) * scaleMultiplier; 
                 this.x = cw + 100 * scaleMultiplier; 
-                let groundY = ch - alturaChao;
                 this.y = groundY - this.radius; 
+                this.groupSize = Math.floor(Math.random() * 3) + 1; 
+                this.isLarge = Math.random() > 0.5;
+            }
+            else if (this.tipo === 'obstaculo_passaro') { 
+                this.radius = 35 * scaleMultiplier; 
+                this.x = cw + 100 * scaleMultiplier; 
+                let heights = [40, 100, 180]; // Baixo (pular), Médio (abaixar), Alto (passar reto)
+                this.y = groundY - (heights[Math.floor(Math.random() * heights.length)] * scaleMultiplier); 
             }
             else { 
                 this.radius = 45 * scaleMultiplier; 
                 this.x = cw + 600 * scaleMultiplier; 
-                this.y = Math.random() > 0.5 ? ch - alturaChao - this.radius - 60 : ch - alturaChao - 260 * scaleMultiplier; 
+                this.y = Math.random() > 0.5 ? groundY - this.radius - 60 : groundY - 260 * scaleMultiplier; 
             }
             
             this.gradCache = null;
@@ -1266,7 +1290,6 @@
         update(timeScale) { 
             if (this.isResolvido) { 
                 this.resolvidoTempo += 0.02 * timeScale;
-                // Easing elástico AAA (Cubic Out)
                 let t = Math.min(this.resolvidoTempo * 1.5, 1);
                 let easeOut = 1 - Math.pow(1 - t, 3);
                 this.scale = 1 + (1.2 * easeOut);
@@ -1278,7 +1301,10 @@
                 return; 
             }
             
-            this.x -= (gameSpeed * 1.5) * timeScale; 
+            // Pássaros voam mais rápido que os cactos
+            let extraSpeed = (this.tipo === 'obstaculo_passaro') ? 3 : 0;
+            this.x -= ((gameSpeed * 1.5) + extraSpeed) * timeScale; 
+            
             this.timerOscilacao += 0.1 * timeScale;
             
             if(this.tipo === 'letra' || this.tipo === 'numero' || this.tipo === 'moeda') { 
@@ -1291,6 +1317,10 @@
             }
             else if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') { 
                 this.y += Math.sin(this.timerOscilacao) * 0.5 * timeScale; 
+            }
+            else if (this.tipo === 'obstaculo_passaro') {
+                this.spin += 0.1 * timeScale; // Usado para a asa
+                this.y += Math.sin(this.timerOscilacao) * 0.8 * timeScale; 
             }
             else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
                 this.spin -= 0.08 * timeScale; 
@@ -1369,51 +1399,70 @@
                 ctx.fillStyle = '#FFF'; ctx.font = `bold ${this.radius*1.2}px 'Fredoka'`; ctx.textAlign='center'; ctx.textBaseline='middle';
                 ctx.fillText('★', 0, 2*scl);
             }
-            else if (this.tipo === 'obstaculo') {
-                // CACTO NEON AAA
+            else if (this.tipo === 'obstaculo_cacto') {
+                // CACTO NEON AAA NORDESTINO
                 ctx.globalAlpha = bgAlpha;
-                ctx.shadowColor = '#39ff14'; ctx.shadowBlur = 15;
-                
-                let w = this.radius * 0.5;
-                let h = this.radius * 2.2;
-                let yOffset = this.radius * 0.5; 
-                
-                ctx.fillStyle = '#0a3a0a'; 
-                
-                ctx.beginPath();
-                // Tronco central
-                ctx.arc(0, -h/2 + yOffset, w, Math.PI, 0);
-                ctx.lineTo(w, h/2 + yOffset);
-                ctx.lineTo(-w, h/2 + yOffset);
-                ctx.closePath();
-                ctx.fill();
-                
-                // Braço esquerdo
-                ctx.beginPath();
-                ctx.arc(-w*2, -h*0.1 + yOffset, w*0.8, Math.PI, 0);
-                ctx.lineTo(-w*1.2, yOffset + h*0.2);
-                ctx.lineTo(-w*2.8, yOffset + h*0.2);
-                ctx.closePath();
-                ctx.fill();
-                ctx.fillRect(-w*2.5, yOffset + h*0.1, w*2.5, w); // conector
-                
-                // Braço direito
-                ctx.beginPath();
-                ctx.arc(w*2, -h*0.3 + yOffset, w*0.8, Math.PI, 0);
-                ctx.lineTo(w*2.8, yOffset);
-                ctx.lineTo(w*1.2, yOffset);
-                ctx.closePath();
-                ctx.fill();
-                ctx.fillRect(w*0.5, yOffset - h*0.1, w*2.5, w); // conector
-                
-                // Espinhos
-                ctx.fillStyle = '#FFF';
+                ctx.shadowColor = '#39ff14'; ctx.shadowBlur = 10;
+                ctx.fillStyle = '#0a3a0a';
+                ctx.strokeStyle = '#39ff14';
+                ctx.lineWidth = 2 * scl;
+
+                for (let i = 0; i < this.groupSize; i++) {
+                    let cx = (i * this.radius) - ((this.groupSize - 1) * this.radius / 2);
+                    let h = this.isLarge ? this.radius * 2.5 : this.radius * 1.5;
+                    let w = this.radius * 0.4;
+                    let yOff = this.radius * 0.5;
+
+                    ctx.beginPath();
+                    ctx.roundRect(cx - w/2, -h + yOff, w, h, w/2);
+                    ctx.fill();
+                    if (!this.isResolvido) ctx.stroke();
+
+                    // Braço esquerdo
+                    if (Math.random() > 0.2 || this.isLarge) {
+                        ctx.beginPath();
+                        ctx.moveTo(cx - w/2, -h*0.6 + yOff);
+                        ctx.lineTo(cx - w*1.5, -h*0.6 + yOff);
+                        ctx.lineTo(cx - w*1.5, -h*0.9 + yOff);
+                        ctx.lineWidth = w * 0.8;
+                        ctx.stroke();
+                    }
+                    // Braço direito
+                    if (Math.random() > 0.2 || this.isLarge) {
+                        ctx.beginPath();
+                        ctx.moveTo(cx + w/2, -h*0.4 + yOff);
+                        ctx.lineTo(cx + w*1.5, -h*0.4 + yOff);
+                        ctx.lineTo(cx + w*1.5, -h*0.7 + yOff);
+                        ctx.lineWidth = w * 0.8;
+                        ctx.stroke();
+                    }
+                }
                 ctx.shadowBlur = 0;
-                ctx.fillRect(-w*0.2, -h*0.4 + yOffset, 2*scl, 6*scl);
-                ctx.fillRect(w*0.2, -h*0.1 + yOffset, 2*scl, 6*scl);
-                ctx.fillRect(-w*0.3, h*0.2 + yOffset, 2*scl, 6*scl);
-                ctx.fillRect(-w*2.2, -h*0.05 + yOffset, 2*scl, 6*scl);
-                ctx.fillRect(w*1.8, -h*0.2 + yOffset, 2*scl, 6*scl);
+            }
+            else if (this.tipo === 'obstaculo_passaro') {
+                // PÁSSARO (CARCARÁ) AAA
+                ctx.globalAlpha = bgAlpha;
+                ctx.shadowColor = '#FF4500'; ctx.shadowBlur = 10;
+                ctx.fillStyle = '#111';
+
+                let wingY = Math.sin(this.spin * 10) * 15 * scl; 
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.radius, this.radius * 0.4, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.moveTo(-this.radius * 0.2, 0);
+                ctx.quadraticCurveTo(0, wingY - 20 * scl, this.radius * 0.5, wingY);
+                ctx.lineTo(0, 0);
+                ctx.fill();
+                
+                ctx.fillStyle = '#FFA500';
+                ctx.beginPath();
+                ctx.moveTo(this.radius * 0.8, -this.radius * 0.1);
+                ctx.lineTo(this.radius * 1.4, 0);
+                ctx.lineTo(this.radius * 0.8, this.radius * 0.1);
+                ctx.fill();
+                ctx.shadowBlur = 0;
             }
             else if (this.tipo === 'numero') {
                 ctx.globalAlpha = bgAlpha;
@@ -1568,6 +1617,7 @@
             this.gravity = 1.2; 
             this.jumpPower = -22; 
             this.isJumping = false; 
+            this.isDucking = false; 
             this.frameX = 0; 
             this.staggerFrames = 4; 
             this.gameFrame = 0; 
@@ -1593,7 +1643,7 @@
                 } else { 
                     this.vy += grav * timeScale; 
                 }
-                this.vy *= Math.pow(0.95, timeScale); // Damping AAA para o balão
+                this.vy *= Math.pow(0.95, timeScale);
                 if (this.vy > 8) this.vy = 8; 
                 if (this.vy < -8) this.vy = -8; 
                 this.y += this.vy * timeScale;
@@ -1607,7 +1657,7 @@
                 this.isJumping = true; 
                 this.frameX = 1; 
                 let targetTilt = Math.min(Math.max(this.vy * 0.03, -0.15), 0.15);
-                this.tilt += (targetTilt - this.tilt) * 0.1 * timeScale; // Interpolacao AAA
+                this.tilt += (targetTilt - this.tilt) * 0.1 * timeScale; 
             } else {
                 this.y += this.vy * timeScale;
                 if (this.y >= groundY) { 
@@ -1631,7 +1681,6 @@
                     } 
                     if (this.gameFrame % 3 === 0 && faseAtual !== 3) { 
                         particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4)); 
-                        if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2)); 
                     }
                     this.gameFrame++; 
                 } else { 
@@ -1724,6 +1773,13 @@
                 }
                 
                 let pisadaY = (!this.isJumping && faseAtual !== 3 && this.frameX === 1) ? (6 * scl) : 0;
+                
+                // ABAIXAR (DUCKING AAA)
+                if (this.isDucking && !this.isJumping && faseAtual === 8) {
+                    ctx.scale(1, 0.55); // Achata a personagem pela metade
+                    pisadaY += (this.height - ajustePe) * 0.45; // Mantém o pé no chão
+                }
+
                 ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height);
                 
                 if (faseAtual === 3) {
@@ -1758,6 +1814,7 @@
                 } 
                 this.vy = this.jumpPower; 
                 this.isJumping = true; 
+                this.isDucking = false;
                 for(let i=0;i<10;i++) {
                     particulas.push(new Particula(this.x + this.width/2, this.y + this.height - (this.height*this.espacoVazio), 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*10+5)); 
                 }
@@ -1776,30 +1833,46 @@
         if (tutorialAtivo) { 
             tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); 
         } 
-        if(gameActive && !isPaused && faseAtual !== 3) { 
-            e.preventDefault(); player.jump(); 
-        } 
+        
+        if (faseAtual === 8) {
+            if (e.type.includes('touch')) {
+                let touchY = e.touches[0].clientY;
+                if (touchY > window.innerHeight * 0.6) {
+                    player.isDucking = true; // Metade inferior abaixa
+                } else {
+                    if (!isPaused) player.jump(); // Metade superior pula
+                }
+            }
+        } else {
+            if(gameActive && !isPaused && faseAtual !== 3) { e.preventDefault(); player.jump(); } 
+        }
         if(faseAtual === 3) e.preventDefault(); 
     }
     
-    function handleUp(e) { isHolding = false; }
+    function handleUp(e) { 
+        isHolding = false; 
+        if (faseAtual === 8 && e.type.includes('touch')) player.isDucking = false;
+    }
     
     window.addEventListener('mousedown', handleDown); 
     window.addEventListener('mouseup', handleUp); 
     window.addEventListener('touchstart', handleDown, {passive: false}); 
     window.addEventListener('touchend', handleUp); 
     window.addEventListener('touchcancel', handleUp); 
+    
     window.addEventListener('keydown', (e) => { 
         if (e.code === 'Space' || e.code === 'ArrowUp') { 
             isHolding = true; 
-            if (tutorialAtivo) { 
-                tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); 
-            } 
+            if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } 
             if(gameActive && !isPaused && faseAtual !== 3) player.jump(); 
         } 
+        if (e.code === 'ArrowDown' && faseAtual === 8 && !player.isJumping) {
+            player.isDucking = true;
+        }
     }); 
     window.addEventListener('keyup', (e) => { 
         if (e.code === 'Space' || e.code === 'ArrowUp') isHolding = false; 
+        if (e.code === 'ArrowDown') player.isDucking = false;
     });
 
     let lastTime = 0;
@@ -1838,25 +1911,33 @@
         let isDarkPhase = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6 || faseAtual === 8);
         let fundoAtual = isDarkPhase ? fundoImg2 : fundoImg1;
         
+        // CORREÇÃO DO SCREEN SHAKE: Desenhar o fundo maior para esconder bordas brancas
         if (fundoAtual.complete && fundoAtual.naturalWidth !== 0) { 
             bgX -= (gameSpeed * 0.04) * timeScale; 
             let bgW = cw; 
             if (bgX <= -bgW * 2) bgX += bgW * 2; 
-            ctx.drawImage(fundoAtual, bgX, 0, bgW, ch); 
+            ctx.drawImage(fundoAtual, bgX - 20, -20, bgW + 40, ch + 40); 
             ctx.save(); 
-            ctx.translate(bgX + bgW * 2, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore(); 
-            ctx.drawImage(fundoAtual, bgX + bgW * 2, 0, bgW, ch); 
+            ctx.translate(bgX + bgW * 2, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, -20, -20, bgW + 40, ch + 40); ctx.restore(); 
+            ctx.drawImage(fundoAtual, bgX + bgW * 2 - 20, -20, bgW + 40, ch + 40); 
             ctx.save(); 
-            ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore();
+            ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, -20, -20, bgW + 40, ch + 40); ctx.restore();
         }
         
         let groundY = ch - alturaChao; 
         if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; 
         if (estradaOffset > 120) estradaOffset -= 120;
         
+        // LÓGICA DO CICLO DIA/NOITE (FASE 8)
+        let isNightTime = false;
+        if (faseAtual === 8) {
+            let cycle = pontuacao % 1000;
+            if (cycle >= 500) isNightTime = true;
+        }
+        
         ctx.save(); 
         let groundGrad = ctx.createLinearGradient(0, groundY, 0, ch);
-        if (isDarkPhase) {
+        if (isDarkPhase || isNightTime) {
             groundGrad.addColorStop(0, '#2a164b'); 
             groundGrad.addColorStop(1, '#0f071c'); 
         } else {
@@ -1864,36 +1945,50 @@
             groundGrad.addColorStop(1, '#8e4a1a'); 
         }
         ctx.fillStyle = groundGrad;
-        ctx.fillRect(0, groundY, cw, alturaChao); 
+        ctx.fillRect(-20, groundY, cw + 40, alturaChao + 20); 
 
-        ctx.fillStyle = isDarkPhase ? '#00FFFF' : '#FFF5EE'; 
+        ctx.fillStyle = (isDarkPhase || isNightTime) ? '#00FFFF' : '#FFF5EE'; 
         ctx.beginPath(); 
-        ctx.moveTo(0, groundY); 
-        for(let i=0; i<=cw; i+=40) { 
+        ctx.moveTo(-20, groundY); 
+        for(let i=-20; i<=cw+20; i+=40) { 
             ctx.lineTo(i, groundY + Math.sin(i*0.05 + bgX*0.1) * 5); 
         } 
-        ctx.lineTo(cw, groundY + 15); 
-        ctx.lineTo(0, groundY + 15); 
+        ctx.lineTo(cw+20, groundY + 15); 
+        ctx.lineTo(-20, groundY + 15); 
         ctx.fill(); 
         
         ctx.fillStyle = 'rgba(0,0,0,0.3)'; 
-        ctx.fillRect(0, groundY + 15, cw, 4); 
+        ctx.fillRect(-20, groundY + 15, cw + 40, 4); 
 
-        ctx.fillStyle = isDarkPhase ? 'rgba(0, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.15)'; 
+        ctx.fillStyle = (isDarkPhase || isNightTime) ? 'rgba(0, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.15)'; 
         for(let x = -150 - estradaOffset; x < cw + 300; x += 120) { 
             ctx.beginPath(); 
             ctx.moveTo(x, groundY + 19); 
             ctx.lineTo(x + 24, groundY + 19); 
-            ctx.lineTo(x - 50, ch); 
-            ctx.lineTo(x - 110, ch); 
+            ctx.lineTo(x - 50, ch+20); 
+            ctx.lineTo(x - 110, ch+20); 
             ctx.fill(); 
         } 
+
+        // Filtro de Transição Dia/Noite Fase 8 (Céu Escuro)
+        if (faseAtual === 8) {
+            let cycle = pontuacao % 1000;
+            let nightAlpha = 0;
+            if (cycle > 450 && cycle < 550) nightAlpha = (cycle - 450) / 100;
+            else if (cycle >= 550 && cycle <= 950) nightAlpha = 1;
+            else if (cycle > 950) nightAlpha = 1 - ((cycle - 950) / 50);
+
+            if (nightAlpha > 0) {
+                ctx.fillStyle = `rgba(10, 10, 30, ${nightAlpha * 0.8})`;
+                ctx.fillRect(-20, -20, cw+40, ch+40);
+            }
+        }
 
         let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch);
         aoGrad.addColorStop(0, 'rgba(0,0,0,0)');
         aoGrad.addColorStop(1, 'rgba(0,0,0,0.6)');
         ctx.fillStyle = aoGrad;
-        ctx.fillRect(0, ch - 60, cw, 60);
+        ctx.fillRect(-20, ch - 60, cw+40, 80);
         ctx.restore();
 
         for (let i = particulas.length - 1; i >= 0; i--) { 
@@ -2038,35 +2133,38 @@
 
         // LÓGICA DA FASE 8: CORRIDA INFINITA TIPO DINO GOOGLE
         if (faseAtual === 8) {
-            // Placar contínuo por tempo/distância
             pontuacao += (gameSpeed * 0.12) * timeScale;
-            let placarTexto = Math.floor(pontuacao).toString().padStart(5, '0');
-            letraUi.innerText = "SCORE: " + placarTexto;
+            let highScore = localStorage.getItem('isadora_hi') || 0;
+            if (pontuacao > highScore) {
+                highScore = Math.floor(pontuacao);
+                localStorage.setItem('isadora_hi', highScore);
+            }
 
-            // Milestones a cada 100 pontos (efeito visual e sonoro clássico)
+            letraUi.innerText = "HI " + highScore.toString().padStart(5, '0') + "   SCORE " + Math.floor(pontuacao).toString().padStart(5, '0');
+
             if (Math.floor(pontuacao / 100) > milestoneAtual && Math.floor(pontuacao) >= 100) {
                 milestoneAtual = Math.floor(pontuacao / 100);
                 AudioManager.playSuccessSFX();
+                letraUi.classList.add('texto-combo-ativo');
                 hudLayer.classList.add('hud-punch');
-                letraUi.style.color = "#00FFFF";
                 setTimeout(() => {
+                    letraUi.classList.remove('texto-combo-ativo');
                     hudLayer.classList.remove('hud-punch');
-                    letraUi.style.color = "#FFF";
-                }, 400);
+                }, 800);
             }
 
             atualizarProgressoHUD();
 
-            // Spawn Dinâmico com base na velocidade
             let spawnRate = Math.max(600, 2000 - ((gameSpeed - baseGameSpeed) * 220)) + Math.random() * 600;
             
             if (itemTimer > spawnRate) {
-                let isObstacle = Math.random() < 0.65; // 65% de chance de Cacto, 35% de chance de Estrela
-                collectibles.push(new Collectible(isObstacle ? 'obstaculo' : 'moeda'));
+                let r = Math.random();
+                if (r < 0.25) collectibles.push(new Collectible('moeda')); // 25% Moeda
+                else if (r < 0.65) collectibles.push(new Collectible('obstaculo_cacto')); // 40% Cacto
+                else collectibles.push(new Collectible('obstaculo_passaro')); // 35% Pássaro
                 itemTimer = 0;
             }
             
-            // Aceleração Progressiva Infinita (Até um limite máximo rápido)
             if (gameSpeed < 18) {
                 gameSpeed += 0.0015 * timeScale;
             }
@@ -2082,15 +2180,15 @@
                 const dx = (player.x + player.width/2) - item.x; 
                 let ajustePe = player.height * player.espacoVazio; 
                 
-                let posYPersonagem = faseAtual === 3 ? (player.y + player.height * 0.3) : (player.y + (player.height - ajustePe)/2);
+                let isDuckingHitbox = player.isDucking && !player.isJumping;
+                let centroPlayerY = isDuckingHitbox ? player.y + player.height * 0.75 : player.y + player.height/2;
+                let posYPersonagem = faseAtual === 3 ? (player.y + player.height * 0.3) : centroPlayerY;
                 
                 if (item.tipo === 'caixa_memoria' || item.tipo === 'caixa_frase') {
                     let isFrase = item.tipo === 'caixa_frase'; 
                     let hitWidth = isFrase ? item.radius * 1.5 : item.radius; 
-                    let baseCaixa = item.y + item.radius; 
-                    let centroPlayer = player.y + player.height/2;
                     
-                    if (player.isJumping && player.vy < 0 && Math.abs(dx) < hitWidth + (player.width * 0.5) && centroPlayer > item.y - item.radius && !item.ignorarColisao && !item.isResolvido) {
+                    if (player.isJumping && player.vy < 0 && Math.abs(dx) < hitWidth + (player.width * 0.5) && centroPlayerY > item.y - item.radius && !item.ignorarColisao && !item.isResolvido) {
                         player.vy = 3; 
                         if(item.isCorrect) {
                             item.isResolvido = true; 
@@ -2138,16 +2236,16 @@
                 
                 const dy = posYPersonagem - item.y; 
 
-                // COLISÃO AAA PERDOADORA (Hitbox Retangular Inteligente)
-                let margemX = faseAtual === 3 ? player.width * 0.8 : player.width * 0.5;
-                let margemY = faseAtual === 3 ? player.height * 0.6 : player.height * 0.45;
+                // COLISÃO AAA PERDOADORA (Ajustada dinamicamente se a Isadora se abaixar)
+                let margemX = faseAtual === 3 ? player.width * 0.8 : player.width * 0.45;
+                let margemY = faseAtual === 3 ? player.height * 0.6 : (isDuckingHitbox ? player.height * 0.25 : player.height * 0.45);
 
                 if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
                     
                     if (item.tipo === 'moeda') {
                         item.isResolvido = true; item.ignorarColisao = true;
                         shakeIntensity = 1;
-                        pontuacao += 50; // Bonus por apanhar a estrela
+                        pontuacao += 50; 
                         AudioManager.playSuccessSFX();
                         textosFlutuantes.push(new TextoFlutuante("+50", item.x, item.y - 40, '#FFF', '#FFD700'));
                         for(let j=0;j<10;j++){
@@ -2155,9 +2253,9 @@
                             particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5));
                         }
                     }
-                    else if (item.tipo === 'obstaculo') {
+                    else if (item.tipo === 'obstaculo_cacto' || item.tipo === 'obstaculo_passaro') {
                         item.isResolvido = true; item.ignorarColisao = true;
-                        pontuacao = Math.max(0, pontuacao - 50); // Penalidade por bater no cacto
+                        pontuacao = Math.max(0, pontuacao - 50); 
                         hitStopTime = 50; shakeIntensity = 12;
                         document.getElementById('damage-overlay').classList.add('damage-active');
                         setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
@@ -2165,8 +2263,8 @@
                         textosFlutuantes.push(new TextoFlutuante("-50", item.x, item.y - 50, '#FFF', '#FF0000'));
                         for(let j=0;j<15;j++){
                             let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4;
-                            // Partículas verdes para o cacto destruído
-                            particulas.push(new Particula(item.x, item.y, '#39ff14', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5));
+                            let colorP = item.tipo === 'obstaculo_cacto' ? '#39ff14' : '#FF4500';
+                            particulas.push(new Particula(item.x, item.y, colorP, Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5));
                         }
                     }
                     else if (item.tipo === 'letra') {
