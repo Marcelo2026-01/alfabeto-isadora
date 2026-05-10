@@ -112,7 +112,7 @@
         /* ========================================================
            TELA DE PAUSE, VITÓRIA & HISTÓRIA (OTIMIZADO MOBILE AAA)
            ======================================================== */
-        #pause-screen, #victory-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
+        #pause-screen, #victory-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box; overflow-y: auto; max-height: 100vh; }
         .btn-pause-ui { background: #FFF; color: #1a1a1a; border: none; border-radius: 8px; padding: clamp(8px, 2vmin, 12px) clamp(20px, 5vmin, 30px); font-size: clamp(16px, 4vmin, 22px); font-weight: bold; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s; text-transform: uppercase; width: clamp(250px, 60vw, 350px); margin: 5px 0; }
         .btn-pause-ui:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.5); } .btn-pause-ui.sair { background: #FF6347; color: #FFF; }
         .trophy-icon { font-size: clamp(60px, 15vw, 100px); margin-bottom: 10px; animation: flutuarLore 3s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); }
@@ -163,7 +163,6 @@
     </style>
 </head>
 <body>
-
 <div id="loading-screen">
     <div class="loader-ring"></div>
     <div class="loader-text">A CARREGAR...</div>
@@ -346,7 +345,7 @@
     let initTimeoutId = null; 
     let hitStopTime = 0; 
     let shakeIntensity = 0;
-    let pontuacao = 0; // NOVA VARIÁVEL: Pontuação Arcade
+    let pontuacao = 0; 
     
     let desafioFase2 = null; 
     let desafioFase4 = null; 
@@ -433,7 +432,6 @@
         } 
     }, 1000);
 
-    // ADICIONADO: NOVO MODO 8 (CORRIDA INFINITA)
     const modosDeJogo = [ 
         { id: 0, nome: "MODO: CAMPANHA (COMPLETA)", icon: "✦", fase: 1, inf: false }, 
         { id: 1, nome: "ATO I - ALFABETO", icon: "∞", fase: 1, inf: true }, 
@@ -511,7 +509,9 @@
         if(paginaAtual < totalPaginas) { paginaAtual++; atualizarLivroUI(); }
     });
 
-    // --- ENGINE DE ÁUDIO AAA ---
+    // ========================================================
+    // ENGINE DE ÁUDIO AAA (CORREÇÃO DE DUPLICIDADE E MUTE)
+    // ========================================================
     if ('speechSynthesis' in window) { 
         window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; 
     }
@@ -525,6 +525,7 @@
         sfxRisada: new Audio('risada.mp3'), 
         musicaAtual: null, 
         ultimaVoz: "", 
+        isMutedGlobal: false,
         
         init() { 
             try { 
@@ -538,28 +539,40 @@
                     this.masterCompressor.release.setValueAtTime(0.25, this.audioCtx.currentTime); 
                     this.masterCompressor.connect(this.audioCtx.destination); 
                 } 
-                if (this.audioCtx.state === 'suspended') this.audioCtx.resume(); 
+                if (this.audioCtx.state === 'suspended' && this.somAtivo) this.audioCtx.resume(); 
                 this.bgmMenu.loop = true; 
                 this.bgmJogo.loop = true; 
             } catch(e) {} 
         },
         
+        stopAll() {
+            if (this.bgmMenu) { this.bgmMenu.pause(); this.bgmMenu.currentTime = 0; }
+            if (this.bgmJogo) { this.bgmJogo.pause(); this.bgmJogo.currentTime = 0; }
+            if (this.sfxRisada) { this.sfxRisada.pause(); this.sfxRisada.currentTime = 0; }
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (this.audioCtx && this.audioCtx.state === 'running') {
+                this.audioCtx.suspend();
+            }
+        },
+
         toggle() { 
             this.somAtivo = !this.somAtivo; 
             localStorage.setItem('isadora_som', this.somAtivo); 
             
             if (!this.somAtivo) { 
-                this.fadeVolume(this.bgmMenu, 0, 100); 
-                this.fadeVolume(this.bgmJogo, 0, 100); 
-                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-                if (this.audioCtx && this.audioCtx.state === 'running') this.audioCtx.suspend();
+                this.isMutedGlobal = true;
+                this.stopAll();
             } else { 
+                this.isMutedGlobal = false;
                 this.init(); 
                 if (this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
-                if(this.musicaAtual) { 
-                    this.musicaAtual.play().catch(()=>{}); 
-                    this.fadeVolume(this.musicaAtual, 0.4, 500); 
-                } 
+                
+                // Retoma a música correspondente à tela
+                if (gameActive) {
+                    this.playBGM('game');
+                } else {
+                    this.playBGM('menu');
+                }
             } 
             this.updateUI(); 
             return this.somAtivo; 
@@ -571,13 +584,18 @@
         },
         
         fadeVolume(audioObj, targetVol, duration) { 
-            if(!audioObj) return; 
+            if(!audioObj || this.isMutedGlobal) return; 
             if(audioObj.fadeReqId) cancelAnimationFrame(audioObj.fadeReqId); 
             
             let startVol = audioObj.volume; 
             let startTime = performance.now(); 
             
             const step = (t) => { 
+                if (this.isMutedGlobal) {
+                    audioObj.volume = 0;
+                    audioObj.pause();
+                    return;
+                }
                 let elapsed = t - startTime; 
                 let progress = Math.min(elapsed / duration, 1); 
                 let ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; 
@@ -598,24 +616,33 @@
         },
         
         playBGM(trackName) { 
+            if (this.isMutedGlobal || !this.somAtivo) return;
+
             let nextTrack = trackName === 'menu' ? this.bgmMenu : this.bgmJogo; 
             let otherTrack = trackName === 'menu' ? this.bgmJogo : this.bgmMenu;
             
-            this.fadeVolume(otherTrack, 0, 300);
+            // Força a parada imediata da outra track para evitar loop duplo
+            otherTrack.pause();
+            otherTrack.currentTime = 0;
             
-            if (this.musicaAtual === nextTrack && nextTrack.volume > 0) return; 
+            if (this.musicaAtual === nextTrack && !nextTrack.paused) return; 
             
             this.musicaAtual = nextTrack; 
             this.musicaAtual.volume = 0; 
-            if (this.somAtivo) { 
-                this.init(); 
-                this.musicaAtual.play().catch(()=>{}); 
-                this.fadeVolume(this.musicaAtual, 0.4, 800); 
-            } 
+            
+            this.init(); 
+            let playPromise = this.musicaAtual.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    this.fadeVolume(this.musicaAtual, 0.4, 800); 
+                }).catch(e => {
+                    console.log("Auto-play blocked");
+                });
+            }
         },
         
         playHoverTick() { 
-            if (!this.somAtivo || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
             try {
                 const now = this.audioCtx.currentTime; 
                 const gain = this.audioCtx.createGain(); 
@@ -632,7 +659,7 @@
         },
         
         playCinematicSweep() { 
-            if (!this.somAtivo || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
             try { 
                 const now = this.audioCtx.currentTime; 
                 const gain = this.audioCtx.createGain(); 
@@ -651,7 +678,7 @@
         },
         
         playMagicSFX() { 
-            if (!this.somAtivo || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
             try {
                 const now = this.audioCtx.currentTime; 
                 const gainL = this.audioCtx.createGain(); 
@@ -693,7 +720,7 @@
         },
         
         playSuccessSFX() { 
-            if (!this.somAtivo || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
             try { 
                 const now = this.audioCtx.currentTime; 
                 const gain = this.audioCtx.createGain(); 
@@ -716,7 +743,7 @@
         },
         
         playErrorSFX() { 
-            if (!this.somAtivo || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
             try {
                 const now = this.audioCtx.currentTime; 
                 const gain = this.audioCtx.createGain(); 
@@ -734,14 +761,14 @@
         },
         
         playRisada() { 
-            if (this.somAtivo && this.sfxRisada) { 
+            if (this.somAtivo && !this.isMutedGlobal && this.sfxRisada) { 
                 this.sfxRisada.currentTime = 0; 
                 this.sfxRisada.play().catch(()=>{}); 
             } 
         },
         
         playVoice(texto) { 
-            if (!this.somAtivo || !('speechSynthesis' in window)) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !('speechSynthesis' in window)) return; 
             try {
                 window.speechSynthesis.cancel(); 
                 this.ultimaVoz = texto; 
@@ -751,13 +778,13 @@
                 let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium'))); 
                 if(vozPremium) utter.voice = vozPremium; 
                 utter.pitch = 1.1; 
-                utter.rate = 0.95; 
+                utter.rate = 0.90; // Um pouco mais lento para ficar claro para crianças
                 window.speechSynthesis.speak(utter); 
             } catch(e) {}
         },
         
         playErrorVoice() { 
-            if (!this.somAtivo || !('speechSynthesis' in window)) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !('speechSynthesis' in window)) return; 
             try {
                 window.speechSynthesis.cancel(); 
                 const frases = ["Ops!", "Quase lá!", "Tente de novo!"]; 
@@ -779,10 +806,13 @@
         },
         
         repeatVoice() { 
-            if (this.ultimaVoz !== "") { this.playVoice(this.ultimaVoz); } 
+            if (this.ultimaVoz !== "" && !this.isMutedGlobal && this.somAtivo) { 
+                this.playVoice(this.ultimaVoz); 
+            } 
         },
         
         playColetaLetra(frase) { 
+            if (this.isMutedGlobal) return;
             this.playMagicSFX(); 
             setTimeout(() => this.playVoice(frase), 150); 
         }
@@ -813,7 +843,7 @@
         else if (faseAtual === 4) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase4 / dadosFase4.length) * 100) + '%'; }
         else if (faseAtual === 5) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase5 / dadosFase5.length) * 100) + '%'; }
         else if (faseAtual === 6) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase6 / dadosFase6.length) * 100) + '%'; }
-        else if (faseAtual === 8) { progressFill.style.width = Math.min(100, ((gameSpeed - baseGameSpeed) / (12 - baseGameSpeed)) * 100) + '%'; } // Velocímetro Arcade
+        else if (faseAtual === 8) { progressFill.style.width = Math.min(100, ((gameSpeed - baseGameSpeed) / (12 - baseGameSpeed)) * 100) + '%'; } 
     }
 
     // --- SISTEMA DE APRESENTAÇÃO CINEMATOGRÁFICA AAA ---
@@ -850,7 +880,7 @@
             metaAlfabeto.innerText = isInfinite ? "ATO 2: ENIGMA" : "DESAFIO DAS LETRAS!"; 
             metaAlfabeto.style.color = "#FF1493"; 
             letraUi.innerText = "Prepare-se..."; 
-            setTimeout(() => AudioManager.playVoice("Desafio das Letras! Escute com atenção."), 800);
+            setTimeout(() => AudioManager.playVoice("Desafio das Letras! Ache a letra correta."), 800);
             mostrarCinematica("ATO II", "O ENIGMA", "#FF1493");
         }
         else if (fase === 3) { 
@@ -863,7 +893,7 @@
             metaAlfabeto.innerText = isInfinite ? "ATO 4: SILABAS" : "CASTELO DAS SILABAS"; 
             metaAlfabeto.style.color = "#00FFFF"; 
             letraUi.innerText = "Junte as silabas..."; 
-            setTimeout(() => AudioManager.playVoice("Castelo das Sílabas! Escute com atenção."), 800);
+            setTimeout(() => AudioManager.playVoice("Castelo das Sílabas! Pegue a sílaba correta."), 800);
             mostrarCinematica("ATO IV", "SÍLABAS MÁGICAS", "#00FFFF");
         }
         else if (fase === 5) { 
@@ -922,6 +952,8 @@
         hudLayer.style.display = 'none'; 
         btnSom.style.display = 'none'; 
         btnPause.style.display = 'none';
+        
+        AudioManager.stopAll();
         AudioManager.playSuccessSFX(); 
         setTimeout(()=> AudioManager.playRisada(), 1000);
         
@@ -1069,7 +1101,10 @@
         hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none';
         ctx.clearRect(0, 0, canvas.width, canvas.height); 
         if (fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height);
+        
+        AudioManager.stopAll(); // Previne loop sobreposto
         AudioManager.playBGM('menu'); 
+        
         startScreen.style.display = 'flex'; 
         setTimeout(() => { startScreen.style.opacity = '1'; }, 50); 
         resetIdleTimer();
@@ -1081,6 +1116,7 @@
         setTimeout(() => { 
             pauseScreen.style.display = 'none'; gameActive = false; 
             if(animationId) { cancelAnimationFrame(animationId); animationId = null; } 
+            AudioManager.stopAll();
             iniciarJogo(); 
         }, 300); 
     });
@@ -1120,8 +1156,7 @@
     
     window.addEventListener('resize', redimensionarCanvas); 
     window.addEventListener('orientationchange', () => { setTimeout(redimensionarCanvas, 100); setTimeout(redimensionarCanvas, 500); });
-
-    if (btnForcarGiro) { 
+if (btnForcarGiro) { 
         btnForcarGiro.addEventListener('click', (e) => { 
             e.preventDefault(); 
             btnForcarGiro.innerText = "VIRE O APARELHO..."; 
@@ -1221,9 +1256,9 @@
             if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') { 
                 this.radius = (cw < 600 || ch < 500) ? 65 * scaleMultiplier : 75 * scaleMultiplier; 
                 this.x = xOverride; 
-                this.y = -this.radius * 2 - (Math.random() * 150); 
-                this.vy = Math.random() * 3; 
-                this.gravity = 0.8 * scaleMultiplier; 
+                this.y = -this.radius * 2 - (Math.random() * 100); 
+                this.vy = 0; 
+                this.gravity = 0.6 * scaleMultiplier; // Física mais suave e controlada
                 this.hasLanded = false; 
             } 
             else if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') { 
@@ -1234,8 +1269,9 @@
             else if (this.tipo === 'estrela_vitoria') { 
                 this.radius = 65 * scaleMultiplier; 
                 this.x = xOverride; 
-                let safeTop = ch * 0.40; 
-                let safeBottom = ch - alturaChao - (120 * scaleMultiplier);
+                // Correção: Mantém a estrela numa área 100% segura e alcançável para o balão
+                let safeTop = ch * 0.25; 
+                let safeBottom = ch - alturaChao - (150 * scaleMultiplier);
                 if (safeTop > safeBottom) safeTop = safeBottom - 20; 
                 this.y = Math.random() * (safeBottom - safeTop) + safeTop; 
             } 
@@ -1263,14 +1299,26 @@
         update(timeScale) { 
             if (this.isResolvido) { 
                 this.resolvidoTempo += 0.02 * timeScale;
-                // Easing elástico AAA (Cubic Out)
-                let t = Math.min(this.resolvidoTempo * 1.5, 1);
-                let easeOut = 1 - Math.pow(1 - t, 3);
-                this.scale = 1 + (1.2 * easeOut);
-                this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.5));
-                this.y -= 2.0 * timeScale * easeOut; 
-                this.x -= (gameSpeed * 0.7) * timeScale;
-                this.spin += 0.05 * timeScale;
+                
+                if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
+                    // Easing pedagógico: Cresce suavemente e fica um pouco transparente (sem sumir instantaneamente)
+                    let t = Math.min(this.resolvidoTempo * 1.2, 1);
+                    let easeOut = 1 - Math.pow(1 - t, 3);
+                    this.scale = 1 + (0.5 * easeOut); // Cresce 50%
+                    this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.2)); 
+                    this.y -= 1.5 * timeScale * easeOut; 
+                    this.x -= (gameSpeed * 0.7) * timeScale; // Acompanha a tela suavemente
+                } else {
+                    // Easing elástico padrão para os outros itens
+                    let t = Math.min(this.resolvidoTempo * 1.5, 1);
+                    let easeOut = 1 - Math.pow(1 - t, 3);
+                    this.scale = 1 + (1.2 * easeOut);
+                    this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.5));
+                    this.y -= 2.0 * timeScale * easeOut; 
+                    this.x -= (gameSpeed * 0.7) * timeScale;
+                    this.spin += 0.05 * timeScale;
+                }
+                
                 if (this.opacity <= 0) this.markedForDeletion = true; 
                 return; 
             }
@@ -1290,30 +1338,30 @@
                 this.y += Math.sin(this.timerOscilacao) * 0.5 * timeScale; 
             }
             else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                this.spin -= 0.08 * timeScale; 
+                // Física aprimorada: Movimento mais previsível e elegante
+                this.spin -= 0.04 * timeScale; 
                 let groundY = window.innerHeight - alturaChao - this.radius - (10 * scaleMultiplier);
-                if (this.y < groundY || this.vy !== 0) {
+                
+                if (this.y < groundY || Math.abs(this.vy) > 0.5) {
                     this.vy += this.gravity * timeScale; 
                     this.y += this.vy * timeScale;
-                    if (!this.hasLanded && Math.random() > 0.4) {
-                        particulas.push(new Particula(this.x + (Math.random()*40-20), this.y - this.radius, 'rgba(0, 255, 255, 0.4)', -gameSpeed * 0.5, -2, Math.random()*8+4));
-                    }
+                    
                     if (this.y >= groundY) { 
                         this.y = groundY; 
-                        this.vy *= -0.35; 
-                        if (Math.abs(this.vy) < 2) { 
+                        this.vy *= -0.25; // Quique bem mais suave
+                        if (Math.abs(this.vy) < 1.5) { 
                             this.vy = 0; 
                             if (!this.hasLanded) { 
                                 this.hasLanded = true; 
-                                for(let i=0; i<8; i++) {
-                                    particulas.push(new Particula(this.x, this.y + this.radius, 'rgba(255, 255, 255, 0.7)', (Math.random()*8)-4, (Math.random()*-4)-1, Math.random()*10+5)); 
+                                for(let i=0; i<5; i++) {
+                                    particulas.push(new Particula(this.x, this.y + this.radius, 'rgba(255, 255, 255, 0.4)', (Math.random()*4)-2, (Math.random()*-2)-1, Math.random()*8+4)); 
                                 }
                             } 
                         } 
                     }
                 }
             }
-            if (this.x < -150) this.markedForDeletion = true; 
+            if (this.x < -200) this.markedForDeletion = true; 
         }
         
         draw(ctx) {
@@ -1322,7 +1370,7 @@
             let scl = scaleMultiplier; 
             let displayTexto = this.info ? (this.info.letra || this.info.s || this.info.palavra || this.info) : '?';
             
-            let bgAlpha = this.isResolvido ? Math.max(0, 1 - (this.resolvidoTempo * 5)) : 1; 
+            let bgAlpha = this.isResolvido ? this.opacity : 1; 
             let textAlpha = this.isResolvido ? this.opacity : 1;
             let currentScale = this.isResolvido ? this.scale : 1;
             
@@ -1509,8 +1557,8 @@
                 ctx.restore();
                 
                 ctx.shadowBlur = 0; 
-                ctx.globalAlpha = textAlpha;
                 ctx.scale(currentScale, currentScale);
+                ctx.globalAlpha = textAlpha; // Fonte suave acompanhando alpha geral
                 ctx.fillStyle = this.ignorarColisao && !this.isResolvido ? '#DDD' : '#FFFFFF'; 
                 ctx.strokeStyle = this.ignorarColisao && !this.isResolvido ? '#222' : '#4B0082'; 
                 ctx.lineWidth = 6 * scl; 
@@ -1553,17 +1601,19 @@
             let groundY = ch - alturaChao - (this.height - ajustePe) + 20;
             
             if (faseAtual === 3) {
-                let thrust = ch < 500 ? 0.6 : 0.8; 
-                let grav = ch < 500 ? 0.2 : 0.3;
+                // Física do Balão AAA aprimorada e fluida
+                let thrust = ch < 500 ? 0.7 : 0.9; 
+                let grav = ch < 500 ? 0.25 : 0.35;
                 if (isHolding) { 
                     this.vy -= thrust * timeScale; 
-                    particulas.push(new Particula(this.x + this.width/2, this.y - this.height*0.6, 'rgba(255, 69, 0, 0.8)', (Math.random()*-1)-0.5, Math.random()*2+1, Math.random()*8+4)); 
+                    if (Math.random() > 0.4) particulas.push(new Particula(this.x + this.width/2, this.y - this.height*0.6, 'rgba(255, 69, 0, 0.8)', (Math.random()*-1)-0.5, Math.random()*2+1, Math.random()*8+4)); 
                 } else { 
                     this.vy += grav * timeScale; 
                 }
-                this.vy *= Math.pow(0.95, timeScale); // Damping AAA para o balão
-                if (this.vy > 8) this.vy = 8; 
-                if (this.vy < -8) this.vy = -8; 
+                
+                this.vy *= Math.pow(0.92, timeScale); // Damping AAA suave
+                if (this.vy > 9) this.vy = 9; 
+                if (this.vy < -9) this.vy = -9; 
                 this.y += this.vy * timeScale;
                 
                 let floorY = ch - alturaChao - this.height + 30; 
@@ -1574,8 +1624,8 @@
                 
                 this.isJumping = true; 
                 this.frameX = 1; 
-                let targetTilt = Math.min(Math.max(this.vy * 0.03, -0.15), 0.15);
-                this.tilt += (targetTilt - this.tilt) * 0.1 * timeScale; // Interpolacao AAA
+                let targetTilt = Math.min(Math.max(this.vy * 0.02, -0.12), 0.12);
+                this.tilt += (targetTilt - this.tilt) * 0.1 * timeScale; 
             } else {
                 this.y += this.vy * timeScale;
                 if (this.y >= groundY) { 
@@ -2004,7 +2054,6 @@
             itemTimer += deltaTime; 
         }
 
-        // LÓGICA DA FASE 8: CORRIDA INFINITA E SPAWN DINÂMICO
         if (faseAtual === 8) {
             pontuacao += (gameSpeed * 0.05) * timeScale;
             metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao);
@@ -2033,7 +2082,8 @@
                 const dx = (player.x + player.width/2) - item.x; 
                 let ajustePe = player.height * player.espacoVazio; 
                 
-                let posYPersonagem = faseAtual === 3 ? (player.y + player.height * 0.3) : (player.y + (player.height - ajustePe)/2);
+                // Correção de colisão precisa AAA
+                let posYPersonagem = faseAtual === 3 ? (player.y - player.height * 0.3) : (player.y + (player.height - ajustePe)/2);
                 
                 if (item.tipo === 'caixa_memoria' || item.tipo === 'caixa_frase') {
                     let isFrase = item.tipo === 'caixa_frase'; 
@@ -2059,7 +2109,6 @@
                             }
                             gerenciarCombo(true); 
                             AudioManager.playSuccessSFX(); 
-                            textosFlutuantes.push(new TextoFlutuante("PERFEITO!", item.x, item.y - 60, '#FFF', isFrase ? '#00FF7F' : '#8A2BE2'));
                             
                             for(let j=0; j<20; j++) {
                                 let angle = Math.random() * Math.PI * 2;
@@ -2076,7 +2125,7 @@
                             setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
                             gerenciarCombo(false); 
                             AudioManager.playErrorSFX(); 
-                            textosFlutuantes.push(new TextoFlutuante("TENTE DE NOVO!", item.x, item.y - 60, '#FFF', '#FF0000'));
+                            
                             for(let j=0; j<15; j++) {
                                 let angle = Math.random() * Math.PI * 2;
                                 particulas.push(new Particula(item.x, item.y, '#555', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*10+5)); 
@@ -2089,9 +2138,9 @@
                 
                 const dy = posYPersonagem - item.y; 
 
-                // COLISÃO AAA PERDOADORA (Hitbox Retangular Inteligente)
-                let margemX = faseAtual === 3 ? player.width * 0.8 : player.width * 0.5;
-                let margemY = faseAtual === 3 ? player.height * 0.6 : player.height * 0.45;
+                // HITBOX AAA OTIMIZADA PARA AS FASES
+                let margemX = faseAtual === 3 ? player.width * 0.9 : player.width * 0.5;
+                let margemY = faseAtual === 3 ? player.height * 0.8 : player.height * 0.45;
 
                 if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
                     
@@ -2140,35 +2189,36 @@
                         if (item.isCorrect) {
                             item.isResolvido = true; 
                             item.ignorarColisao = true;
-                            shakeIntensity = 4; 
+                            shakeIntensity = 2; 
                             if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
                             else { acertosFase4++; desafioFase4 = null; }
                             
                             gerenciarCombo(true); 
                             AudioManager.playSuccessSFX(); 
-                            textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
                             
-                            for(let j=0; j<25; j++) {
+                            // Removemos os textos espalhafatosos e estrelas pesadas por um design mais limpo e focado no aprendizado (Particulas Leves)
+                            for(let j=0; j<12; j++) {
                                 let angle = Math.random() * Math.PI * 2;
-                                let speed = Math.random() * 10 + 4;
-                                particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5));
+                                let speed = Math.random() * 6 + 2;
+                                particulas.push(new Particula(item.x, item.y, 'rgba(255, 255, 255, 0.8)', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5));
                             }
                             collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; }); 
                             atualizarProgressoHUD();
                         } else {
-                            item.markedForDeletion = true; 
-                            hitStopTime = 80; 
-                            shakeIntensity = 12; 
-                            document.getElementById('damage-overlay').classList.add('damage-active'); 
-                            setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
-                            gerenciarCombo(false); 
-                            AudioManager.playErrorSFX(); 
-                            textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
-                            for(let j=0; j<15; j++) {
-                                let angle = Math.random() * Math.PI * 2;
-                                particulas.push(new Particula(item.x, item.y, '#555', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*10+5)); 
+                            if (!item.isResolvido && !item.markedForDeletion) {
+                                item.markedForDeletion = true; 
+                                hitStopTime = 60; 
+                                shakeIntensity = 8; 
+                                document.getElementById('damage-overlay').classList.add('damage-active'); 
+                                setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
+                                gerenciarCombo(false); 
+                                AudioManager.playErrorSFX(); 
+                                for(let j=0; j<10; j++) {
+                                    let angle = Math.random() * Math.PI * 2;
+                                    particulas.push(new Particula(item.x, item.y, 'rgba(100, 100, 100, 0.8)', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*8+4)); 
+                                }
+                                setTimeout(() => { AudioManager.playErrorVoice(); }, 400);
                             }
-                            setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
                         }
                     } 
                     else if (item.tipo === 'estrela_vitoria') {
@@ -2201,7 +2251,7 @@
                         }
                     }
                 } 
-                else if (item.x < -150) { 
+                else if (item.x < -200) { 
                     item.markedForDeletion = true; 
                 }
             }
