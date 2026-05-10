@@ -28,7 +28,7 @@
         canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 
         /* ========================================================
-           TELA DE CARREGAMENTO SUPREMA (LOADER PS5 NEXT-GEN)
+           ECRÃ DE CARREGAMENTO SUPREMO (LOADER PS5 NEXT-GEN)
            ======================================================== */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #050811; background-image: radial-gradient(circle at 20% 30%, rgba(0, 243, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 0, 127, 0.08) 0%, transparent 50%); z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s; will-change: opacity, visibility; }
         .loader-ring { width: clamp(80px, 15vw, 120px); height: clamp(80px, 15vw, 120px); position: relative; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%); animation: pulseCore 2s ease-in-out infinite alternate; }
@@ -110,9 +110,9 @@
         .idle-active { animation: idleChamada 1.5s ease-in-out !important; }
 
         /* ========================================================
-           TELA DE PAUSE, VITÓRIA & HISTÓRIA (OTIMIZADO MOBILE AAA)
+           ECRÃ DE PAUSA, VITÓRIA & HISTÓRIA (OTIMIZADO MOBILE AAA)
            ======================================================== */
-        #pause-screen, #victory-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box; overflow-y: auto; max-height: 100vh; }
+        #pause-screen, #victory-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
         .btn-pause-ui { background: #FFF; color: #1a1a1a; border: none; border-radius: 8px; padding: clamp(8px, 2vmin, 12px) clamp(20px, 5vmin, 30px); font-size: clamp(16px, 4vmin, 22px); font-weight: bold; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s; text-transform: uppercase; width: clamp(250px, 60vw, 350px); margin: 5px 0; }
         .btn-pause-ui:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.5); } .btn-pause-ui.sair { background: #FF6347; color: #FFF; }
         .trophy-icon { font-size: clamp(60px, 15vw, 100px); margin-bottom: 10px; animation: flutuarLore 3s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); }
@@ -155,7 +155,7 @@
             .victory-title { font-size: clamp(25px, 6vw, 40px); margin-bottom: 0; }
             .victory-subtitle { font-size: clamp(12px, 3vw, 16px); margin-bottom: 10px; }
             .credits { font-size: clamp(10px, 2.5vw, 14px); margin-bottom: 10px; line-height: 1.4; }
-            #livro-container { padding: 15px; }
+            #livro-container { padding: 15px; flex-shrink: 1; overflow-y: auto; max-height: 85vh;}
             .foto-casa-livro { height: clamp(100px, 25vmin, 150px); margin-bottom: 10px; }
             #modal-historia { padding: 10px; }
             #btn-fechar-historia { top: 10px; right: 10px; width: 40px; height: 40px; }
@@ -163,10 +163,11 @@
     </style>
 </head>
 <body>
+
 <div id="loading-screen">
     <div class="loader-ring"></div>
     <div class="loader-text">A CARREGAR...</div>
-    <div class="loader-tip" id="loader-tip-text">DICA: Use fones de ouvido para uma experiência AAA!</div>
+    <div class="loader-tip" id="loader-tip-text">DICA: Use auscultadores para uma experiência AAA!</div>
 </div>
 
 <div id="flash-overlay"></div>
@@ -180,9 +181,9 @@
 <div id="game-container">
     <div id="aviso-rotacao">
         <div class="icone-celular">🔄</div>
-        <h2>Vire o Celular</h2>
-        <p>Para brincar, o celular precisa estar deitado.</p>
-        <button id="btn-forcar-giro" class="btn-pause-ui">GIRAR TELA</button>
+        <h2>Vire o Telemóvel</h2>
+        <p>Para brincar, o telemóvel precisa estar deitado.</p>
+        <button id="btn-forcar-giro" class="btn-pause-ui">GIRAR ECRÃ</button>
     </div>
 
     <button id="btn-som" class="btn-corner" style="display: none;">♪ SOM</button>
@@ -510,7 +511,7 @@
     });
 
     // ========================================================
-    // ENGINE DE ÁUDIO AAA (CORREÇÃO DE DUPLICIDADE E MUTE)
+    // ENGINE DE ÁUDIO AAA (100% BLINDADA)
     // ========================================================
     if ('speechSynthesis' in window) { 
         window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; 
@@ -539,13 +540,16 @@
                     this.masterCompressor.release.setValueAtTime(0.25, this.audioCtx.currentTime); 
                     this.masterCompressor.connect(this.audioCtx.destination); 
                 } 
-                if (this.audioCtx.state === 'suspended' && this.somAtivo) this.audioCtx.resume(); 
+                if (this.audioCtx.state === 'suspended' && this.somAtivo && !this.isMutedGlobal) {
+                    this.audioCtx.resume(); 
+                }
                 this.bgmMenu.loop = true; 
                 this.bgmJogo.loop = true; 
             } catch(e) {} 
         },
         
         stopAll() {
+            this.isMutedGlobal = true; // Lock the engine
             if (this.bgmMenu) { this.bgmMenu.pause(); this.bgmMenu.currentTime = 0; }
             if (this.bgmJogo) { this.bgmJogo.pause(); this.bgmJogo.currentTime = 0; }
             if (this.sfxRisada) { this.sfxRisada.pause(); this.sfxRisada.currentTime = 0; }
@@ -560,14 +564,12 @@
             localStorage.setItem('isadora_som', this.somAtivo); 
             
             if (!this.somAtivo) { 
-                this.isMutedGlobal = true;
                 this.stopAll();
             } else { 
                 this.isMutedGlobal = false;
                 this.init(); 
                 if (this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
                 
-                // Retoma a música correspondente à tela
                 if (gameActive) {
                     this.playBGM('game');
                 } else {
@@ -584,14 +586,17 @@
         },
         
         fadeVolume(audioObj, targetVol, duration) { 
-            if(!audioObj || this.isMutedGlobal) return; 
+            if(!audioObj || this.isMutedGlobal || !this.somAtivo) {
+                if(audioObj) { audioObj.pause(); audioObj.volume = 0; }
+                return;
+            } 
             if(audioObj.fadeReqId) cancelAnimationFrame(audioObj.fadeReqId); 
             
             let startVol = audioObj.volume; 
             let startTime = performance.now(); 
             
             const step = (t) => { 
-                if (this.isMutedGlobal) {
+                if (this.isMutedGlobal || !this.somAtivo) {
                     audioObj.volume = 0;
                     audioObj.pause();
                     return;
@@ -621,9 +626,11 @@
             let nextTrack = trackName === 'menu' ? this.bgmMenu : this.bgmJogo; 
             let otherTrack = trackName === 'menu' ? this.bgmJogo : this.bgmMenu;
             
-            // Força a parada imediata da outra track para evitar loop duplo
-            otherTrack.pause();
-            otherTrack.currentTime = 0;
+            if (otherTrack) {
+                if(otherTrack.fadeReqId) cancelAnimationFrame(otherTrack.fadeReqId);
+                otherTrack.pause();
+                otherTrack.currentTime = 0;
+            }
             
             if (this.musicaAtual === nextTrack && !nextTrack.paused) return; 
             
@@ -636,13 +643,13 @@
                 playPromise.then(() => {
                     this.fadeVolume(this.musicaAtual, 0.4, 800); 
                 }).catch(e => {
-                    console.log("Auto-play blocked");
+                    console.log("Auto-play blocked pending interaction.");
                 });
             }
         },
         
         playHoverTick() { 
-            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try {
                 const now = this.audioCtx.currentTime; 
                 const gain = this.audioCtx.createGain(); 
@@ -659,7 +666,7 @@
         },
         
         playCinematicSweep() { 
-            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try { 
                 const now = this.audioCtx.currentTime; 
                 const gain = this.audioCtx.createGain(); 
@@ -678,7 +685,7 @@
         },
         
         playMagicSFX() { 
-            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try {
                 const now = this.audioCtx.currentTime; 
                 const gainL = this.audioCtx.createGain(); 
@@ -720,7 +727,7 @@
         },
         
         playSuccessSFX() { 
-            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try { 
                 const now = this.audioCtx.currentTime; 
                 const gain = this.audioCtx.createGain(); 
@@ -743,7 +750,7 @@
         },
         
         playErrorSFX() { 
-            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx) return; 
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try {
                 const now = this.audioCtx.currentTime; 
                 const gain = this.audioCtx.createGain(); 
@@ -763,7 +770,10 @@
         playRisada() { 
             if (this.somAtivo && !this.isMutedGlobal && this.sfxRisada) { 
                 this.sfxRisada.currentTime = 0; 
-                this.sfxRisada.play().catch(()=>{}); 
+                let playPromise = this.sfxRisada.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => console.log("SFX blocked"));
+                }
             } 
         },
         
@@ -778,7 +788,7 @@
                 let vozPremium = vozes.find(v => v.lang.includes('pt-BR') && (v.name.includes('Google') || v.name.includes('Luciana') || v.name.includes('Premium'))); 
                 if(vozPremium) utter.voice = vozPremium; 
                 utter.pitch = 1.1; 
-                utter.rate = 0.90; // Um pouco mais lento para ficar claro para crianças
+                utter.rate = 0.85; 
                 window.speechSynthesis.speak(utter); 
             } catch(e) {}
         },
@@ -798,7 +808,7 @@
                 if(this.ultimaVoz) { 
                     let utterRegra = new SpeechSynthesisUtterance(this.ultimaVoz); 
                     utterRegra.lang = 'pt-BR'; 
-                    utterRegra.rate = 0.9; 
+                    utterRegra.rate = 0.85; 
                     if(vozPremium) utterRegra.voice = vozPremium; 
                     window.speechSynthesis.speak(utterRegra); 
                 } 
@@ -812,7 +822,7 @@
         },
         
         playColetaLetra(frase) { 
-            if (this.isMutedGlobal) return;
+            if (this.isMutedGlobal || !this.somAtivo) return;
             this.playMagicSFX(); 
             setTimeout(() => this.playVoice(frase), 150); 
         }
@@ -833,9 +843,13 @@
     });
     
     document.body.addEventListener('click', function initMenuMusic() { 
-        AudioManager.playBGM('menu'); 
+        if(!AudioManager.isMutedGlobal) AudioManager.playBGM('menu'); 
         document.body.removeEventListener('click', initMenuMusic); 
     }, { once: true });
+
+    // FIX: Prevenir softlock se o jogo for minimizado no telemóvel enquanto salta/balão
+    window.addEventListener('blur', () => { isHolding = false; });
+    window.addEventListener('visibilitychange', () => { if(document.hidden) isHolding = false; });
 
     function atualizarProgressoHUD() {
         if (faseAtual === 1) { progressFill.style.width = isInfinite ? '100%' : ((letrasColetadas.length / letrasParaVencerFase1) * 100) + '%'; }
@@ -954,6 +968,7 @@
         btnPause.style.display = 'none';
         
         AudioManager.stopAll();
+        AudioManager.isMutedGlobal = false; // Permite o som de vitoria tocar
         AudioManager.playSuccessSFX(); 
         setTimeout(()=> AudioManager.playRisada(), 1000);
         
@@ -979,9 +994,10 @@
     function iniciarJogo() {
         if (gameActive) return;
         try { 
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(()=>{}); 
-            }
+            // Webkit suportado para Safari/iOS
+            let docEl = document.documentElement;
+            let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; 
+            if (requestFS) { requestFS.call(docEl).catch(()=>{}); }
         } catch(e){}
         
         if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
@@ -1102,8 +1118,9 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height); 
         if (fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height);
         
-        AudioManager.stopAll(); // Previne loop sobreposto
-        AudioManager.playBGM('menu'); 
+        AudioManager.stopAll();
+        AudioManager.isMutedGlobal = false; // Restaura áudio ao voltar
+        if(AudioManager.somAtivo) AudioManager.playBGM('menu'); 
         
         startScreen.style.display = 'flex'; 
         setTimeout(() => { startScreen.style.opacity = '1'; }, 50); 
@@ -1117,6 +1134,7 @@
             pauseScreen.style.display = 'none'; gameActive = false; 
             if(animationId) { cancelAnimationFrame(animationId); animationId = null; } 
             AudioManager.stopAll();
+            AudioManager.isMutedGlobal = false;
             iniciarJogo(); 
         }, 300); 
     });
@@ -1156,7 +1174,8 @@
     
     window.addEventListener('resize', redimensionarCanvas); 
     window.addEventListener('orientationchange', () => { setTimeout(redimensionarCanvas, 100); setTimeout(redimensionarCanvas, 500); });
-if (btnForcarGiro) { 
+
+    if (btnForcarGiro) { 
         btnForcarGiro.addEventListener('click', (e) => { 
             e.preventDefault(); 
             btnForcarGiro.innerText = "VIRE O APARELHO..."; 
@@ -1256,9 +1275,9 @@ if (btnForcarGiro) {
             if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') { 
                 this.radius = (cw < 600 || ch < 500) ? 65 * scaleMultiplier : 75 * scaleMultiplier; 
                 this.x = xOverride; 
-                this.y = -this.radius * 2 - (Math.random() * 100); 
-                this.vy = 0; 
-                this.gravity = 0.6 * scaleMultiplier; // Física mais suave e controlada
+                this.y = -this.radius * 2 - (Math.random() * 150); 
+                this.vy = Math.random() * 3; 
+                this.gravity = 0.8 * scaleMultiplier; 
                 this.hasLanded = false; 
             } 
             else if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') { 
@@ -1269,9 +1288,8 @@ if (btnForcarGiro) {
             else if (this.tipo === 'estrela_vitoria') { 
                 this.radius = 65 * scaleMultiplier; 
                 this.x = xOverride; 
-                // Correção: Mantém a estrela numa área 100% segura e alcançável para o balão
-                let safeTop = ch * 0.25; 
-                let safeBottom = ch - alturaChao - (150 * scaleMultiplier);
+                let safeTop = ch * 0.15; 
+                let safeBottom = ch - alturaChao - (this.radius * 2.5);
                 if (safeTop > safeBottom) safeTop = safeBottom - 20; 
                 this.y = Math.random() * (safeBottom - safeTop) + safeTop; 
             } 
@@ -1299,17 +1317,15 @@ if (btnForcarGiro) {
         update(timeScale) { 
             if (this.isResolvido) { 
                 this.resolvidoTempo += 0.02 * timeScale;
-                
+                // Easing elástico AAA 
                 if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                    // Easing pedagógico: Cresce suavemente e fica um pouco transparente (sem sumir instantaneamente)
-                    let t = Math.min(this.resolvidoTempo * 1.2, 1);
-                    let easeOut = 1 - Math.pow(1 - t, 3);
-                    this.scale = 1 + (0.5 * easeOut); // Cresce 50%
+                    let t = Math.min(this.resolvidoTempo * 1.5, 1);
+                    let easeOut = 1 - Math.pow(1 - t, 4);
+                    this.scale = 1 + (0.8 * easeOut); 
                     this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.2)); 
-                    this.y -= 1.5 * timeScale * easeOut; 
-                    this.x -= (gameSpeed * 0.7) * timeScale; // Acompanha a tela suavemente
+                    this.y -= 1.0 * timeScale * easeOut; 
+                    this.x -= (gameSpeed * 0.3) * timeScale; 
                 } else {
-                    // Easing elástico padrão para os outros itens
                     let t = Math.min(this.resolvidoTempo * 1.5, 1);
                     let easeOut = 1 - Math.pow(1 - t, 3);
                     this.scale = 1 + (1.2 * easeOut);
@@ -1338,30 +1354,30 @@ if (btnForcarGiro) {
                 this.y += Math.sin(this.timerOscilacao) * 0.5 * timeScale; 
             }
             else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                // Física aprimorada: Movimento mais previsível e elegante
-                this.spin -= 0.04 * timeScale; 
+                this.spin -= 0.08 * timeScale; 
                 let groundY = window.innerHeight - alturaChao - this.radius - (10 * scaleMultiplier);
-                
-                if (this.y < groundY || Math.abs(this.vy) > 0.5) {
+                if (this.y < groundY || this.vy !== 0) {
                     this.vy += this.gravity * timeScale; 
                     this.y += this.vy * timeScale;
-                    
+                    if (!this.hasLanded && Math.random() > 0.4) {
+                        particulas.push(new Particula(this.x + (Math.random()*40-20), this.y - this.radius, 'rgba(0, 255, 255, 0.4)', -gameSpeed * 0.5, -2, Math.random()*8+4));
+                    }
                     if (this.y >= groundY) { 
                         this.y = groundY; 
-                        this.vy *= -0.25; // Quique bem mais suave
-                        if (Math.abs(this.vy) < 1.5) { 
+                        this.vy *= -0.35; 
+                        if (Math.abs(this.vy) < 2) { 
                             this.vy = 0; 
                             if (!this.hasLanded) { 
                                 this.hasLanded = true; 
-                                for(let i=0; i<5; i++) {
-                                    particulas.push(new Particula(this.x, this.y + this.radius, 'rgba(255, 255, 255, 0.4)', (Math.random()*4)-2, (Math.random()*-2)-1, Math.random()*8+4)); 
+                                for(let i=0; i<8; i++) {
+                                    particulas.push(new Particula(this.x, this.y + this.radius, 'rgba(255, 255, 255, 0.7)', (Math.random()*8)-4, (Math.random()*-4)-1, Math.random()*10+5)); 
                                 }
                             } 
                         } 
                     }
                 }
             }
-            if (this.x < -200) this.markedForDeletion = true; 
+            if (this.x < -150) this.markedForDeletion = true; 
         }
         
         draw(ctx) {
@@ -1370,7 +1386,7 @@ if (btnForcarGiro) {
             let scl = scaleMultiplier; 
             let displayTexto = this.info ? (this.info.letra || this.info.s || this.info.palavra || this.info) : '?';
             
-            let bgAlpha = this.isResolvido ? this.opacity : 1; 
+            let bgAlpha = this.isResolvido ? Math.max(0, 1 - (this.resolvidoTempo * 5)) : 1; 
             let textAlpha = this.isResolvido ? this.opacity : 1;
             let currentScale = this.isResolvido ? this.scale : 1;
             
@@ -1558,7 +1574,7 @@ if (btnForcarGiro) {
                 
                 ctx.shadowBlur = 0; 
                 ctx.scale(currentScale, currentScale);
-                ctx.globalAlpha = textAlpha; // Fonte suave acompanhando alpha geral
+                ctx.globalAlpha = textAlpha; 
                 ctx.fillStyle = this.ignorarColisao && !this.isResolvido ? '#DDD' : '#FFFFFF'; 
                 ctx.strokeStyle = this.ignorarColisao && !this.isResolvido ? '#222' : '#4B0082'; 
                 ctx.lineWidth = 6 * scl; 
@@ -1601,9 +1617,9 @@ if (btnForcarGiro) {
             let groundY = ch - alturaChao - (this.height - ajustePe) + 20;
             
             if (faseAtual === 3) {
-                // Física do Balão AAA aprimorada e fluida
-                let thrust = ch < 500 ? 0.7 : 0.9; 
-                let grav = ch < 500 ? 0.25 : 0.35;
+                // AAA Baloon Physics
+                let thrust = ch < 500 ? 0.65 : 0.85; 
+                let grav = ch < 500 ? 0.15 : 0.25;
                 if (isHolding) { 
                     this.vy -= thrust * timeScale; 
                     if (Math.random() > 0.4) particulas.push(new Particula(this.x + this.width/2, this.y - this.height*0.6, 'rgba(255, 69, 0, 0.8)', (Math.random()*-1)-0.5, Math.random()*2+1, Math.random()*8+4)); 
@@ -1611,7 +1627,7 @@ if (btnForcarGiro) {
                     this.vy += grav * timeScale; 
                 }
                 
-                this.vy *= Math.pow(0.92, timeScale); // Damping AAA suave
+                this.vy *= Math.pow(0.94, timeScale); 
                 if (this.vy > 9) this.vy = 9; 
                 if (this.vy < -9) this.vy = -9; 
                 this.y += this.vy * timeScale;
@@ -1659,115 +1675,135 @@ if (btnForcarGiro) {
         }
         
         draw(ctx) {
+            let rW, rH;
+            let ajustePe = 0;
+            let groundY = window.innerHeight - alturaChao + 20;
+
             if (playerSprite.complete && playerSprite.naturalWidth > 0) {
-                let rW = playerSprite.naturalWidth / 3; 
-                let rH = playerSprite.naturalHeight; 
+                rW = playerSprite.naturalWidth / 3; 
+                rH = playerSprite.naturalHeight; 
                 this.width = rW * this.scale; 
                 this.height = rH * this.scale; 
-                let ajustePe = this.height * this.espacoVazio; 
-                let groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; 
+                ajustePe = this.height * this.espacoVazio; 
+                groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; 
                 
                 if (!this.isJumping && this.y > groundY && faseAtual !== 3) this.y = groundY; 
-                
-                let alturaDoChao = groundY - this.y; 
-                let tamanhoSombra = Math.max(10 * scaleMultiplier, (this.width/3) - (alturaDoChao * 0.15)); 
-                let opSombra = Math.max(0.1, 0.4 - (alturaDoChao * 0.002)); 
-                
-                ctx.fillStyle = `rgba(0,0,0,${opSombra})`; 
-                ctx.beginPath(); 
-                ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); 
-                ctx.fill(); 
-                
-                ctx.save(); 
-                ctx.translate(this.x + this.width/2, this.y + this.height - ajustePe); 
-                ctx.rotate(this.tilt);
-                let scl = scaleMultiplier;
-                
-                if (faseAtual === 3) {
-                    let bW = this.width * 1.2; let bH = this.height * 1.2; let envY = -this.height * 1.0; 
-                    let basketW = this.width * 1.2; let basketH = this.height * 0.35; 
-                    let basketX = -basketW / 2; let basketY = -this.height * 0.3;
-                    
-                    if(!this.gradCache) { 
-                        this.gradCache = ctx.createLinearGradient(0, basketY, 0, basketY + basketH); 
-                        this.gradCache.addColorStop(0, '#C17D3F'); 
-                        this.gradCache.addColorStop(0.5, '#8B5A2B'); 
-                        this.gradCache.addColorStop(1, '#5C3A21'); 
-                    }
-                    
-                    ctx.fillStyle = '#2A1608'; 
-                    ctx.beginPath(); 
-                    ctx.rect(basketX, basketY, basketW, basketH); 
-                    ctx.fill();
-                    
-                    ctx.strokeStyle = '#B8860B'; ctx.lineWidth = 2*scl; 
-                    ctx.beginPath(); ctx.moveTo(basketX + 10*scl, basketY); ctx.lineTo(-bW*0.4, envY + bH/2 - 10*scl); ctx.stroke(); 
-                    ctx.beginPath(); ctx.moveTo(basketX + basketW - 10*scl, basketY); ctx.lineTo(bW*0.4, envY + bH/2 - 10*scl); ctx.stroke();
-                    
-                    ctx.shadowColor = 'rgba(255, 105, 180, 0.5)'; ctx.shadowBlur = 15*scl; 
-                    let gradBalao = ctx.createRadialGradient(0, envY - bH/6, 10*scl, 0, envY, bW); 
-                    gradBalao.addColorStop(0, 'rgba(255, 230, 150, 0.95)'); 
-                    gradBalao.addColorStop(0.4, 'rgba(255, 105, 180, 0.9)'); 
-                    gradBalao.addColorStop(0.8, 'rgba(138, 43, 226, 0.85)'); 
-                    gradBalao.addColorStop(1, 'rgba(75, 0, 130, 0.8)'); 
-                    
-                    ctx.beginPath(); 
-                    ctx.moveTo(0, envY + bH/2); 
-                    ctx.quadraticCurveTo(bW*0.4, envY + bH/4, bW*0.7, envY - bH/6); 
-                    ctx.arc(0, envY - bH/6, bW*0.7, 0, Math.PI, true); 
-                    ctx.quadraticCurveTo(-bW*0.4, envY + bH/4, 0, envY + bH/2); 
-                    ctx.fillStyle = gradBalao; 
-                    ctx.fill(); 
-                    ctx.shadowBlur = 0;
-                    
-                    ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'; ctx.lineWidth = 2*scl; 
-                    for (let i = -2; i <= 2; i++) { 
-                        ctx.beginPath(); ctx.moveTo(0, envY + bH/2); 
-                        ctx.quadraticCurveTo(bW*0.4*i, envY, 0, envY - bH/6 - bW*0.7); 
-                        ctx.stroke(); 
-                    } 
-                    ctx.beginPath(); ctx.ellipse(-bW/4, envY - bH/6, bW/5, bH/3, Math.PI/6, 0, Math.PI*2); 
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'; ctx.fill(); ctx.restore();
-                    
-                    ctx.fillStyle = '#444'; ctx.fillRect(-12*scl, envY + bH/2 - 5*scl, 24*scl, 10*scl);
-                    
-                    if (isHolding) { 
-                        ctx.shadowColor = '#FF4500'; ctx.shadowBlur = 20*scl; 
-                        ctx.fillStyle = '#FFA500'; 
-                        ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 15*scl + Math.random()*5*scl, 0, Math.PI*2); ctx.fill(); 
-                        ctx.fillStyle = '#FFFF00'; 
-                        ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 8*scl + Math.random()*4*scl, 0, Math.PI*2); ctx.fill(); 
-                        ctx.shadowBlur = 0; 
-                    }
-                }
-                
-                let pisadaY = (!this.isJumping && faseAtual !== 3 && this.frameX === 1) ? (6 * scl) : 0;
-                ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height);
-                
-                if (faseAtual === 3) {
-                    let bW = this.width * 1.2; let basketW = this.width * 1.2; let basketH = this.height * 0.35; let basketX = -basketW / 2; let basketY = -this.height * 0.3;
-                    ctx.fillStyle = this.gradCache; 
-                    ctx.beginPath(); let r = 8*scl; 
-                    ctx.moveTo(basketX + r, basketY); 
-                    ctx.lineTo(basketX + basketW - r, basketY); 
-                    ctx.quadraticCurveTo(basketX + basketW, basketY, basketX + basketW, basketY + r); 
-                    ctx.lineTo(basketX + basketW, basketY + basketH - r); 
-                    ctx.quadraticCurveTo(basketX + basketW, basketY + basketH, basketX + basketW - r, basketY + basketH); 
-                    ctx.lineTo(basketX + r, basketY + basketH); 
-                    ctx.quadraticCurveTo(basketX, basketY + basketH, basketX, basketY + basketH - r); 
-                    ctx.lineTo(basketX, basketY + r); 
-                    ctx.quadraticCurveTo(basketX, basketY, basketX + r, basketY); 
-                    ctx.fill();
-                    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2*scl; 
-                    for(let i=1; i<4; i++) { 
-                        ctx.beginPath(); ctx.moveTo(basketX, basketY + (basketH/4)*i); ctx.lineTo(basketX+basketW, basketY + (basketH/4)*i); ctx.stroke(); 
-                    }
-                }
-                ctx.restore();
+            } else {
+                // FALLBACK DE SEGURANÇA: Se a imagem falhar o carregamento, a criança ainda consegue jogar
+                this.width = 100 * this.scale;
+                this.height = 150 * this.scale;
+                ajustePe = 10 * this.scale;
+                groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20;
+                if (!this.isJumping && this.y > groundY && faseAtual !== 3) this.y = groundY;
             }
+
+            let alturaDoChao = groundY - this.y; 
+            let tamanhoSombra = Math.max(10 * scaleMultiplier, (this.width/3) - (alturaDoChao * 0.15)); 
+            let opSombra = Math.max(0.1, 0.4 - (alturaDoChao * 0.002)); 
+            
+            ctx.fillStyle = `rgba(0,0,0,${opSombra})`; 
+            ctx.beginPath(); 
+            ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); 
+            ctx.fill(); 
+            
+            ctx.save(); 
+            ctx.translate(this.x + this.width/2, this.y + this.height - ajustePe); 
+            ctx.rotate(this.tilt);
+            let scl = scaleMultiplier;
+            
+            if (faseAtual === 3) {
+                let bW = this.width * 1.2; let bH = this.height * 1.2; let envY = -this.height * 1.0; 
+                let basketW = this.width * 1.2; let basketH = this.height * 0.35; 
+                let basketX = -basketW / 2; let basketY = -this.height * 0.3;
+                
+                if(!this.gradCache) { 
+                    this.gradCache = ctx.createLinearGradient(0, basketY, 0, basketY + basketH); 
+                    this.gradCache.addColorStop(0, '#C17D3F'); 
+                    this.gradCache.addColorStop(0.5, '#8B5A2B'); 
+                    this.gradCache.addColorStop(1, '#5C3A21'); 
+                }
+                
+                ctx.fillStyle = '#2A1608'; 
+                ctx.beginPath(); 
+                ctx.rect(basketX, basketY, basketW, basketH); 
+                ctx.fill();
+                
+                ctx.strokeStyle = '#B8860B'; ctx.lineWidth = 2*scl; 
+                ctx.beginPath(); ctx.moveTo(basketX + 10*scl, basketY); ctx.lineTo(-bW*0.4, envY + bH/2 - 10*scl); ctx.stroke(); 
+                ctx.beginPath(); ctx.moveTo(basketX + basketW - 10*scl, basketY); ctx.lineTo(bW*0.4, envY + bH/2 - 10*scl); ctx.stroke();
+                
+                ctx.shadowColor = 'rgba(255, 105, 180, 0.5)'; ctx.shadowBlur = 15*scl; 
+                let gradBalao = ctx.createRadialGradient(0, envY - bH/6, 10*scl, 0, envY, bW); 
+                gradBalao.addColorStop(0, 'rgba(255, 230, 150, 0.95)'); 
+                gradBalao.addColorStop(0.4, 'rgba(255, 105, 180, 0.9)'); 
+                gradBalao.addColorStop(0.8, 'rgba(138, 43, 226, 0.85)'); 
+                gradBalao.addColorStop(1, 'rgba(75, 0, 130, 0.8)'); 
+                
+                ctx.beginPath(); 
+                ctx.moveTo(0, envY + bH/2); 
+                ctx.quadraticCurveTo(bW*0.4, envY + bH/4, bW*0.7, envY - bH/6); 
+                ctx.arc(0, envY - bH/6, bW*0.7, 0, Math.PI, true); 
+                ctx.quadraticCurveTo(-bW*0.4, envY + bH/4, 0, envY + bH/2); 
+                ctx.fillStyle = gradBalao; 
+                ctx.fill(); 
+                ctx.shadowBlur = 0;
+                
+                ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'; ctx.lineWidth = 2*scl; 
+                for (let i = -2; i <= 2; i++) { 
+                    ctx.beginPath(); ctx.moveTo(0, envY + bH/2); 
+                    ctx.quadraticCurveTo(bW*0.4*i, envY, 0, envY - bH/6 - bW*0.7); 
+                    ctx.stroke(); 
+                } 
+                ctx.beginPath(); ctx.ellipse(-bW/4, envY - bH/6, bW/5, bH/3, Math.PI/6, 0, Math.PI*2); 
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'; ctx.fill(); ctx.restore();
+                
+                ctx.fillStyle = '#444'; ctx.fillRect(-12*scl, envY + bH/2 - 5*scl, 24*scl, 10*scl);
+                
+                if (isHolding) { 
+                    ctx.shadowColor = '#FF4500'; ctx.shadowBlur = 20*scl; 
+                    ctx.fillStyle = '#FFA500'; 
+                    ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 15*scl + Math.random()*5*scl, 0, Math.PI*2); ctx.fill(); 
+                    ctx.fillStyle = '#FFFF00'; 
+                    ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 8*scl + Math.random()*4*scl, 0, Math.PI*2); ctx.fill(); 
+                    ctx.shadowBlur = 0; 
+                }
+            }
+            
+            let pisadaY = (!this.isJumping && faseAtual !== 3 && this.frameX === 1) ? (6 * scl) : 0;
+            
+            if (playerSprite.complete && playerSprite.naturalWidth > 0) {
+                ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height);
+            } else {
+                ctx.fillStyle = '#FF69B4';
+                ctx.beginPath();
+                ctx.roundRect(-this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height * 0.9, 15);
+                ctx.fill();
+            }
+            
+            if (faseAtual === 3) {
+                let bW = this.width * 1.2; let basketW = this.width * 1.2; let basketH = this.height * 0.35; let basketX = -basketW / 2; let basketY = -this.height * 0.3;
+                ctx.fillStyle = this.gradCache; 
+                ctx.beginPath(); let r = 8*scl; 
+                ctx.moveTo(basketX + r, basketY); 
+                ctx.lineTo(basketX + basketW - r, basketY); 
+                ctx.quadraticCurveTo(basketX + basketW, basketY, basketX + basketW, basketY + r); 
+                ctx.lineTo(basketX + basketW, basketY + basketH - r); 
+                ctx.quadraticCurveTo(basketX + basketW, basketY + basketH, basketX + basketW - r, basketY + basketH); 
+                ctx.lineTo(basketX + r, basketY + basketH); 
+                ctx.quadraticCurveTo(basketX, basketY + basketH, basketX, basketY + basketH - r); 
+                ctx.lineTo(basketX, basketY + r); 
+                ctx.quadraticCurveTo(basketX, basketY, basketX + r, basketY); 
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2*scl; 
+                for(let i=1; i<4; i++) { 
+                    ctx.beginPath(); ctx.moveTo(basketX, basketY + (basketH/4)*i); ctx.lineTo(basketX+basketW, basketY + (basketH/4)*i); ctx.stroke(); 
+                }
+            }
+            ctx.restore();
         }
         
         jump() { 
+            // CORREÇÃO CRÍTICA APLICADA: Remover bloqueio de salto do sistema de áudio
             if (!this.isJumping && faseAtual !== 3) { 
                 if (tutorialAtivo) { 
                     tutorialAtivo = false; 
@@ -2052,6 +2088,11 @@ if (btnForcarGiro) {
             }
         } else { 
             itemTimer += deltaTime; 
+            // CORREÇÃO: Lembrete de voz se a criança demorar mais de 8 segundos (8000ms) numa escolha
+            if (itemTimer > 8000 && (faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) {
+                AudioManager.repeatVoice();
+                itemTimer = 0; // reseta para não repetir o som sem parar
+            }
         }
 
         if (faseAtual === 8) {
@@ -2082,8 +2123,13 @@ if (btnForcarGiro) {
                 const dx = (player.x + player.width/2) - item.x; 
                 let ajustePe = player.height * player.espacoVazio; 
                 
-                // Correção de colisão precisa AAA
-                let posYPersonagem = faseAtual === 3 ? (player.y - player.height * 0.3) : (player.y + (player.height - ajustePe)/2);
+                // CORREÇÃO: Hitbox dinâmica com precisão. O balão precisa ser apanhado mais acima.
+                let posYPersonagem;
+                if (faseAtual === 3) {
+                    posYPersonagem = player.y - player.height * 0.7; // Alinhamento exato com o visual do balão
+                } else {
+                    posYPersonagem = player.y + (player.height - ajustePe)/2;
+                }
                 
                 if (item.tipo === 'caixa_memoria' || item.tipo === 'caixa_frase') {
                     let isFrase = item.tipo === 'caixa_frase'; 
@@ -2109,6 +2155,7 @@ if (btnForcarGiro) {
                             }
                             gerenciarCombo(true); 
                             AudioManager.playSuccessSFX(); 
+                            textosFlutuantes.push(new TextoFlutuante("PERFEITO!", item.x, item.y - 60, '#FFF', isFrase ? '#00FF7F' : '#8A2BE2'));
                             
                             for(let j=0; j<20; j++) {
                                 let angle = Math.random() * Math.PI * 2;
@@ -2125,7 +2172,7 @@ if (btnForcarGiro) {
                             setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
                             gerenciarCombo(false); 
                             AudioManager.playErrorSFX(); 
-                            
+                            textosFlutuantes.push(new TextoFlutuante("TENTE DE NOVO!", item.x, item.y - 60, '#FFF', '#FF0000'));
                             for(let j=0; j<15; j++) {
                                 let angle = Math.random() * Math.PI * 2;
                                 particulas.push(new Particula(item.x, item.y, '#555', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*10+5)); 
@@ -2139,8 +2186,8 @@ if (btnForcarGiro) {
                 const dy = posYPersonagem - item.y; 
 
                 // HITBOX AAA OTIMIZADA PARA AS FASES
-                let margemX = faseAtual === 3 ? player.width * 0.9 : player.width * 0.5;
-                let margemY = faseAtual === 3 ? player.height * 0.8 : player.height * 0.45;
+                let margemX = faseAtual === 3 ? player.width * 1.0 : player.width * 0.5;
+                let margemY = faseAtual === 3 ? player.height * 0.9 : player.height * 0.45;
 
                 if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
                     
@@ -2189,36 +2236,35 @@ if (btnForcarGiro) {
                         if (item.isCorrect) {
                             item.isResolvido = true; 
                             item.ignorarColisao = true;
-                            shakeIntensity = 2; 
+                            shakeIntensity = 4; 
                             if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
                             else { acertosFase4++; desafioFase4 = null; }
                             
                             gerenciarCombo(true); 
                             AudioManager.playSuccessSFX(); 
+                            textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
                             
-                            // Removemos os textos espalhafatosos e estrelas pesadas por um design mais limpo e focado no aprendizado (Particulas Leves)
-                            for(let j=0; j<12; j++) {
+                            for(let j=0; j<25; j++) {
                                 let angle = Math.random() * Math.PI * 2;
-                                let speed = Math.random() * 6 + 2;
-                                particulas.push(new Particula(item.x, item.y, 'rgba(255, 255, 255, 0.8)', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5));
+                                let speed = Math.random() * 10 + 4;
+                                particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5));
                             }
                             collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; }); 
                             atualizarProgressoHUD();
                         } else {
-                            if (!item.isResolvido && !item.markedForDeletion) {
-                                item.markedForDeletion = true; 
-                                hitStopTime = 60; 
-                                shakeIntensity = 8; 
-                                document.getElementById('damage-overlay').classList.add('damage-active'); 
-                                setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
-                                gerenciarCombo(false); 
-                                AudioManager.playErrorSFX(); 
-                                for(let j=0; j<10; j++) {
-                                    let angle = Math.random() * Math.PI * 2;
-                                    particulas.push(new Particula(item.x, item.y, 'rgba(100, 100, 100, 0.8)', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*8+4)); 
-                                }
-                                setTimeout(() => { AudioManager.playErrorVoice(); }, 400);
+                            item.markedForDeletion = true; 
+                            hitStopTime = 80; 
+                            shakeIntensity = 12; 
+                            document.getElementById('damage-overlay').classList.add('damage-active'); 
+                            setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50);
+                            gerenciarCombo(false); 
+                            AudioManager.playErrorSFX(); 
+                            textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
+                            for(let j=0; j<15; j++) {
+                                let angle = Math.random() * Math.PI * 2;
+                                particulas.push(new Particula(item.x, item.y, '#555', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*10+5)); 
                             }
+                            setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
                         }
                     } 
                     else if (item.tipo === 'estrela_vitoria') {
@@ -2251,7 +2297,7 @@ if (btnForcarGiro) {
                         }
                     }
                 } 
-                else if (item.x < -200) { 
+                else if (item.x < -150) { 
                     item.markedForDeletion = true; 
                 }
             }
