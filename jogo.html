@@ -199,7 +199,7 @@
         
         <div id="tutorial-ui">
             <div class="ps5-tutorial-box">
-                <span class="ps5-btn-hint" id="txt-tutorial">ESPACO OU TOQUE PARA PULAR</span>
+                <span class="ps5-btn-hint" id="txt-tutorial">ESPAÇO OU TOQUE PARA PULAR</span>
             </div>
         </div>
 
@@ -233,10 +233,10 @@
         <div id="victory-screen">
             <div class="trophy-icon">🏆</div>
             <h1 class="victory-title">PLATINA!</h1>
-            <h2 class="victory-subtitle">VOCE DOMINOU O ALFABETO E AS SILABAS</h2>
+            <h2 class="victory-subtitle">VOCÊ DOMINOU O ALFABETO E AS SÍLABAS</h2>
             <div class="credits">
                 Protagonista: <strong>Isadora</strong><br>
-                Diretor Criativo: <strong>Papai Jose Marcelo</strong><br>
+                Diretor Criativo: <strong>Papai José Marcelo</strong><br>
                 Apoio Especial: <strong>Casa Sorrir</strong><br><br>
                 <em>A jornada continua!</em>
             </div>
@@ -248,28 +248,28 @@
             <div id="livro-container">
                 <div class="pagina ativa" id="livro-p1">
                     <div class="foto-isadora-livro pose-1"></div>
-                    <h2>Um Presente do Ceu</h2>
-                    <p>Em Mirandiba, nasceu a pequena Isadora. Ela chegou trazendo um sorriso unico, com uma marquinha especial chamada labio leporino.</p>
+                    <h2>Um Presente do Céu</h2>
+                    <p>Em Mirandiba, nasceu a pequena Isadora. Ela chegou trazendo um sorriso único, com uma marquinha especial chamada lábio leporino.</p>
                 </div>
                 <div class="pagina" id="livro-p2">
                     <div class="foto-casa-livro"></div>
                     <h2>Um Lar em Recife</h2>
-                    <p>Quando chegou a hora da primeira cirurgia, a familia viajou para Recife e encontrou a <strong>Casa Sorrir</strong>. Mais que um abrigo, cuidado e amor.</p>
+                    <p>Quando chegou a hora da primeira cirurgia, a família viajou para Recife e encontrou a <strong>Casa Sorrir</strong>. Mais que um abrigo, cuidado e amor.</p>
                 </div>
                 <div class="pagina" id="livro-p3">
                     <div class="foto-isadora-livro pose-2"></div>
-                    <h2>Maos de Fada</h2>
+                    <h2>Mãos de Fada</h2>
                     <p>Com o apoio da Casa Sorrir e o carinho de todos, Isadora enfrentou sua primeira jornada no hospital.</p>
                 </div>
                 <div class="pagina" id="livro-p4">
                     <div class="foto-isadora-livro pose-3"></div>
                     <h2>O Sorriso que Venceu</h2>
-                    <p>Hoje, aquela marquinha e o simbolo de uma grande vitoria. Isadora cresce feliz e brincando.</p>
+                    <p>Hoje, aquela marquinha é o símbolo de uma grande vitória. Isadora cresce feliz e brincando.</p>
                 </div>
                 <div class="controles-livro">
                     <button id="prevBtnLivro" class="btn-livro" disabled><span class="ps5-icon">◀</span> Anterior</button>
                     <div class="numero-pagina" id="paginacaoLivro">1 / 4</div>
-                    <button id="nextBtnLivro" class="btn-livro">Proxima <span class="ps5-icon">▶</span></button>
+                    <button id="nextBtnLivro" class="btn-livro">Próxima <span class="ps5-icon">▶</span></button>
                 </div>
             </div>
         </div>
@@ -277,7 +277,7 @@
         <div id="exit-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; opacity: 0; transition: opacity 0.5s ease; text-align: center;">
             <div style="background: rgba(15, 20, 35, 0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 80%; display: flex; flex-direction: column; align-items: center;">
                 <h1 style="color: #FF107A; font-size: clamp(24px, 6vw, 35px); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-family: 'Fredoka', sans-serif;">Sistema</h1>
-                <p style="color: #A0AAB5; font-size: clamp(14px, 3.5vw, 18px); margin-bottom: 25px; line-height: 1.5; font-family: 'Fredoka', sans-serif;">Para encerrar sua sessao, minimize ou feche este aplicativo no seu celular.</p>
+                <p style="color: #A0AAB5; font-size: clamp(14px, 3.5vw, 18px); margin-bottom: 25px; line-height: 1.5; font-family: 'Fredoka', sans-serif;">Para encerrar sua sessão, minimize ou feche este aplicativo no seu celular.</p>
                 <button id="btn-cancelar-sair" class="btn-pause-ui">VOLTAR AO JOGO</button>
             </div>
         </div>
@@ -1085,6 +1085,7 @@
             hitStopTime = 0; 
             shakeIntensity = 0;
             window.extraGroundOffset = 0; // AAA FIX: Reset do sync parallax
+            window.nextGap8 = 0;
             
             animationId = requestAnimationFrame(animate);
 
@@ -1314,7 +1315,9 @@
                 this.y = Math.random() > 0.5 ? groundY - 60 * scaleMultiplier : groundY - 220 * scaleMultiplier; 
             }
             else if (this.tipo === 'obstaculo') { 
-                this.radius = 40 * scaleMultiplier; 
+                // AAA FIX: Variação de cristais para simular os cactos do Dino
+                this.variation = Math.floor(Math.random() * 3); // 0: pequeno, 1: alto, 2: duplo
+                this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; 
                 this.x = cw + 100 * scaleMultiplier; 
                 let groundY = ch - alturaChao;
                 this.y = groundY - this.radius + 12 * scaleMultiplier; 
@@ -1429,34 +1432,47 @@
             }
             else if (this.tipo === 'obstaculo') {
                 ctx.globalAlpha = bgAlpha;
+                let chaoAjuste = this.radius + 10 * scl; 
+                ctx.translate(0, chaoAjuste); 
                 
-                ctx.fillStyle = '#050012';
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.radius, this.radius * 0.2, 0, 0, Math.PI * 2);
-                ctx.fill();
-
                 let gradCristal = ctx.createLinearGradient(0, 0, 0, -this.radius * 2.8);
                 gradCristal.addColorStop(0, '#001b3d');
                 gradCristal.addColorStop(0.5, '#00F3FF');
                 gradCristal.addColorStop(1, '#FFFFFF');
 
-                ctx.fillStyle = gradCristal;
                 ctx.shadowColor = '#00F3FF'; 
-                ctx.shadowBlur = 15 * scl;
-                
-                ctx.beginPath();
-                ctx.moveTo(-this.radius * 0.4, 0); 
-                ctx.lineTo(0, -this.radius * 2.8); 
-                ctx.lineTo(this.radius * 0.4, 0); 
-                ctx.fill();
+                ctx.shadowBlur = 10 * scl;
 
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                const drawCrystal = (offsetX, hScale, wScale) => {
+                    ctx.fillStyle = '#050012';
+                    ctx.beginPath(); ctx.ellipse(offsetX, 0, this.radius * 0.9 * wScale, this.radius * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+                    
+                    ctx.fillStyle = gradCristal;
+                    ctx.beginPath();
+                    ctx.moveTo(offsetX - this.radius * 0.4 * wScale, 0); 
+                    ctx.lineTo(offsetX, -this.radius * 2.8 * hScale); 
+                    ctx.lineTo(offsetX + this.radius * 0.4 * wScale, 0); 
+                    ctx.fill();
+
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.beginPath();
+                    ctx.moveTo(offsetX, -this.radius * 2.6 * hScale);
+                    ctx.lineTo(offsetX + this.radius * 0.15 * wScale, -this.radius * 0.5);
+                    ctx.lineTo(offsetX - this.radius * 0.15 * wScale, -this.radius * 0.5);
+                    ctx.fill();
+                };
+
+                // AAA FIX: Variações de cristais (Cactos do Dino)
+                if (this.variation === 0) { 
+                    drawCrystal(0, 0.8, 1);
+                } else if (this.variation === 1) { 
+                    drawCrystal(0, 1.2, 1.1);
+                } else { 
+                    drawCrystal(-this.radius * 0.4, 0.9, 0.8);
+                    drawCrystal(this.radius * 0.4, 0.7, 0.8);
+                }
+
                 ctx.shadowBlur = 0;
-                ctx.beginPath();
-                ctx.moveTo(0, -this.radius * 2.6);
-                ctx.lineTo(this.radius * 0.15, -this.radius * 0.5);
-                ctx.lineTo(-this.radius * 0.15, -this.radius * 0.5);
-                ctx.fill();
             }
             else if (this.tipo === 'numero') {
                 ctx.globalAlpha = bgAlpha;
@@ -1696,17 +1712,25 @@
             metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao);
             atualizarProgressoHUD();
 
+            // SISTEMA DE SPAWN ESTILO CHROME DINO (AAA FIX)
             let ultimoItem = collectibles.length > 0 ? collectibles[collectibles.length - 1] : null;
-            let minDistancia = cw * 0.55; 
             let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999;
             
-            let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200));
+            // Calcula o pulo com exatidão para não criar situações impossíveis
+            let puloTempo = (Math.abs(player.jumpPower) * 2) / player.gravity; 
+            let distanciaPulo = puloTempo * (gameSpeed * 1.5); 
             
-            if (itemTimer > spawnRate && distanciaLivre > minDistancia) {
-                let isObstacle = Math.random() < 0.6; 
+            let minGap = distanciaPulo + (player.width * 2.5); // Distância que ela voa + espaço para pousar e reagir
+            let maxGap = minGap + (cw * 0.6); 
+            
+            if (!window.nextGap8) window.nextGap8 = minGap;
+
+            if (distanciaLivre >= window.nextGap8) {
+                let isObstacle = Math.random() < 0.75; // 75% chance de Cristal (Cacto)
                 collectibles.push(new Collectible(isObstacle ? 'obstaculo' : 'moeda'));
-                itemTimer = 0; 
+                window.nextGap8 = Math.random() * (maxGap - minGap) + minGap;
             }
+            
             if (gameSpeed < 14) { gameSpeed += 0.001 * timeScale; } 
         } else {
             if (itemTimer > itemInterval) { 
@@ -1825,10 +1849,11 @@
                 if (item.tipo === 'obstaculo') { 
                     let centroYObstaculo = item.y - (item.radius * 1.5);
                     let dyObstaculo = posYPersonagem - centroYObstaculo;
-                    margemX = player.width * 0.25; 
-                    margemY = player.height * 0.35; 
+                    // HITBOX AAA FIX: Perdoadora nas pontas do cristal
+                    margemX = player.width * 0.15; 
+                    margemY = player.height * 0.25; 
                     
-                    if (Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dyObstaculo) < (item.radius * 1.5 + margemY) && !item.ignorarColisao && !item.isResolvido) {
+                    if (Math.abs(dx) < (item.radius * 0.6 + margemX) && Math.abs(dyObstaculo) < (item.radius * 1.2 + margemY) && !item.ignorarColisao && !item.isResolvido) {
                         item.isResolvido = true; item.ignorarColisao = true; pontuacao = Math.max(0, pontuacao - 50); hitStopTime = 50; shakeIntensity = 12; document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("-50", item.x, item.y - 50, '#FFF', '#FF0000'));
                         for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#00F3FF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); }
                     }
