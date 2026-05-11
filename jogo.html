@@ -364,7 +364,7 @@
         { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, 
         { letra: 'J', palavra: 'Jacare' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leao' }, 
         { letra: 'M', palavra: 'Macaco' }, { letra: 'N', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, 
-        { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, 
+        { letra: 'P', palavra: 'Pato' }, { letra: 'Q', marginal: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, 
         { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, 
         { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xicara' }, 
         { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } 
@@ -1429,7 +1429,6 @@
                     }
                 }
             }
-            // MARGEM AUMENTADA PARA DELEÇÃO MAIS SUAVE E LIMPEZA DE MEMÓRIA
             if (this.x < -200) this.markedForDeletion = true; 
         }
         
@@ -1641,7 +1640,7 @@
 
     const player = new Player(); 
     let collectibles = []; let itemTimer = 0; let itemInterval = 2500; 
-    let textosFlutuantes = []; // DECLARAÇÃO GLOBAL ADICIONADA
+    let textosFlutuantes = []; 
 
     function handleDown(e) { 
         if (e.target.closest('button') || e.target.closest('.ps5-btn') || e.target.closest('.btn-corner') || document.getElementById('modal-historia').style.display === 'flex' || document.getElementById('exit-screen').style.display === 'flex' || !gameActive) return; 
@@ -1663,7 +1662,7 @@
     window.addEventListener('keyup', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') isHolding = false; });
 
     let lastTime = 0;
-    let particulas = []; // DECLARAÇÃO GLOBAL GARANTIDA
+    let particulas = []; 
     
     // --- LAÇO PRINCIPAL (ANIMATE AAA) ---
     function animate(timeStamp) {
@@ -1673,6 +1672,8 @@
         if (deltaTime > 100) deltaTime = 16; 
         lastTime = timeStamp; 
         let timeScale = deltaTime / 16.666;
+
+        itemTimer += deltaTime; // <--- CORREÇÃO CRÍTICA (CONTA O TEMPO EM TODAS AS FASES)
 
         if (hitStopTime > 0) { 
             hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; 
@@ -1804,9 +1805,9 @@
             
             let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200));
             
+            // CONDIÇÃO ATUALIZADA: GARANTE O SPAWN NA FASE 8
             if (itemTimer > spawnRate && distanciaLivre > minDistancia) {
-                let isObstacle = true; 
-                collectibles.push(new Collectible(isObstacle ? 'obstaculo' : 'moeda'));
+                collectibles.push(new Collectible('obstaculo')); 
                 itemTimer = 0; 
             }
             if (gameSpeed < 16) { gameSpeed += 0.001 * timeScale; } 
@@ -1912,7 +1913,6 @@
                     } itemTimer = 0;
                 }
             } else { 
-                itemTimer += deltaTime; 
                 if (itemTimer > 8000 && (faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { AudioManager.repeatVoice(); itemTimer = 0; }
             }
         }
