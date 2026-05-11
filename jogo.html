@@ -163,6 +163,7 @@
     </style>
 </head>
 <body>
+
     <div id="loading-screen">
         <div class="loader-ring"></div>
         <div class="loader-text">A CARREGAR...</div>
@@ -510,7 +511,7 @@
     });
 
     // ========================================================
-    // ENGINE DE ÁUDIO AAA COM FALLBACK DE VOZ HUMANA
+    // ENGINE DE ÁUDIO AAA COM FALLBACK DE VOZ HUMANA E SINTETIZADOR
     // ========================================================
     if ('speechSynthesis' in window) { 
         window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; 
@@ -1392,7 +1393,12 @@
         
         draw(ctx) {
             ctx.save(); 
-            ctx.translate(this.x, this.y - 10); 
+            if (this.tipo === 'obstaculo') {
+                ctx.translate(this.x, this.y); 
+            } else {
+                ctx.translate(this.x, this.y - 10); 
+            }
+            
             let scl = scaleMultiplier; 
             let displayTexto = this.info ? (this.info.letra || this.info.s || this.info.palavra || this.info) : '?';
             let bgAlpha = this.isResolvido ? Math.max(0, 1 - (this.resolvidoTempo * 5)) : 1; 
@@ -1423,23 +1429,34 @@
             }
             else if (this.tipo === 'obstaculo') {
                 ctx.globalAlpha = bgAlpha;
-                ctx.translate(0, this.radius * 0.5); 
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                
+                ctx.fillStyle = '#050012';
                 ctx.beginPath();
-                ctx.ellipse(0, 0, this.radius * 0.9, this.radius * 0.2, 0, 0, Math.PI * 2);
+                ctx.ellipse(0, 0, this.radius, this.radius * 0.2, 0, 0, Math.PI * 2);
                 ctx.fill();
 
-                let gradCristal = ctx.createLinearGradient(0, 0, 0, -this.radius * 2.5);
-                gradCristal.addColorStop(0, '#8A004A');
-                gradCristal.addColorStop(0.5, '#FF107A');
-                gradCristal.addColorStop(1, '#FF69B4');
+                let gradCristal = ctx.createLinearGradient(0, 0, 0, -this.radius * 2.8);
+                gradCristal.addColorStop(0, '#001b3d');
+                gradCristal.addColorStop(0.5, '#00F3FF');
+                gradCristal.addColorStop(1, '#FFFFFF');
 
                 ctx.fillStyle = gradCristal;
-                ctx.shadowColor = '#FF107A'; ctx.shadowBlur = 15 * scl;
-                ctx.beginPath(); ctx.moveTo(-this.radius * 0.4, 0); ctx.lineTo(0, -this.radius * 2.2); ctx.lineTo(this.radius * 0.4, 0); ctx.fill();
+                ctx.shadowColor = '#00F3FF'; 
+                ctx.shadowBlur = 15 * scl;
+                
+                ctx.beginPath();
+                ctx.moveTo(-this.radius * 0.4, 0); 
+                ctx.lineTo(0, -this.radius * 2.8); 
+                ctx.lineTo(this.radius * 0.4, 0); 
+                ctx.fill();
 
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; ctx.shadowBlur = 0;
-                ctx.beginPath(); ctx.moveTo(0, -this.radius * 2.1); ctx.lineTo(this.radius * 0.1, -this.radius * 0.5); ctx.lineTo(-this.radius * 0.1, -this.radius * 0.5); ctx.fill();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.shadowBlur = 0;
+                ctx.beginPath();
+                ctx.moveTo(0, -this.radius * 2.6);
+                ctx.lineTo(this.radius * 0.15, -this.radius * 0.5);
+                ctx.lineTo(-this.radius * 0.15, -this.radius * 0.5);
+                ctx.fill();
             }
             else if (this.tipo === 'numero') {
                 ctx.globalAlpha = bgAlpha;
@@ -1612,6 +1629,21 @@
             if (bgX <= -bgW * 2) bgX += bgW * 2; 
             ctx.drawImage(fundoAtual, bgX, 0, bgW, ch); ctx.save(); ctx.translate(bgX + bgW * 2, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore(); 
             ctx.drawImage(fundoAtual, bgX + bgW * 2, 0, bgW, ch); ctx.save(); ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore();
+        }
+
+        // --- EFEITO NOITE (EXCLUSIVO MODO EXTRA) ---
+        if (faseAtual === 8) {
+            ctx.fillStyle = 'rgba(10, 5, 30, 0.75)'; 
+            ctx.fillRect(0, 0, cw, ch - alturaChao);
+            
+            ctx.save();
+            ctx.fillStyle = '#FFFDE7';
+            ctx.shadowColor = '#FFFDE7';
+            ctx.shadowBlur = 30;
+            ctx.beginPath();
+            ctx.arc(cw * 0.8, ch * 0.2, 40 * scaleMultiplier, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
         }
         
         let groundY = ch - alturaChao; 
@@ -1790,16 +1822,21 @@
                 let margemX = faseAtual === 3 ? player.width * 1.0 : player.width * 0.5;
                 let margemY = faseAtual === 3 ? player.height * 0.9 : player.height * 0.45;
 
-                if (item.tipo === 'obstaculo') { margemX = player.width * 0.25; margemY = player.height * 0.25; }
-
-                if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
+                if (item.tipo === 'obstaculo') { 
+                    let centroYObstaculo = item.y - (item.radius * 1.5);
+                    let dyObstaculo = posYPersonagem - centroYObstaculo;
+                    margemX = player.width * 0.25; 
+                    margemY = player.height * 0.35; 
+                    
+                    if (Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dyObstaculo) < (item.radius * 1.5 + margemY) && !item.ignorarColisao && !item.isResolvido) {
+                        item.isResolvido = true; item.ignorarColisao = true; pontuacao = Math.max(0, pontuacao - 50); hitStopTime = 50; shakeIntensity = 12; document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("-50", item.x, item.y - 50, '#FFF', '#FF0000'));
+                        for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#00F3FF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); }
+                    }
+                }
+                else if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
                     if (item.tipo === 'moeda') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 1; pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
                         for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
-                    }
-                    else if (item.tipo === 'obstaculo') {
-                        item.isResolvido = true; item.ignorarColisao = true; pontuacao = Math.max(0, pontuacao - 50); hitStopTime = 50; shakeIntensity = 12; document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("-50", item.x, item.y - 50, '#FFF', '#FF0000'));
-                        for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y, '#FF4500', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); }
                     }
                     else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
