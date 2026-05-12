@@ -1040,7 +1040,7 @@
         btnPause.style.display = 'none';
         
         AudioManager.stopAll();
-        AudioManager.isMutedGlobal = false;
+        AudioManager.isMutedGlobal = false; // Permite o som de vitoria tocar
         AudioManager.playSuccessSFX(); 
         setTimeout(()=> AudioManager.playRisada(), 1000);
         
@@ -1891,13 +1891,8 @@
                             let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo);
                             collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
                             
-                            // VISUAL PURO AAA: Apenas a letra gigante e limpa
+                            // VISUAL PURO AAA (MÉTODO ASTRO BOT): Apenas a letra gigante. Silêncio no spawn para gerar foco.
                             letraUi.innerText = `[ ${letraAlvo} ]`;
-                            
-                            // ÁUDIO PURO AAA: Fala apenas a letra no momento exato em que aparece
-                            setTimeout(() => {
-                                if(gameActive && !isPaused) AudioManager.playVoice(letraAlvo);
-                            }, 100);
                         }
                     } else { faseAtual = 2; prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX(); }
                     itemTimer = 0;
@@ -1970,7 +1965,6 @@
                     } itemTimer = 0;
                 }
             } else { 
-                // CORREÇÃO AAA: Fase 1 removida do loop de repetição. Silêncio e foco para a criança.
                 if (itemTimer > 8000 && (faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { AudioManager.repeatVoice(); itemTimer = 0; }
             }
         }
@@ -2040,7 +2034,7 @@
                     else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); 
                         
-                        // ÁUDIO PURO AAA: Fala APENAS o nome da letra ("A", "B", etc) sem ser confundido pelo TTS
+                        // TRIUNFO NA COLETA (MÉTODO ASTRO BOT): Fala o nome da letra apenas como recompensa
                         AudioManager.playColetaLetra(item.info.letra); 
                         
                         // VISUAL PURO AAA: Flutua apenas a letra em dourado
