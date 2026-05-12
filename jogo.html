@@ -783,13 +783,15 @@
             } 
         },
         
-        playVoice(texto) { 
+     playVoice(texto) { 
             if (!this.somAtivo || this.isMutedGlobal) return; 
             try {
                 this.ultimaVoz = texto; 
                 let src = "";
                 
-                if (texto === "Desafio das Letras! Ache a letra correta.") src = "audios/intro_fase2.mp3";
+                // Mapeamento premium e nova lógica de introdução
+                if (texto === "Vamos brincar das letras!") src = "audios/intro_fase1.mp3";
+                else if (texto === "Desafio das Letras! Ache a letra correta.") src = "audios/intro_fase2.mp3";
                 else if (texto === "Castelo das Sílabas! Pegue a sílaba correta.") src = "audios/intro_fase4.mp3";
                 else if (texto === "Vale das Sombras! Escute com atenção.") src = "audios/intro_fase5.mp3";
                 else if (texto === "Ponte das Frases! Leia com atenção.") src = "audios/intro_fase6.mp3";
@@ -798,7 +800,10 @@
                 else if (texto === "Ops!") src = "audios/erro_ops.mp3";
                 else if (texto === "Quase lá!") src = "audios/erro_quase.mp3";
                 else if (texto === "Tente de novo!") src = "audios/erro_tente.mp3";
-                
+                else if (texto.startsWith("Encontre a letra ")) {
+                    let letra = texto.substring(17, 18);
+                    src = `audios/encontre_letra_${letra}.mp3`;
+                }
                 else if (/^[A-Z] de /.test(texto)) {
                     let letra = texto.charAt(0);
                     src = `audios/letra_${letra}.mp3`;
@@ -816,56 +821,39 @@
                     src = `audios/caixa_letra_${letra}.mp3`;
                 }
                 
+                const fallbackTTS = () => {
+                    if ('speechSynthesis' in window) {
+                        // CORREÇÃO AAA: Limpa a fila engasgada que causava o delay infinito da primeira voz
+                        window.speechSynthesis.cancel(); 
+                        let utter = new SpeechSynthesisUtterance(texto);
+                        utter.lang = 'pt-BR';
+                        utter.rate = 1.0; // Velocidade normalizada para não distorcer timings curtos
+                        window.speechSynthesis.speak(utter);
+                    }
+                };
+
                 if (src !== "") {
                     if(!this.vozHumana) this.vozHumana = new Audio();
                     this.vozHumana.src = src;
                     this.vozHumana.currentTime = 0;
-                    this.vozHumana.play().catch(e => {
-                        if ('speechSynthesis' in window) {
-                            let utter = new SpeechSynthesisUtterance(texto);
-                            utter.lang = 'pt-BR';
-                            utter.rate = 0.85;
-                            window.speechSynthesis.speak(utter);
-                        }
-                    });
-                } else {
-                    if ('speechSynthesis' in window) {
-                        let utter = new SpeechSynthesisUtterance(texto);
-                        utter.lang = 'pt-BR';
-                        utter.rate = 0.85;
-                        window.speechSynthesis.speak(utter);
+                    
+                    // CORREÇÃO AAA: Não trava o jogo aguardando erro de rede caso o mp3 não exista
+                    let playPromise = this.vozHumana.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(e => { fallbackTTS(); });
                     }
+                } else {
+                    fallbackTTS();
                 }
             } catch(e) {}
-        },
-        
-        playErrorVoice() { 
-            if (!this.somAtivo || this.isMutedGlobal) return; 
-            try {
-                const frases = ["Ops!", "Quase lá!", "Tente de novo!"]; 
-                let fraseEscolhida = frases[Math.floor(Math.random()*frases.length)]; 
-                this.playVoice(fraseEscolhida); 
-                
-                if(this.ultimaVoz && this.ultimaVoz !== fraseEscolhida) { 
-                    setTimeout(() => {
-                        this.playVoice(this.ultimaVoz); 
-                    }, 1500); 
-                } 
-            } catch(e) {}
-        },
-        
-        repeatVoice() { 
-            if (this.ultimaVoz !== "" && !this.isMutedGlobal && this.somAtivo) { 
-                this.playVoice(this.ultimaVoz); 
-            } 
         },
         
         playColetaLetra(frase) { 
             if (this.isMutedGlobal || !this.somAtivo) return;
             this.playMagicSFX(); 
-            setTimeout(() => this.playVoice(frase), 150); 
+            // CORREÇÃO AAA: Timing de coleta imediato. Sem delay artificial que causava sensação de lag.
+            this.playVoice(frase); 
         }
-    };
     
     AudioManager.updateUI();
 
@@ -921,11 +909,19 @@
     function prepararFase(fase) {
         if (gameActive) dispararFlashTransicao();
 
-        if(fase === 1) { 
+       if(fase === 1) { 
             metaAlfabeto.innerText = isInfinite ? "ATO 1: ALFABETO" : "COLETE O ALFABETO"; 
             metaAlfabeto.style.color = "#FFD700"; 
             letraUi.innerText = "Sua jornada vai comecar..."; 
             mostrarCinematica("ATO I", "O ALFABETO", "#FFD700");
+
+            // NOVA LÓGICA PEDAGÓGICA AAA: Delay elegante para a Isadora não falar por cima da transição
+            setTimeout(() => {
+                if(gameActive && !isPaused && faseAtual === 1) {
+                    AudioManager.playVoice("Vamos brincar das letras!");
+                    letraUi.innerText = "Vamos brincar das letras!";
+                }
+            }, 1800);
         }
         else if (fase === 2) { 
             metaAlfabeto.innerText = isInfinite ? "ATO 2: ENIGMA" : "DESAFIO DAS LETRAS!"; 
@@ -1873,14 +1869,24 @@
         } else {
             if (itemTimer > itemInterval) { 
                 let podeSpawnar = true;
-                if (faseAtual === 1) {
+               if (faseAtual === 1) {
                     let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
                     if (letrasFaltantes.length > 0 || isInfinite) { 
                         let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; 
-                        if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: AlfabetoIsadora.find(i=>i.letra===letraAlvo).palavra})); }
+                        
+                        if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { 
+                            let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo);
+                            collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
+                            
+                            // NOVA LÓGICA PEDAGÓGICA AAA: Foco absoluto e sem atraso na leitura.
+                            letraUi.innerText = `ENCONTRE A LETRA [ ${letraAlvo} ]`;
+                            setTimeout(() => {
+                                if(gameActive && !isPaused) AudioManager.playVoice(`Encontre a letra ${letraAlvo}`);
+                            }, 300);
+                        }
                     } else { faseAtual = 2; prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX(); }
                     itemTimer = 0;
-                } 
+                }
                 else if (faseAtual === 2) {
                     if (!isInfinite && acertosAtuaisFase2 >= acertosParaVencerFase2) { faseAtual = 3; prepararFase(3); podeSpawnar = false; AudioManager.playSuccessSFX(); } 
                     else if (collectibles.length === 0) { 
