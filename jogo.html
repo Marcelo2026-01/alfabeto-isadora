@@ -1905,9 +1905,15 @@
                             while (errada.letra === certa.letra) errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)]; 
                             desafioFase2 = {certa, errada, ordem: Math.random() > 0.5}; 
                         }
-                        letraUi.innerText = `ACHE A LETRA [ ${desafioFase2.certa.letra} ] DE ${desafioFase2.certa.palavra.toUpperCase()}`; AudioManager.playVoice(`Ache a letra ${desafioFase2.certa.letra}, de ${desafioFase2.certa.palavra}`);
-                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.certa : desafioFase2.errada, cw + 100, desafioFase2.ordem)); 
-                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.errada : desafioFase2.certa, cw + 700, !desafioFase2.ordem)); 
+                        
+                        // UX AAA: Texto rico na HUD, mas áudio direto e focado na ação.
+                        letraUi.innerText = `ACHE A LETRA [ ${desafioFase2.certa.letra} ] DE ${desafioFase2.certa.palavra.toUpperCase()}`; 
+                        
+                        // TIMING AAA: O áudio toca, mas os itens nascem mais longe (cw+300) para dar tempo de reação.
+                        AudioManager.playVoice(`Ache a letra ${desafioFase2.certa.letra}`);
+                        
+                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.certa : desafioFase2.errada, cw + 300, desafioFase2.ordem)); 
+                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.errada : desafioFase2.certa, cw + 900, !desafioFase2.ordem)); 
                     } itemTimer = 0;
                 } 
                 else if (faseAtual === 3) {
@@ -2045,8 +2051,26 @@
                     } 
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
-                            item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 4; if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } else { acertosFase4++; desafioFase4 = null; }
-                            gerenciarCombo(true); AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
+                            item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 4; 
+                            
+                            // IDENTIFICAÇÃO DO TIPO PARA FEEDBACK OTIMIZADO
+                            let textoFeedback = item.tipo === 'letra_desafio' ? item.info.letra : item.info.s;
+                            
+                            if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
+                            else { acertosFase4++; desafioFase4 = null; }
+                            
+                            gerenciarCombo(true); 
+                            
+                            // ÁUDIO AAA REFORÇO: Repete o som isolado da letra para fixar a aprendizagem
+                            if(item.tipo === 'letra_desafio') {
+                                AudioManager.playColetaLetra(item.info.letra);
+                            } else {
+                                AudioManager.playSuccessSFX();
+                            }
+
+                            // VISUAL AAA: Mostra a letra correta gigante em vez de um "CERTO!" genérico
+                            textosFlutuantes.push(new TextoFlutuante(textoFeedback, item.x, item.y - 50, '#FFF', '#32CD32'));
+                            
                             for(let j=0; j<25; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 10 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
                             collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; }); atualizarProgressoHUD();
                         } else {
