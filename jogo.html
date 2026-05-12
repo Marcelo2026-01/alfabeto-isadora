@@ -62,6 +62,7 @@
         /* ========================================================
            HUD DO JOGO
            ======================================================== */
+        /* CORREÇÃO AAA: Removido aria-live que causava conflito com TTS nativo no Android */
         #ui-layer { position: absolute; top: 15px; left: 5vw; background: rgba(15, 25, 40, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: clamp(10px, 2vmin, 15px) clamp(15px, 4vmin, 25px); box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 2px 10px rgba(255,255,255,0.1); color: #FFF; font-weight: 700; pointer-events: none; z-index: 20; display: flex; flex-direction: column; max-width: 75vw; margin-top: clamp(45px, 9vmin, 60px); transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); will-change: transform; }
         .hud-punch { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4), inset 0 2px 15px rgba(255,255,255,0.3) !important; }
         #meta-alfabeto { font-size: clamp(12px, 2.5vw, 18px); color: #FFD700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
@@ -189,7 +190,7 @@
         <button id="btn-som" class="btn-corner" style="display: none;">♪ SOM</button>
         <div id="btn-pause" class="btn-corner" style="display: none;">||</div>
 
-        <div id="ui-layer" aria-live="polite" style="display: none;">
+        <div id="ui-layer" style="display: none;">
             <span id="meta-alfabeto">COLETE O ALFABETO</span>
             <span id="letra-ui">A preparar a jornada...</span>
             <div class="progress-bar-container">
@@ -799,10 +800,9 @@
                 else if (texto === "Quase lá!") src = "audios/erro_quase.mp3";
                 else if (texto === "Tente de novo!") src = "audios/erro_tente.mp3";
                 
-                // NOVA REGRA AAA: Para tocar o som limpo da letra! Ex: playVoice("Letra A")
-                else if (texto.startsWith("Letra ")) {
-                    let letra = texto.substring(6, 7);
-                    src = `audios/som_letra_${letra}.mp3`;
+                // CORREÇÃO AAA DE ELITE: Mapeia apenas a letra pura. Nada de prefixos enganosos.
+                else if (texto.length === 1 && texto.match(/[A-Z]/i)) {
+                    src = `audios/som_letra_${texto.toUpperCase()}.mp3`;
                 }
                 else if (texto.startsWith("Ache a letra ")) {
                     let letra = texto.substring(13, 14);
@@ -990,7 +990,6 @@
         player.y = 0; 
         isHolding = false;
         
-        // CORREÇÃO CRÍTICA DO TEMPO DE SPAWN. Se for Fase 8, nasce logo.
         itemTimer = fase === 8 ? 1000 : -2500; 
     }
 
@@ -1041,7 +1040,7 @@
         btnPause.style.display = 'none';
         
         AudioManager.stopAll();
-        AudioManager.isMutedGlobal = false; // Permite o som de vitoria tocar
+        AudioManager.isMutedGlobal = false;
         AudioManager.playSuccessSFX(); 
         setTimeout(()=> AudioManager.playRisada(), 1000);
         
@@ -1895,9 +1894,9 @@
                             // VISUAL PURO AAA: Apenas a letra gigante e limpa
                             letraUi.innerText = `[ ${letraAlvo} ]`;
                             
-                            // ÁUDIO PURO AAA: Fala apenas "Letra A" no momento exato em que aparece
+                            // ÁUDIO PURO AAA: Fala apenas a letra no momento exato em que aparece
                             setTimeout(() => {
-                                if(gameActive && !isPaused) AudioManager.playVoice(`Letra ${letraAlvo}`);
+                                if(gameActive && !isPaused) AudioManager.playVoice(letraAlvo);
                             }, 100);
                         }
                     } else { faseAtual = 2; prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX(); }
@@ -1971,7 +1970,8 @@
                     } itemTimer = 0;
                 }
             } else { 
-                if (itemTimer > 8000 && (faseAtual === 1 || faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { AudioManager.repeatVoice(); itemTimer = 0; }
+                // CORREÇÃO AAA: Fase 1 removida do loop de repetição. Silêncio e foco para a criança.
+                if (itemTimer > 8000 && (faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { AudioManager.repeatVoice(); itemTimer = 0; }
             }
         }
         
@@ -2040,8 +2040,8 @@
                     else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); 
                         
-                        // ÁUDIO PURO AAA: Confirmação apenas com o nome da letra
-                        AudioManager.playColetaLetra(`Letra ${item.info.letra}`); 
+                        // ÁUDIO PURO AAA: Fala APENAS o nome da letra ("A", "B", etc) sem ser confundido pelo TTS
+                        AudioManager.playColetaLetra(item.info.letra); 
                         
                         // VISUAL PURO AAA: Flutua apenas a letra em dourado
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
