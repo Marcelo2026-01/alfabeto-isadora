@@ -799,9 +799,10 @@
                 else if (texto === "Quase lá!") src = "audios/erro_quase.mp3";
                 else if (texto === "Tente de novo!") src = "audios/erro_tente.mp3";
                 
-                else if (/^[A-Z] de /.test(texto)) {
-                    let letra = texto.charAt(0);
-                    src = `audios/letra_${letra}.mp3`;
+                // NOVA REGRA AAA: Para tocar o som limpo da letra! Ex: playVoice("Letra A")
+                else if (texto.startsWith("Letra ")) {
+                    let letra = texto.substring(6, 7);
+                    src = `audios/som_letra_${letra}.mp3`;
                 }
                 else if (texto.startsWith("Ache a letra ")) {
                     let letra = texto.substring(13, 14);
@@ -822,17 +823,19 @@
                     this.vozHumana.currentTime = 0;
                     this.vozHumana.play().catch(e => {
                         if ('speechSynthesis' in window) {
+                            window.speechSynthesis.cancel();
                             let utter = new SpeechSynthesisUtterance(texto);
                             utter.lang = 'pt-BR';
-                            utter.rate = 0.85;
+                            utter.rate = 1.0;
                             window.speechSynthesis.speak(utter);
                         }
                     });
                 } else {
                     if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
                         let utter = new SpeechSynthesisUtterance(texto);
                         utter.lang = 'pt-BR';
-                        utter.rate = 0.85;
+                        utter.rate = 1.0;
                         window.speechSynthesis.speak(utter);
                     }
                 }
@@ -924,8 +927,15 @@
         if(fase === 1) { 
             metaAlfabeto.innerText = isInfinite ? "ATO 1: ALFABETO" : "COLETE O ALFABETO"; 
             metaAlfabeto.style.color = "#FFD700"; 
-            letraUi.innerText = "Sua jornada vai comecar..."; 
+            letraUi.innerText = "Vamos começar..."; 
             mostrarCinematica("ATO I", "O ALFABETO", "#FFD700");
+
+            setTimeout(() => {
+                if(gameActive && !isPaused && faseAtual === 1) {
+                    AudioManager.playVoice("Vamos brincar das letras!");
+                    letraUi.innerText = "Letras!";
+                }
+            }, 1800);
         }
         else if (fase === 2) { 
             metaAlfabeto.innerText = isInfinite ? "ATO 2: ENIGMA" : "DESAFIO DAS LETRAS!"; 
@@ -1877,7 +1887,19 @@
                     let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
                     if (letrasFaltantes.length > 0 || isInfinite) { 
                         let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; 
-                        if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: AlfabetoIsadora.find(i=>i.letra===letraAlvo).palavra})); }
+                        
+                        if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { 
+                            let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo);
+                            collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
+                            
+                            // VISUAL PURO AAA: Apenas a letra gigante e limpa
+                            letraUi.innerText = `[ ${letraAlvo} ]`;
+                            
+                            // ÁUDIO PURO AAA: Fala apenas "Letra A" no momento exato em que aparece
+                            setTimeout(() => {
+                                if(gameActive && !isPaused) AudioManager.playVoice(`Letra ${letraAlvo}`);
+                            }, 100);
+                        }
                     } else { faseAtual = 2; prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX(); }
                     itemTimer = 0;
                 } 
@@ -1949,7 +1971,7 @@
                     } itemTimer = 0;
                 }
             } else { 
-                if (itemTimer > 8000 && (faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { AudioManager.repeatVoice(); itemTimer = 0; }
+                if (itemTimer > 8000 && (faseAtual === 1 || faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { AudioManager.repeatVoice(); itemTimer = 0; }
             }
         }
         
@@ -2016,7 +2038,14 @@
                         for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
                     }
                     else if (item.tipo === 'letra') {
-                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
+                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); 
+                        
+                        // ÁUDIO PURO AAA: Confirmação apenas com o nome da letra
+                        AudioManager.playColetaLetra(`Letra ${item.info.letra}`); 
+                        
+                        // VISUAL PURO AAA: Flutua apenas a letra em dourado
+                        textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
+                        
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); } 
                         for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
                     } 
