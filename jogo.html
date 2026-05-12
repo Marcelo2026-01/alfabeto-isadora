@@ -1881,7 +1881,7 @@
         } else {
             if (itemTimer > itemInterval) { 
                 let podeSpawnar = true;
-               if (faseAtual === 1) {
+              if (faseAtual === 1) {
                     let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
                     if (letrasFaltantes.length > 0 || isInfinite) { 
                         let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; 
@@ -1890,11 +1890,8 @@
                             let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo);
                             collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
                             
-                            // NOVA LÓGICA PEDAGÓGICA AAA: Foco absoluto e sem atraso na leitura.
+                            // VISUAL APENAS: Atualiza a interface, mas NÃO FALA NADA para não ficar chato.
                             letraUi.innerText = `ENCONTRE A LETRA [ ${letraAlvo} ]`;
-                            setTimeout(() => {
-                                if(gameActive && !isPaused) AudioManager.playVoice(`Encontre a letra ${letraAlvo}`);
-                            }, 300);
                         }
                     } else { faseAtual = 2; prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX(); }
                     itemTimer = 0;
@@ -1968,10 +1965,10 @@
                 }
             } else { 
                 // CORREÇÃO AAA: Fase 1 incluída na regra. Se a criança se distrair, a Isadora repete o comando.
-                if (itemTimer > 8000 && (faseAtual === 1 || faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { 
+               // A Fase 1 foi retirada daqui para a Isadora jogar em paz sem ngm falando no ouvido
+                if (itemTimer > 8000 && (faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { 
                     AudioManager.repeatVoice(); itemTimer = 0; 
-                }         }
-        }
+                }
         
         try {
             // --- CONTROLE DE HITBOXES E CULLING ---
@@ -2035,14 +2032,15 @@
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 1; pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
                         for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
                     }
-                    else if (item.tipo === 'letra') {
+                  else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); 
                         
-                        // NOVA LÓGICA PEDAGÓGICA AAA: Feedback instantâneo, sem travar o FPS do jogo
-                        let feedbackAudio = Math.random() > 0.5 ? `Muito bem! Letra ${item.info.letra}!` : `Parabéns! ${item.info.letra} de ${item.info.palavra}!`;
-                        AudioManager.playColetaLetra(feedbackAudio); 
+                        // FALA DIRETA: Sem parabéns, sem palavras longas. Apenas "Letra A".
+                        AudioManager.playColetaLetra(`Letra ${item.info.letra}`); 
                         
-                        textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
+                        // EFEITO VISUAL DIRETO: Mostra só a letra A gigante flutuando.
+                        textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x + 10, item.y - 20, '#FFF', '#FF8C00'));
+                        
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); } 
                         for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
                     }
