@@ -853,8 +853,20 @@
             this.playMagicSFX(); 
             // CORREÇÃO AAA: Timing de coleta imediato. Sem delay artificial que causava sensação de lag.
             this.playVoice(frase); 
+        },
+        
+        playErrorVoice() {
+            if (!this.somAtivo || this.isMutedGlobal) return;
+            let frases = ["Ops!", "Quase lá!", "Tente de novo!"];
+            this.playVoice(frases[Math.floor(Math.random() * frases.length)]);
+        },
+        
+        repeatVoice() {
+            if (!this.somAtivo || this.isMutedGlobal || !this.ultimaVoz) return;
+            this.playVoice(this.ultimaVoz);
         }
-    
+    }; // <--- ESTA É A CHAVE QUE FALTAVA PARA SALVAR O JOGO!
+
     AudioManager.updateUI();
 
     document.querySelectorAll('.ps5-btn, .btn-livro, .btn-corner').forEach(btn => { 
