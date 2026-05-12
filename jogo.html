@@ -1955,8 +1955,10 @@
                     } itemTimer = 0;
                 }
             } else { 
-                if (itemTimer > 8000 && (faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { AudioManager.repeatVoice(); itemTimer = 0; }
-            }
+                // CORREÇÃO AAA: Fase 1 incluída na regra. Se a criança se distrair, a Isadora repete o comando.
+                if (itemTimer > 8000 && (faseAtual === 1 || faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { 
+                    AudioManager.repeatVoice(); itemTimer = 0; 
+                }         }
         }
         
         try {
@@ -2022,10 +2024,16 @@
                         for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
                     }
                     else if (item.tipo === 'letra') {
-                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
+                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); 
+                        
+                        // NOVA LÓGICA PEDAGÓGICA AAA: Feedback instantâneo, sem travar o FPS do jogo
+                        let feedbackAudio = Math.random() > 0.5 ? `Muito bem! Letra ${item.info.letra}!` : `Parabéns! ${item.info.letra} de ${item.info.palavra}!`;
+                        AudioManager.playColetaLetra(feedbackAudio); 
+                        
+                        textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); } 
                         for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
-                    } 
+                    }
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
                             item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 4; if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } else { acertosFase4++; desafioFase4 = null; }
