@@ -1783,85 +1783,8 @@
             ctx.drawImage(fundoAtual, bgX + bgW * 2, 0, bgW, ch); ctx.save(); ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore();
         }
 
-        // --- CÉU E SOL/LUA (EXCLUSIVO MODO EXTRA) ---
-        // MELHORIA AAA 2026: Renderização ultra realista com volumetria e bloom solar/lunar
-        if (faseAtual === 8) {
-            if (isNightMode) {
-                ctx.fillStyle = 'rgba(10, 5, 30, 0.85)';
-            } else {
-                ctx.fillStyle = 'rgba(255, 200, 100, 0.15)';
-            }
-            ctx.fillRect(0, 0, cw, ch - alturaChao);
-
-            ctx.save();
-            const astroX = cw * 0.8;
-            const astroY = ch * 0.2;
-
-            if (isNightMode) {
-                const moonRadius = 40 * scaleMultiplier;
-                
-                // 1. Halo Atmosférico (Glow de PS5)
-                const haloGrad = ctx.createRadialGradient(astroX, astroY, moonRadius * 0.8, astroX, astroY, moonRadius * 2.5);
-                haloGrad.addColorStop(0, 'rgba(255, 253, 231, 0.25)');
-                haloGrad.addColorStop(1, 'rgba(255, 253, 231, 0)');
-                ctx.fillStyle = haloGrad;
-                ctx.beginPath(); ctx.arc(astroX, astroY, moonRadius * 2.5, 0, Math.PI * 2); ctx.fill();
-
-                // 2. Núcleo Lunar (Gradiente Pérola Realista)
-                const moonGrad = ctx.createRadialGradient(astroX - moonRadius * 0.3, astroY - moonRadius * 0.3, moonRadius * 0.1, astroX, astroY, moonRadius);
-                moonGrad.addColorStop(0, '#FFFFFF'); 
-                moonGrad.addColorStop(0.4, '#FFFDE7');
-                moonGrad.addColorStop(1, '#D1C4E9'); // Light Purple tint para realismo noturno
-                
-                ctx.shadowColor = 'rgba(255, 253, 231, 0.4)';
-                ctx.shadowBlur = 15 * scaleMultiplier;
-                ctx.fillStyle = moonGrad;
-                ctx.beginPath(); ctx.arc(astroX, astroY, moonRadius, 0, Math.PI * 2); ctx.fill();
-                ctx.shadowBlur = 0;
-
-                // 3. Detalhes de Cratera (Procedural Suave)
-                ctx.globalAlpha = 0.07;
-                const drawMoonCrater = (ox, oy, r) => {
-                    const cGrad = ctx.createRadialGradient(astroX + ox, astroY + oy, 0, astroX + ox, astroY + oy, r);
-                    cGrad.addColorStop(0, '#311B92');
-                    cGrad.addColorStop(1, 'transparent');
-                    ctx.fillStyle = cGrad;
-                    ctx.beginPath(); ctx.arc(astroX + ox, astroY + oy, r, 0, Math.PI * 2); ctx.fill();
-                };
-                drawMoonCrater(-moonRadius * 0.4, -moonRadius * 0.2, moonRadius * 0.3);
-                drawMoonCrater(moonRadius * 0.2, moonRadius * 0.4, moonRadius * 0.4);
-                drawMoonCrater(moonRadius * 0.1, -moonRadius * 0.5, moonRadius * 0.2);
-                ctx.globalAlpha = 1.0;
-
-            } else {
-                const sunRadius = 45 * scaleMultiplier;
-
-                // 1. Bloom Solar Volumétrico (Efeito Cinematográfico)
-                ctx.globalCompositeOperation = 'screen';
-                const sunBloom = ctx.createRadialGradient(astroX, astroY, sunRadius, astroX, astroY, sunRadius * 4);
-                sunBloom.addColorStop(0, 'rgba(255, 215, 0, 0.4)');
-                sunBloom.addColorStop(0.5, 'rgba(255, 140, 0, 0.15)');
-                sunBloom.addColorStop(1, 'rgba(255, 69, 0, 0)');
-                ctx.fillStyle = sunBloom;
-                ctx.beginPath(); ctx.arc(astroX, astroY, sunRadius * 4, 0, Math.PI * 2); ctx.fill();
-
-                // 2. Núcleo Incandescente (Qualidade Estúdio)
-                const sunCore = ctx.createRadialGradient(astroX, astroY, 0, astroX, astroY, sunRadius);
-                sunCore.addColorStop(0, '#FFFFFF'); // Centro Branco-Quente
-                sunCore.addColorStop(0.2, '#FFFFE0'); 
-                sunCore.addColorStop(0.6, '#FFD700'); // Amarelo Dourado
-                sunCore.addColorStop(0.9, '#FFA500'); // Laranja Bloom
-                sunCore.addColorStop(1, '#FF4500');   // Borda de Fogo
-                
-                ctx.shadowColor = '#FFD700';
-                ctx.shadowBlur = 40 * scaleMultiplier;
-                ctx.fillStyle = sunCore;
-                ctx.beginPath(); ctx.arc(astroX, astroY, sunRadius, 0, Math.PI * 2); ctx.fill();
-                ctx.globalCompositeOperation = 'source-over';
-            }
-            ctx.restore();
-        }
-        
+        // LIGANDO O NOVO MOTOR VISUAL VIP:
+    if (typeof renderizarCeuVIP === 'function') { renderizarCeuVIP(); }
         let groundY = ch - alturaChao; 
         if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; 
         if (estradaOffset > 120) estradaOffset -= 120;
