@@ -46,7 +46,7 @@
            EFEITOS DE IMPACTO E TRANSIÇÕES AAA
            ======================================================== */
         #damage-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 80px rgba(255, 0, 0, 0); pointer-events: none; z-index: 80; transition: box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); will-change: box-shadow; }
-        .damage-active { box-shadow: inset 0 0 180px rgba(255, 0, 40, 0.9) !important; transition: box-shadow 0.05s ease-out; }
+        .damage-active { box-shadow: inset 0 0 150px rgba(255, 0, 40, 0.85) !important; transition: box-shadow 0.05s ease-out; }
         #flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; pointer-events: none; z-index: 85; opacity: 0; transition: opacity 0.8s ease-out; will-change: opacity; }
         .flash-active { opacity: 1 !important; transition: opacity 0.05s ease-out !important; }
 
@@ -865,8 +865,7 @@
         playColetaLetra(frase) { 
             if (this.isMutedGlobal || !this.somAtivo) return;
             this.playMagicSFX(); 
-            // CORREÇÃO AAA: Feedback de recolha agora é imediato (delay removido para eliminar o input lag).
-            this.playVoice(frase); 
+            setTimeout(() => this.playVoice(frase), 150); 
         }
     };
     
@@ -1382,17 +1381,15 @@
         update(timeScale) { 
             if (this.isResolvido) { 
                 this.resolvidoTempo += 0.02 * timeScale;
-                
-                // CORREÇÃO AAA: Pop de escala super satisfatório (Ease-Out Quart)
                 if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                    let t = Math.min(this.resolvidoTempo * 2.0, 1);
+                    let t = Math.min(this.resolvidoTempo * 1.5, 1);
                     let easeOut = 1 - Math.pow(1 - t, 4);
-                    this.scale = 1 + (1.5 * easeOut); 
-                    this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.5)); 
-                    this.y -= 1.5 * timeScale * easeOut; 
+                    this.scale = 1 + (0.8 * easeOut); 
+                    this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.2)); 
+                    this.y -= 1.0 * timeScale * easeOut; 
                     this.x -= (gameSpeed * 0.3) * timeScale; 
                 } else {
-                    let t = Math.min(this.resolvidoTempo * 2.0, 1);
+                    let t = Math.min(this.resolvidoTempo * 1.5, 1);
                     let easeOut = 1 - Math.pow(1 - t, 3);
                     this.scale = 1 + (1.2 * easeOut);
                     this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.5));
@@ -1671,7 +1668,7 @@
             }
             if (faseAtual === 3) {
                 let bW = this.width * 1.2; let basketW = this.width * 1.2; let basketH = this.height * 0.35; let basketX = -basketW / 2; let basketY = -this.height * 0.3;
-                ctx.fillStyle = this.gradCache; ctx.beginPath(); let r = 8*scl; ctx.moveTo(basketX + r, basketY); ctx.lineTo(basketX + basketW - r, basketY); ctx.quadraticCurveTo(basketX + basketW, basketY, basketX + basketW, basketY + r); ctx.lineTo(basketX + basketW, basketY + basketH - r); ctx.quadraticCurveTo(basketX + basketW, basketY + basketH, basketX + basketW - r, basketY + basketH); ctx.lineTo(basketX + r, basketY + basketH); ctx.quadraticCurveTo(basketX, basketY + basketH, basketX, basketY + basketH - r); ctx.lineTo(basketX, basketY + r); ctx.quadraticCurveTo(basketX, basketY, basketX + r, basketY); ctx.fill();
+                ctx.fillStyle = this.gradCache; ctx.beginPath(); let r = 8*scl; ctx.moveTo(basketX + r, basketY); ctx.lineTo(basketX + basketW - r, basketY); ctx.quadraticCurveTo(basketX + basketW, basketY, basketX + basketW, basketY + r); ctx.lineTo(basketX + basketW, basketY + basketH - r); ctx.quadraticCurveTo(basketX + basketW, basketY + basketH, basketX + basketW - r, basketY + basketH); ctx.lineTo(basketX + r, basketY + basketH); ctx.quadraticCurveTo(basketX, battlefieldY + basketH, basketX, basketY + basketH - r); ctx.lineTo(basketX, basketY + r); ctx.quadraticCurveTo(basketX, basketY, basketX + r, basketY); ctx.fill();
                 ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2*scl; for(let i=1; i<4; i++) { ctx.beginPath(); ctx.moveTo(basketX, basketY + (basketH/4)*i); ctx.lineTo(basketX+basketW, basketY + (basketH/4)*i); ctx.stroke(); }
             }
             ctx.restore();
@@ -1725,7 +1722,6 @@
             hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; 
         }
 
-        // CORREÇÃO AAA: O Timer de Spawn só avança se o jogo NÃO estiver em HitStop.
         itemTimer += deltaTime; 
 
         if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
@@ -1740,7 +1736,6 @@
 
         let isDarkPhase = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6 || faseAtual === 8);
         
-        // --- PREPARAÇÃO DO FUNDO DO MODO EXTRA ---
         let fundoAtual;
         if (faseAtual === 8 && fundoImgExtra.complete && fundoImgExtra.naturalWidth > 0) {
             fundoAtual = fundoImgExtra;
@@ -1748,7 +1743,6 @@
             fundoAtual = isDarkPhase ? fundoImg2 : fundoImg1;
         }
         
-        // CÁLCULO DE DIA/NOITE (Fase 8)
         let isNightMode = false;
         if (faseAtual === 8) {
             let ciclo = Math.floor(pontuacao / 500); 
@@ -1763,28 +1757,80 @@
         }
 
         // --- CÉU E SOL/LUA (EXCLUSIVO MODO EXTRA) ---
+        // MELHORIA AAA 2026: Renderização ultra realista com volumetria e bloom solar/lunar
         if (faseAtual === 8) {
             if (isNightMode) {
-                ctx.fillStyle = 'rgba(10, 5, 30, 0.85)'; 
+                ctx.fillStyle = 'rgba(10, 5, 30, 0.85)';
             } else {
-                ctx.fillStyle = 'rgba(255, 200, 100, 0.15)'; 
+                ctx.fillStyle = 'rgba(255, 200, 100, 0.15)';
             }
             ctx.fillRect(0, 0, cw, ch - alturaChao);
-            
+
             ctx.save();
+            const astroX = cw * 0.8;
+            const astroY = ch * 0.2;
+
             if (isNightMode) {
-                ctx.fillStyle = '#FFFDE7';
-                ctx.shadowColor = '#FFFDE7';
-                ctx.shadowBlur = 30;
-                ctx.beginPath(); ctx.arc(cw * 0.8, ch * 0.2, 40 * scaleMultiplier, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = 'rgba(0,0,0,0.1)';
-                ctx.beginPath(); ctx.arc(cw * 0.8 - 10, ch * 0.2 - 10, 8, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(cw * 0.8 + 15, ch * 0.2 + 5, 12, 0, Math.PI * 2); ctx.fill();
+                const moonRadius = 40 * scaleMultiplier;
+                
+                // 1. Halo Atmosférico (Glow de PS5)
+                const haloGrad = ctx.createRadialGradient(astroX, astroY, moonRadius * 0.8, astroX, astroY, moonRadius * 2.5);
+                haloGrad.addColorStop(0, 'rgba(255, 253, 231, 0.25)');
+                haloGrad.addColorStop(1, 'rgba(255, 253, 231, 0)');
+                ctx.fillStyle = haloGrad;
+                ctx.beginPath(); ctx.arc(astroX, astroY, moonRadius * 2.5, 0, Math.PI * 2); ctx.fill();
+
+                // 2. Núcleo Lunar (Gradiente Pérola Realista)
+                const moonGrad = ctx.createRadialGradient(astroX - moonRadius * 0.3, astroY - moonRadius * 0.3, moonRadius * 0.1, astroX, astroY, moonRadius);
+                moonGrad.addColorStop(0, '#FFFFFF'); 
+                moonGrad.addColorStop(0.4, '#FFFDE7');
+                moonGrad.addColorStop(1, '#D1C4E9'); // Light Purple tint para realismo noturno
+                
+                ctx.shadowColor = 'rgba(255, 253, 231, 0.4)';
+                ctx.shadowBlur = 15 * scaleMultiplier;
+                ctx.fillStyle = moonGrad;
+                ctx.beginPath(); ctx.arc(astroX, astroY, moonRadius, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // 3. Detalhes de Cratera (Procedural Suave)
+                ctx.globalAlpha = 0.07;
+                const drawMoonCrater = (ox, oy, r) => {
+                    const cGrad = ctx.createRadialGradient(astroX + ox, astroY + oy, 0, astroX + ox, astroY + oy, r);
+                    cGrad.addColorStop(0, '#311B92');
+                    cGrad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = cGrad;
+                    ctx.beginPath(); ctx.arc(astroX + ox, astroY + oy, r, 0, Math.PI * 2); ctx.fill();
+                };
+                drawMoonCrater(-moonRadius * 0.4, -moonRadius * 0.2, moonRadius * 0.3);
+                drawMoonCrater(moonRadius * 0.2, moonRadius * 0.4, moonRadius * 0.4);
+                drawMoonCrater(moonRadius * 0.1, -moonRadius * 0.5, moonRadius * 0.2);
+                ctx.globalAlpha = 1.0;
+
             } else {
-                ctx.fillStyle = '#FFD700';
-                ctx.shadowColor = '#FFA500';
-                ctx.shadowBlur = 40;
-                ctx.beginPath(); ctx.arc(cw * 0.8, ch * 0.2, 45 * scaleMultiplier, 0, Math.PI * 2); ctx.fill();
+                const sunRadius = 45 * scaleMultiplier;
+
+                // 1. Bloom Solar Volumétrico (Efeito Cinematográfico)
+                ctx.globalCompositeOperation = 'screen';
+                const sunBloom = ctx.createRadialGradient(astroX, astroY, sunRadius, astroX, astroY, sunRadius * 4);
+                sunBloom.addColorStop(0, 'rgba(255, 215, 0, 0.4)');
+                sunBloom.addColorStop(0.5, 'rgba(255, 140, 0, 0.15)');
+                sunBloom.addColorStop(1, 'rgba(255, 69, 0, 0)');
+                ctx.fillStyle = sunBloom;
+                ctx.beginPath(); ctx.arc(astroX, astroY, sunRadius * 4, 0, Math.PI * 2); ctx.fill();
+
+                // 2. Núcleo Incandescente (Qualidade Estúdio)
+                const sunCore = ctx.createRadialGradient(astroX, astroY, 0, astroX, astroY, sunRadius);
+                sunCore.addColorStop(0, '#FFFFFF'); // Centro Branco-Quente
+                sunCore.addColorStop(0.2, '#FFFFE0'); 
+                sunCore.addColorStop(0.6, '#FFD700'); // Amarelo Dourado
+                sunCore.addColorStop(0.9, '#FFA500'); // Laranja Bloom
+                sunCore.addColorStop(1, '#FF4500');   // Borda de Fogo
+                
+                ctx.shadowColor = '#FFD700';
+                ctx.shadowBlur = 40 * scaleMultiplier;
+                ctx.fillStyle = sunCore;
+                ctx.beginPath(); ctx.arc(astroX, astroY, sunRadius, 0, Math.PI * 2); ctx.fill();
+                ctx.globalCompositeOperation = 'source-over';
             }
             ctx.restore();
         }
@@ -1848,12 +1894,9 @@
             atualizarProgressoHUD();
 
             let ultimoItem = collectibles.length > 0 ? collectibles[collectibles.length - 1] : null;
-            
-            // CORREÇÃO AAA: Calcula o arco do pulo real da Isadora para criar spawns matematicamente justos.
-            let jumpArcDistance = (Math.abs(player.jumpPower) * 2 / player.gravity) * (gameSpeed * 1.5);
-            let minDistancia = Math.max(cw * 0.5, jumpArcDistance + (100 * scaleMultiplier));
-            
+            let minDistancia = cw * 0.45; 
             let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999;
+            
             let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200));
             
             if (itemTimer > spawnRate && distanciaLivre > minDistancia) {
@@ -1895,8 +1938,6 @@
                         if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { 
                             let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo);
                             collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
-                            
-                            // VISUAL PURO AAA (MÉTODO ASTRO BOT): Apenas a letra gigante. Silêncio no spawn para gerar foco.
                             letraUi.innerText = `[ ${letraAlvo} ]`;
                         }
                     } else { faseAtual = 2; prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX(); }
@@ -1910,15 +1951,9 @@
                             while (errada.letra === certa.letra) errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)]; 
                             desafioFase2 = {certa, errada, ordem: Math.random() > 0.5}; 
                         }
-                        
-                        // UX AAA: Texto rico na HUD, mas áudio direto e focado na ação.
-                        letraUi.innerText = `ACHE A LETRA [ ${desafioFase2.certa.letra} ] DE ${desafioFase2.certa.palavra.toUpperCase()}`; 
-                        
-                        // TIMING AAA: O áudio toca, mas os itens nascem mais longe (cw+300) para dar tempo de reação.
-                        AudioManager.playVoice(`Ache a letra ${desafioFase2.certa.letra}`);
-                        
-                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.certa : desafioFase2.errada, cw + 300, desafioFase2.ordem)); 
-                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.errada : desafioFase2.certa, cw + 900, !desafioFase2.ordem)); 
+                        letraUi.innerText = `ACHE A LETRA [ ${desafioFase2.certa.letra} ] DE ${desafioFase2.certa.palavra.toUpperCase()}`; AudioManager.playVoice(`Ache a letra ${desafioFase2.certa.letra}, de ${desafioFase2.certa.palavra}`);
+                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.certa : desafioFase2.errada, cw + 100, desafioFase2.ordem)); 
+                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.errada : desafioFase2.certa, cw + 700, !desafioFase2.ordem)); 
                     } itemTimer = 0;
                 } 
                 else if (faseAtual === 3) {
@@ -1981,7 +2016,6 @@
         }
         
         try {
-            // --- CONTROLE DE HITBOXES E CULLING ---
             for (let i = collectibles.length - 1; i >= 0; i--) {
                 let item = collectibles[i]; if(item.markedForDeletion) { collectibles.splice(i, 1); continue; }
                 item.update(timeScale); item.draw(ctx);
@@ -2044,38 +2078,15 @@
                     }
                     else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); 
-                        
-                        // TRIUNFO NA COLETA (MÉTODO ASTRO BOT): Fala o nome da letra apenas como recompensa (Delay 0)
                         AudioManager.playColetaLetra(item.info.letra); 
-                        
-                        // VISUAL PURO AAA: Flutua apenas a letra em dourado
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
-                        
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); } 
                         for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
                     } 
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
-                            item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 4; 
-                            
-                            // IDENTIFICAÇÃO DO TIPO PARA FEEDBACK OTIMIZADO
-                            let textoFeedback = item.tipo === 'letra_desafio' ? item.info.letra : item.info.s;
-                            
-                            if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
-                            else { acertosFase4++; desafioFase4 = null; }
-                            
-                            gerenciarCombo(true); 
-                            
-                            // ÁUDIO AAA REFORÇO: Repete o som isolado da letra para fixar a aprendizagem
-                            if(item.tipo === 'letra_desafio') {
-                                AudioManager.playColetaLetra(item.info.letra);
-                            } else {
-                                AudioManager.playSuccessSFX();
-                            }
-
-                            // VISUAL AAA: Mostra a letra correta gigante em vez de um "CERTO!" genérico
-                            textosFlutuantes.push(new TextoFlutuante(textoFeedback, item.x, item.y - 50, '#FFF', '#32CD32'));
-                            
+                            item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 4; if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } else { acertosFase4++; desafioFase4 = null; }
+                            gerenciarCombo(true); AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
                             for(let j=0; j<25; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 10 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
                             collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; }); atualizarProgressoHUD();
                         } else {
@@ -2095,7 +2106,6 @@
             }
         } catch (error) {}
         
-        // --- CONTROLE DOS TEXTOS FLUTUANTES ---
         if (textosFlutuantes.length > 10) {
             textosFlutuantes.splice(0, textosFlutuantes.length - 10);
         }
