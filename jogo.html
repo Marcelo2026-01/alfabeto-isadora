@@ -46,7 +46,7 @@
            EFEITOS DE IMPACTO E TRANSIÇÕES AAA
            ======================================================== */
         #damage-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 80px rgba(255, 0, 0, 0); pointer-events: none; z-index: 80; transition: box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); will-change: box-shadow; }
-        .damage-active { box-shadow: inset 0 0 150px rgba(255, 0, 40, 0.85) !important; transition: box-shadow 0.05s ease-out; }
+        .damage-active { box-shadow: inset 0 0 180px rgba(255, 0, 40, 0.9) !important; transition: box-shadow 0.05s ease-out; }
         #flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; pointer-events: none; z-index: 85; opacity: 0; transition: opacity 0.8s ease-out; will-change: opacity; }
         .flash-active { opacity: 1 !important; transition: opacity 0.05s ease-out !important; }
 
@@ -62,7 +62,6 @@
         /* ========================================================
            HUD DO JOGO
            ======================================================== */
-        /* CORREÇÃO AAA: Removido aria-live que causava conflito com TTS nativo no Android */
         #ui-layer { position: absolute; top: 15px; left: 5vw; background: rgba(15, 25, 40, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: clamp(10px, 2vmin, 15px) clamp(15px, 4vmin, 25px); box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 2px 10px rgba(255,255,255,0.1); color: #FFF; font-weight: 700; pointer-events: none; z-index: 20; display: flex; flex-direction: column; max-width: 75vw; margin-top: clamp(45px, 9vmin, 60px); transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); will-change: transform; }
         .hud-punch { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4), inset 0 2px 15px rgba(255,255,255,0.3) !important; }
         #meta-alfabeto { font-size: clamp(12px, 2.5vw, 18px); color: #FFD700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
@@ -866,7 +865,8 @@
         playColetaLetra(frase) { 
             if (this.isMutedGlobal || !this.somAtivo) return;
             this.playMagicSFX(); 
-            setTimeout(() => this.playVoice(frase), 150); 
+            // CORREÇÃO AAA: Feedback de recolha agora é imediato (delay removido para eliminar o input lag).
+            this.playVoice(frase); 
         }
     };
     
@@ -1382,15 +1382,17 @@
         update(timeScale) { 
             if (this.isResolvido) { 
                 this.resolvidoTempo += 0.02 * timeScale;
+                
+                // CORREÇÃO AAA: Pop de escala super satisfatório (Ease-Out Quart)
                 if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                    let t = Math.min(this.resolvidoTempo * 1.5, 1);
+                    let t = Math.min(this.resolvidoTempo * 2.0, 1);
                     let easeOut = 1 - Math.pow(1 - t, 4);
-                    this.scale = 1 + (0.8 * easeOut); 
-                    this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.2)); 
-                    this.y -= 1.0 * timeScale * easeOut; 
+                    this.scale = 1 + (1.5 * easeOut); 
+                    this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.5)); 
+                    this.y -= 1.5 * timeScale * easeOut; 
                     this.x -= (gameSpeed * 0.3) * timeScale; 
                 } else {
-                    let t = Math.min(this.resolvidoTempo * 1.5, 1);
+                    let t = Math.min(this.resolvidoTempo * 2.0, 1);
                     let easeOut = 1 - Math.pow(1 - t, 3);
                     this.scale = 1 + (1.2 * easeOut);
                     this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.5));
@@ -1719,11 +1721,12 @@
         lastTime = timeStamp; 
         let timeScale = deltaTime / 16.666;
 
-        itemTimer += deltaTime; // <--- CORREÇÃO DEFINITIVA (O tempo sempre roda, independente da fase)
-
         if (hitStopTime > 0) { 
             hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; 
         }
+
+        // CORREÇÃO AAA: O Timer de Spawn só avança se o jogo NÃO estiver em HitStop.
+        itemTimer += deltaTime; 
 
         if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
 
@@ -1845,12 +1848,14 @@
             atualizarProgressoHUD();
 
             let ultimoItem = collectibles.length > 0 ? collectibles[collectibles.length - 1] : null;
-            let minDistancia = cw * 0.45; // Distância ajustada para fluidez
-            let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999;
             
+            // CORREÇÃO AAA: Calcula o arco do pulo real da Isadora para criar spawns matematicamente justos.
+            let jumpArcDistance = (Math.abs(player.jumpPower) * 2 / player.gravity) * (gameSpeed * 1.5);
+            let minDistancia = Math.max(cw * 0.5, jumpArcDistance + (100 * scaleMultiplier));
+            
+            let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999;
             let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200));
             
-            // O TIMER FUNCIONA AGORA
             if (itemTimer > spawnRate && distanciaLivre > minDistancia) {
                 collectibles.push(new Collectible('obstaculo')); 
                 itemTimer = 0; 
@@ -2040,7 +2045,7 @@
                     else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); 
                         
-                        // TRIUNFO NA COLETA (MÉTODO ASTRO BOT): Fala o nome da letra apenas como recompensa
+                        // TRIUNFO NA COLETA (MÉTODO ASTRO BOT): Fala o nome da letra apenas como recompensa (Delay 0)
                         AudioManager.playColetaLetra(item.info.letra); 
                         
                         // VISUAL PURO AAA: Flutua apenas a letra em dourado
