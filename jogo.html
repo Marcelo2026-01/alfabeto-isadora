@@ -1006,7 +1006,8 @@
     }
 
     // GAME OVER DO MODO EXTRA
-    function dispararGameOverExtra() {
+   // GAME OVER DO MODO EXTRA COM LIGAÇÃO À NUVEM (VERSÃO FINAL)
+    async function dispararGameOverExtra() {
         if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
         gameActive = false; 
         isHolding = false;
@@ -1015,19 +1016,45 @@
         btnPause.style.display = 'none';
         
         AudioManager.stopAll();
-        AudioManager.isMutedGlobal = false;
-        AudioManager.playErrorVoice(); 
         
-        document.querySelector('.victory-title').innerText = "FIM DE JOGO!";
-        document.querySelector('.victory-title').style.color = "#FF1493";
-        document.querySelector('.victory-subtitle').innerText = "VOCÊ CORREU MUITO BEM!";
-        document.querySelector('.victory-subtitle').style.color = "#FFF";
-        document.querySelector('.trophy-icon').innerText = "🌵";
+        let pontosFinais = Math.floor(pontuacao);
         
-        letraUi.innerText = "PONTUAÇÃO FINAL: " + Math.floor(pontuacao);
-        
+        // Ativar tela de vitória para mostrar o status da nuvem
         victoryScreen.style.display = 'flex'; 
         setTimeout(() => { victoryScreen.style.opacity = '1'; }, 100);
+
+        document.querySelector('.victory-title').innerText = "A LER A NUVEM...";
+        document.querySelector('.victory-subtitle').innerText = "Consultando recordes...";
+        document.querySelector('.trophy-icon').innerText = "☁️";
+
+        // Tenta falar com o Firebase
+        let resultado = null;
+        if(window.verificarESalvarRecorde) {
+            resultado = await window.verificarESalvarRecorde(pontosFinais);
+        }
+
+        if (resultado && resultado.bateuRecorde) {
+            // EFEITO AAA: NOVO RECORDE GLOBAL!
+            AudioManager.playSuccessSFX();
+            document.querySelector('.victory-title').innerText = "NOVO RECORDE!";
+            document.querySelector('.victory-title').style.color = "#FFD700";
+            document.querySelector('.victory-subtitle').innerText = "A ISADORA É A MELHOR!";
+            document.querySelector('.trophy-icon').innerText = "🏆";
+            document.querySelector('.credits').innerHTML = "Pontos: " + pontosFinais + "<br><strong>GRAVADO NA NUVEM!</strong>";
+            
+            // Explosão de Partículas
+            for(let i=0; i<50; i++) {
+                particulas.push(new Particula(canvas.width/2, canvas.height/2, '#FFD700', (Math.random()*20)-10, (Math.random()*20)-10, 15));
+            }
+        } else {
+            // FIM DE JOGO NORMAL
+            AudioManager.playErrorVoice(); 
+            document.querySelector('.victory-title').innerText = "FIM DE JOGO!";
+            document.querySelector('.victory-title').style.color = "#FF1493";
+            document.querySelector('.trophy-icon').innerText = "🌵";
+            let recTexto = resultado ? "<br>Recorde a bater: " + resultado.recorde : "";
+            document.querySelector('.credits').innerHTML = "Pontos: " + pontosFinais + recTexto;
+        }
     }
 
     function dispararGrandFinale() {
