@@ -1005,6 +1005,70 @@
         setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
     }
 
+    // ==========================================
+    // MOTOR VISUAL AAA: CICLO VIP (SOL E LUA)
+    // ==========================================
+    function renderizarCeuVIP() {
+        if (faseAtual === 8 && window.isVIPPrata) {
+            let cw = canvas.width;
+            let ch = canvas.height;
+            
+            // O ciclo gira conforme a pontuação! (Cada 1000 pontos = 1 Dia Completo)
+            let ciclo = (pontuacao % 1000) / 1000; 
+            let angulo = ciclo * Math.PI * 2;
+            
+            let cx = cw / 2;
+            let cy = ch; // Horizonte (base da tela)
+            let raio = cw / 1.5;
+            
+            let solX = cx - Math.sin(angulo) * raio;
+            let solY = cy - Math.cos(angulo) * raio;
+            
+            let luaX = cx + Math.sin(angulo) * raio;
+            let luaY = cy + Math.cos(angulo) * raio;
+            
+            // 1. Desenhar o Sol Brilhante (Dia)
+            if (solY < ch) {
+                ctx.save();
+                ctx.shadowBlur = 80; ctx.shadowColor = "#FFDF00"; ctx.fillStyle = "#FFF700";
+                ctx.beginPath(); ctx.arc(solX, solY, 60, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+            }
+            
+            // 2. Escurecimento do Céu e Estrelas (Noite)
+            let escurecer = Math.max(0, Math.cos(angulo + Math.PI)); 
+            if (escurecer > 0) {
+                // Tela escurece gradualmente
+                ctx.fillStyle = `rgba(5, 5, 25, ${escurecer * 0.8})`; 
+                ctx.fillRect(0, 0, cw, ch);
+                
+                // Estrelas aparecem quando fica muito escuro
+                if (escurecer > 0.3) {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${escurecer})`;
+                    for(let i=1; i<=25; i++) {
+                        let sx = (i * 123) % cw; 
+                        let sy = (i * 77) % (ch / 1.5);
+                        ctx.beginPath(); ctx.arc(sx, sy, (i%3)+1, 0, Math.PI*2); ctx.fill();
+                    }
+                }
+            }
+            
+            // 3. Desenhar a Lua Premium
+            if (luaY < ch) {
+                ctx.save();
+                ctx.shadowBlur = 50; ctx.shadowColor = "#FFFFFF"; ctx.fillStyle = "#F0F8FF";
+                ctx.beginPath(); ctx.arc(luaX, luaY, 50, 0, Math.PI*2); ctx.fill();
+                // Crateras da lua
+                ctx.fillStyle = "rgba(180, 180, 180, 0.5)";
+                ctx.beginPath(); ctx.arc(luaX - 12, luaY - 15, 10, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(luaX + 18, luaY + 8, 14, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(luaX - 5, luaY + 18, 6, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+            }
+        }
+    }
+    // ==========================================
+    
     // GAME OVER DO MODO EXTRA
    // GAME OVER DO MODO EXTRA COM LIGAÇÃO À NUVEM (VERSÃO FINAL)
     async function dispararGameOverExtra() {
