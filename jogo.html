@@ -2123,11 +2123,9 @@
 </script>
 
 <script type="module">
-  // Importação direta dos servidores super rápidos do Google (CDN)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-  // AS SUAS CHAVES REAIS (O Cérebro da Isadora)
   const firebaseConfig = {
     apiKey: "AIzaSyD_gYdKNnnhFr-bg1u0HT-O8kUsBWS9akY",
     authDomain: "isadora-game.firebaseapp.com",
@@ -2137,12 +2135,34 @@
     appId: "1:256153804637:web:34e19d317f1e41ba1892b4"
   };
 
-  // Ligar os motores
   const app = initializeApp(firebaseConfig); 
   const db = getFirestore(app); 
-  window.db = db; // Libera o banco de dados para o nosso jogo usar
+  window.db = db;
 
-  console.log("🔥 Motor Firebase Conectado com Sucesso! Projeto: isadora-game");
+  // FUNÇÃO AAA: Verificar e Salvar Recorde na Nuvem
+  window.verificarESalvarRecorde = async function(pontosAtuais) {
+      try {
+          const docRef = doc(db, "recordes", "fase8_recorde");
+          const docSnap = await getDoc(docRef);
+          let recordeAntigo = 0;
+
+          if (docSnap.exists()) {
+              recordeAntigo = docSnap.data().pontuacao;
+          }
+
+          if (pontosAtuais > recordeAntigo) {
+              await setDoc(docRef, { pontuacao: pontosAtuais });
+              return { bateuRecorde: true, recorde: pontosAtuais };
+          } else {
+              return { bateuRecorde: false, recorde: recordeAntigo };
+          }
+      } catch (e) {
+          console.error("Erro na nuvem:", e);
+          return { bateuRecorde: false, recorde: 0 };
+      }
+  };
+
+  console.log("🔥 Motor Firebase + Sistema de Recordes Online!");
 </script>
 
 </body>
