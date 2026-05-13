@@ -2166,19 +2166,48 @@
   const db = getFirestore(app); 
   window.db = db;
 
-  // FUNÇÃO AAA: Verificar e Salvar Recorde na Nuvem
+  // 🌟 NOVO: VARIÁVEIS DO ESTATUTO VIP DA ISADORA
+  window.recordeGlobal = 0;
+  window.isVIPPrata = false; // Ativa Sol e Lua (1.000+ pontos)
+  window.isVIPOuro = false;  // Ativa Aura Dourada (2.000+ pontos)
+
+  // 🌟 NOVO: FUNÇÃO QUE LÊ A NUVEM AO LIGAR O JOGO
+  async function carregarEstatutoVIP() {
+      try {
+          const docRef = doc(db, "recordes", "fase8_recorde");
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+              window.recordeGlobal = docSnap.data().pontuacao;
+              
+              if (window.recordeGlobal >= 1000) window.isVIPPrata = true;
+              if (window.recordeGlobal >= 2000) window.isVIPOuro = true;
+              
+              console.log("🌟 NUVEM LIDA! Recorde: " + window.recordeGlobal + " | Sol/Lua: " + window.isVIPPrata + " | Aura: " + window.isVIPOuro);
+          }
+      } catch (e) {
+          console.error("Erro ao carregar VIP:", e);
+      }
+  }
+
+  // Executa a leitura assim que a página carrega
+  carregarEstatutoVIP();
+
+  // Função Antiga (Mantida Intacta para o Game Over)
   window.verificarESalvarRecorde = async function(pontosAtuais) {
       try {
           const docRef = doc(db, "recordes", "fase8_recorde");
           const docSnap = await getDoc(docRef);
           let recordeAntigo = 0;
-
-          if (docSnap.exists()) {
-              recordeAntigo = docSnap.data().pontuacao;
-          }
+          if (docSnap.exists()) { recordeAntigo = docSnap.data().pontuacao; }
 
           if (pontosAtuais > recordeAntigo) {
               await setDoc(docRef, { pontuacao: pontosAtuais });
+              // Atualiza o VIP na hora se ela bater a meta durante a corrida!
+              window.recordeGlobal = pontosAtuais;
+              if (pontosAtuais >= 1000) window.isVIPPrata = true;
+              if (pontosAtuais >= 2000) window.isVIPOuro = true;
+              
               return { bateuRecorde: true, recorde: pontosAtuais };
           } else {
               return { bateuRecorde: false, recorde: recordeAntigo };
@@ -2188,8 +2217,6 @@
           return { bateuRecorde: false, recorde: 0 };
       }
   };
-
-  console.log("🔥 Motor Firebase + Sistema de Recordes Online!");
 </script>
 
 </body>
