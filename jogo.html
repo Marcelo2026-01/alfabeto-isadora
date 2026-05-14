@@ -354,7 +354,7 @@
     let vidasExtra = 3;
     let invulneravelTimer = 0;
 
-    // --- DADOS DO JOGO (SÓ O NECESSÁRIO PARA FASE 1 E 8) ---
+    // --- DADOS DO JOGO ---
     const AlfabetoIsadora = [ 
         { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, 
         { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, 
@@ -869,32 +869,56 @@
         constructor(tipo = 'letra', info = null) {
             this.tipo = tipo; this.info = info; 
             this.markedForDeletion = false; this.spin = 0; this.ignorarColisao = false; this.isResolvido = false; 
+            this.timerOscilacao = Math.random() * 100;
             let cw = window.innerWidth; let ch = window.innerHeight;
             
-            // NOVO: POÇA DE LAMA MÁGICA
+            // LAMA CORRIGIDA: Cravada no chão!
             if (this.tipo === 'lama') {
-                this.radius = 35 * scaleMultiplier;
+                this.radius = 45 * scaleMultiplier;
                 this.x = cw + 100 * scaleMultiplier;
-                this.y = ch - alturaChao - 10 * scaleMultiplier; // Rente ao chão
+                this.y = ch - alturaChao + 18 * scaleMultiplier; // Matemática corrigida. Ajuste exato para não voar.
                 this.hasLanded = true;
+            }
+            else if (this.tipo === 'moeda') { 
+                this.radius = 35 * scaleMultiplier; this.x = cw + 100 * scaleMultiplier; 
+                let groundY = ch - alturaChao; this.y = Math.random() > 0.5 ? groundY - 60 * scaleMultiplier : groundY - 220 * scaleMultiplier; 
             }
             else if (this.tipo === 'obstaculo') { 
                 this.variation = Math.floor(Math.random() * 3); this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; 
                 this.x = cw + 100 * scaleMultiplier; let groundY = ch - alturaChao; this.y = groundY - this.radius + 12 * scaleMultiplier; 
                 this.spin = 0; this.hasLanded = true;
             }
-            else { // letra
+            else { // LETRA VIVA AAA
                 this.radius = 45 * scaleMultiplier; this.x = cw + 600 * scaleMultiplier; 
-                this.y = Math.random() > 0.5 ? ch - alturaChao - this.radius - 60 : ch - alturaChao - 260 * scaleMultiplier; 
+                this.baseY = ch - alturaChao - 120 * scaleMultiplier; 
+                this.y = this.baseY;
+                this.comportamento = Math.floor(Math.random() * 3); // 0 = Flutua, 1 = Quica, 2 = Voo Alto
             }
             this.gradCache = null;
         }
         
         update(timeScale) { 
             this.x -= (gameSpeed * 1.5) * timeScale; 
+            
+            // INTELIGÊNCIA DAS LETRAS VIVAS
             if(this.tipo === 'letra') { 
-                this.spin += 0.05 * timeScale; this.y += Math.sin(this.spin*2) * 1.5 * timeScale; 
+                this.spin += 0.05 * timeScale; 
+                this.timerOscilacao += 0.1 * timeScale;
+                
+                if (this.comportamento === 0) {
+                    this.y = this.baseY + Math.sin(this.timerOscilacao) * 20 * scaleMultiplier; // Onda suave
+                } else if (this.comportamento === 1) {
+                    this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.5)) * -80 * scaleMultiplier; // Quica no chão
+                } else {
+                    this.y = this.baseY - 60 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.8) * 30 * scaleMultiplier; // Voa alto e balança
+                }
             } 
+            else if (this.tipo === 'moeda') {
+                this.spin += 0.05 * timeScale; 
+                this.timerOscilacao += 0.1 * timeScale;
+                this.y += Math.sin(this.timerOscilacao) * 1.5 * timeScale;
+            }
+
             if (this.x < -200) this.markedForDeletion = true; 
         }
         
@@ -903,19 +927,23 @@
             let scl = scaleMultiplier; let displayTexto = this.info ? this.info.letra : '?';
             let bgAlpha = this.isResolvido ? 0 : 1; let textAlpha = this.isResolvido ? 0 : 1;
             
-            // DESENHO DA POÇA DE LAMA
+            // DESENHO DA LAMA
             if (this.tipo === 'lama') {
                 ctx.globalAlpha = bgAlpha;
-                ctx.translate(0, 5 * scl); // ajusta pro chão
-                ctx.fillStyle = this.ignorarColisao ? 'rgba(101, 67, 33, 0.3)' : '#654321'; // Marrom
+                ctx.fillStyle = this.ignorarColisao ? 'rgba(101, 67, 33, 0.3)' : '#654321'; 
                 ctx.beginPath();
                 ctx.ellipse(0, 0, this.radius * 1.5, this.radius * 0.4, 0, 0, Math.PI * 2);
                 ctx.fill();
-                // Reflexo de água na lama
                 ctx.fillStyle = this.ignorarColisao ? 'rgba(139, 90, 43, 0.2)' : 'rgba(255, 255, 255, 0.15)';
                 ctx.beginPath();
                 ctx.ellipse(-this.radius*0.4, -this.radius*0.1, this.radius*0.6, this.radius*0.15, 0, 0, Math.PI*2);
                 ctx.fill();
+            }
+            else if (this.tipo === 'moeda') {
+                ctx.globalAlpha = bgAlpha; ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 20;
+                ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fillStyle = '#FFD700'; ctx.fill();
+                ctx.fillStyle = '#FFA500'; ctx.beginPath(); ctx.arc(0,0, this.radius*0.7, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.fillStyle = '#FFF'; ctx.font = `bold ${this.radius*1.2}px 'Fredoka'`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('★', 0, 2*scl);
             }
             else if (this.tipo === 'obstaculo') {
                 ctx.globalAlpha = bgAlpha; let chaoAjuste = this.radius + 10 * scl; ctx.translate(0, chaoAjuste); 
@@ -1131,7 +1159,7 @@
                 ctx.restore();
             }
         } else {
-            // NOVO MOTOR DE SPAWN: FASE 1 (Letras e Poças de Lama)
+            // MOTOR DE SPAWN FASE 1: Letras, Lama e Moedas!
             window.lamaTimer = (window.lamaTimer || 0) + deltaTime;
             
             if (itemTimer > itemInterval) { 
@@ -1146,14 +1174,18 @@
                 } else { 
                     faseAtual = 8; prepararFase(8); AudioManager.playSuccessSFX(); 
                 }
-                itemTimer = 0;
-                window.lamaTimer = 0; // Garante que a lama não nasça no mesmo segundo da letra
+                itemTimer = 0; window.lamaTimer = 0;
             }
-            else if (window.lamaTimer > 1200) {
-                // Tenta colocar uma Lama na pista se não houver letra muito perto
-                let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 350 * scaleMultiplier);
-                if (!temItemPerto && Math.random() > 0.4) {
-                    collectibles.push(new Collectible('lama'));
+            else if (window.lamaTimer > 1000) {
+                // Sorteio no Tempo Morto (Aventura na Pista)
+                let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier);
+                if (!temItemPerto) {
+                    let sorteio = Math.random();
+                    if (sorteio > 0.6) {
+                        collectibles.push(new Collectible('lama')); // 40% chance de Lama
+                    } else if (sorteio > 0.2) {
+                        collectibles.push(new Collectible('moeda')); // 40% chance de Moeda Ouro
+                    }
                 }
                 window.lamaTimer = 0;
             }
@@ -1174,23 +1206,15 @@
                 
                 let margemX = player.width * 0.5; let margemY = player.height * 0.45;
 
-                // COLISÃO COM A POÇA DE LAMA
+                // COLISÃO COM LAMA
                 if (item.tipo === 'lama') {
-                    // Colisão mais justa, a lama fica no chão
                     let centroYLama = item.y;
-                    let dyLama = (player.y + player.height) - centroYLama; // Checa o pé da Isadora
+                    let dyLama = (player.y + player.height) - centroYLama; // Checa o pé do jogador
                     if (Math.abs(dx) < (item.radius * 0.8 + margemX) && dyLama > -20 && !item.ignorarColisao && !item.isResolvido) {
                         item.isResolvido = true; item.ignorarColisao = true; 
-                        shakeIntensity = 8; // Treme a tela
-                        hitStopTime = 40; // Dá uma travadinha rápida de tropeço
-                        AudioManager.playErrorSFX(); // Som de erro suave
+                        shakeIntensity = 8; hitStopTime = 40; AudioManager.playErrorSFX(); 
                         textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 40, '#FFF', '#8B4513'));
-                        // Levanta poeira/lama marrom
-                        for(let j=0; j<15; j++) {
-                            let angle = Math.random() * Math.PI * 2;
-                            let speed = Math.random() * 5 + 2;
-                            particulas.push(new Particula(item.x, item.y, '#654321', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*8+4));
-                        }
+                        for(let j=0; j<15; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 5 + 2; particulas.push(new Particula(item.x, item.y, '#654321', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*8+4)); }
                     }
                 }
                 else if (item.tipo === 'obstaculo') { 
@@ -1209,7 +1233,11 @@
                     }
                 }
                 else if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
-                    if (item.tipo === 'letra') {
+                    if (item.tipo === 'moeda') {
+                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 1; pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
+                        for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
+                    }
+                    else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(item.info.letra); 
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); } 
