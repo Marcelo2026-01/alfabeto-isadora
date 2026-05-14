@@ -101,7 +101,7 @@
         .ps5-hero-area { width: 50%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; perspective: 1000px; }
         .ps5-hero-glow { position: absolute; width: clamp(250px, 45vw, 600px); height: clamp(250px, 45vw, 600px); background: radial-gradient(circle, rgba(255, 16, 122, 0.4) 0%, rgba(0, 216, 255, 0.2) 40%, transparent 70%); border-radius: 50%; animation: pulsarLuz 3s alternate infinite ease-in-out; filter: blur(20px); will-change: transform, opacity; }
         
-        /* 🌟 FOTO REAL DA ISADORA NO MENU PRINCIPAL (PADRÃO PS5) 🌟 */
+        /* 🌟 EFEITO MAGICO NO MENU: ISADORA -> GATINHA 🌟 */
         .ps5-hero-mascot { 
             position: relative; 
             z-index: 2; 
@@ -114,6 +114,27 @@
             filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.5)); 
             animation: breatheMascot 4s ease-in-out infinite; 
             will-change: transform; 
+        }
+        
+        .ps5-hero-mascot::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('gatinha.png');
+            background-size: contain;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            opacity: 0;
+            animation: morphGatinha 12s infinite;
+            will-change: opacity, filter, transform;
+        }
+
+        @keyframes morphGatinha {
+            0%, 35% { opacity: 0; filter: brightness(1); transform: scale(1); }
+            40% { opacity: 0.8; filter: brightness(2) drop-shadow(0 0 30px #FFF); transform: scale(1.05); }
+            45%, 85% { opacity: 1; filter: brightness(1); transform: scale(1); }
+            90% { opacity: 0.8; filter: brightness(2) drop-shadow(0 0 30px #FFF); transform: scale(1.05); }
+            100% { opacity: 0; filter: brightness(1); transform: scale(1); }
         }
         
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
@@ -144,7 +165,6 @@
         #livro-container .pagina { display: none; animation: fadeInLore 0.8s; flex-grow: 1; } #livro-container .pagina.ativa { display: flex; flex-direction: column; justify-content: center; }
         @keyframes fadeInLore { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* 🌟 FOTO REAL DA ISADORA NO LIVRO DE HISTÓRIA 🌟 */
         .foto-isadora-livro { 
             width: clamp(90px, 20vmin, 140px); 
             height: clamp(180px, 40vmin, 280px); 
@@ -898,7 +918,7 @@
     const fundoImg2 = new Image(); fundoImg2.src = 'cenario2.png'; 
     const playerSprite = new Image(); playerSprite.src = 'seu_personagem.png'; 
     const fundoImgExtra = new Image(); fundoImgExtra.src = 'cenario_extra.png'; 
-    const gatinhaSprite = new Image(); gatinhaSprite.src = 'gatinha.png'; // 🌟 NOVO SPRITE CARREGADO
+    const gatinhaSprite = new Image(); gatinhaSprite.src = 'gatinha.png'; 
 
     class Particula {
         constructor(x, y, cor, vx, vy, tamanho) {
@@ -936,7 +956,8 @@
             
             if (this.tipo === 'mini_obstaculo') { 
                 this.variation = Math.floor(Math.random() * 3); 
-                this.radius = (this.variation === 1 ? 30 : 25) * scaleMultiplier; 
+                // 🌟 AJUSTE: MESMO TAMANHO DA FASE 8 🌟
+                this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; 
                 this.x = cw + 100 * scaleMultiplier; 
                 let groundY = ch - alturaChao; 
                 this.y = groundY - this.radius + 12 * scaleMultiplier; 
@@ -1047,7 +1068,7 @@
             this.baseScale = 0.28; this.width = 100; this.height = 200; 
             this.baseX = window.innerWidth * 0.15; this.x = this.baseX; this.y = 0; this.vy = 0; this.gravity = 1.2; this.jumpPower = -22; 
             this.isJumping = false; this.frameX = 0; 
-            this.staggerFrames = 3; // 🌟 GATINHA COM VELOCIDADE SONIC 🌟
+            this.staggerFrames = 3; 
             this.gameFrame = 0; this.espacoVazio = 0.25; this.tilt = 0; 
         }
         update(timeScale) {
@@ -1058,7 +1079,7 @@
             if (this.y >= groundY) { 
                 if (this.isJumping) { 
                     for(let i=0;i<12;i++) {
-                        let corPo = isGatinha ? '#FF1493' : 'rgba(255, 228, 225, 0.8)'; // Pó rosa se for gatinha
+                        let corPo = isGatinha ? '#FF1493' : 'rgba(255, 228, 225, 0.8)'; 
                         particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, corPo, (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); 
                     }
                 } 
@@ -1070,11 +1091,9 @@
                 if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; } 
                 if (this.gameFrame % 3 === 0) { 
                     if (isGatinha) {
-                        // 🌟 PARTÍCULAS MÁGICAS DA GATINHA 🌟
                         particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#FF1493', -gameSpeed * 1.5, -1, Math.random() * 8 + 4)); 
                         if (Math.random() > 0.5) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#FFD700', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 6 + 2));
                     } else {
-                        // POEIRA NORMAL
                         particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4)); 
                         if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2)); 
                     }
@@ -1086,7 +1105,6 @@
             let prevAlpha = ctx.globalAlpha;
             let rW, rH; let ajustePe = 0; let groundY = window.innerHeight - alturaChao + 20;
             
-            // 🌟 MOTOR ESCOLHE A ISADORA OU A GATINHA 🌟
             let spriteAtual = isGatinha ? gatinhaSprite : playerSprite;
 
             if (spriteAtual.complete && spriteAtual.naturalWidth > 0) {
@@ -1213,20 +1231,19 @@
         if (faseAtual === 8) {
             pontuacao += (gameSpeed * 0.05) * timeScale; metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao); atualizarProgressoHUD();
             
-            // 🌟 A TRANSFORMAÇÃO MÁGICA 🌟
-            if (pontuacao >= 2000 && !hasTransformed) {
+            // 🌟 A TRANSFORMAÇÃO MÁGICA (Agora aos 1.000 pontos!) 🌟
+            if (pontuacao >= 1000 && !hasTransformed) {
                 hasTransformed = true;
                 isGatinha = true;
-                hitStopTime = 150; // Trava dramática
-                shakeIntensity = 25; // Terremoto
+                hitStopTime = 150; 
+                shakeIntensity = 25; 
                 
                 AudioManager.playMagicSFX();
                 AudioManager.playSuccessSFX();
-                dispararFlashTransicao(); // Clarão branco
+                dispararFlashTransicao(); 
                 
                 textosFlutuantes.push(new TextoFlutuante("SUPER GATINHA!", player.x - 50, player.y - 100, '#FFF', '#FF1493'));
                 
-                // Explosão gigante de partículas
                 for(let j=0; j<80; j++) {
                     let angle = Math.random() * Math.PI * 2;
                     let speed = Math.random() * 15 + 5;
