@@ -101,17 +101,17 @@
         .ps5-hero-area { width: 50%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; perspective: 1000px; }
         .ps5-hero-glow { position: absolute; width: clamp(250px, 45vw, 600px); height: clamp(250px, 45vw, 600px); background: radial-gradient(circle, rgba(255, 16, 122, 0.4) 0%, rgba(0, 216, 255, 0.2) 40%, transparent 70%); border-radius: 50%; animation: pulsarLuz 3s alternate infinite ease-in-out; filter: blur(20px); will-change: transform, opacity; }
         
-        /* 🌟 NOVO: FOTO REAL EM PNG PADRÃO PS5 🌟 */
+        /* 🌟 FOTO REAL DA ISADORA NO MENU PRINCIPAL (PADRÃO PS5) 🌟 */
         .ps5-hero-mascot { 
             position: relative; 
             z-index: 2; 
             width: clamp(200px, 40vw, 550px); 
             height: clamp(250px, 50vw, 700px); 
-            background-image: url('foto_isadora.png'); /* ⬅️ INSIRA A SUA FOTO AQUI */
-            background-size: contain; 
-            background-position: center bottom; 
+            background-image: url('Isadora.png'); /* ⬅️ NOME CORRIGIDO EXATAMENTE COMO NO GITHUB */
+            background-size: contain; /* Encaixa a foto inteira sem cortar */
+            background-position: center bottom; /* Fixa a base da foto em baixo */
             background-repeat: no-repeat; 
-            filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.5)); 
+            filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.5)); /* Sombra + Brilho Rosa Neon */
             animation: breatheMascot 4s ease-in-out infinite; 
             will-change: transform; 
         }
@@ -143,7 +143,21 @@
         #livro-container { width: 90vw; max-width: 600px; background: rgba(20, 25, 35, 0.7); border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); padding: clamp(15px, 4vmin, 40px); text-align: center; color: #E0E0E0; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;}
         #livro-container .pagina { display: none; animation: fadeInLore 0.8s; flex-grow: 1; } #livro-container .pagina.ativa { display: flex; flex-direction: column; justify-content: center; }
         @keyframes fadeInLore { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .foto-isadora-livro { width: clamp(90px, 20vmin, 140px); height: clamp(180px, 40vmin, 280px); margin: 0 auto 10px; background-image: url('seu_personagem.png'); background-size: 300% 100%; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.8)); animation: flutuarLore 4s infinite; }
+        
+        /* 🌟 FOTO REAL DA ISADORA NO LIVRO DE HISTÓRIA 🌟 */
+        .foto-isadora-livro { 
+            width: clamp(90px, 20vmin, 140px); 
+            height: clamp(180px, 40vmin, 280px); 
+            margin: 0 auto 10px; 
+            background-image: url('Isadora.png'); /* ⬅️ NOME CORRIGIDO EXATAMENTE COMO NO GITHUB */
+            background-size: cover; /* Ajusta a foto de forma elegante como um retrato */
+            background-position: center 20%; /* Foca mais no rosto lindo dela */
+            border-radius: 15px; /* Deixa os cantos redondinhos parecendo porta-retrato */
+            border: 2px solid rgba(255, 105, 180, 0.5); /* Bordinha rosa suave */
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.8)); 
+            animation: flutuarLore 4s infinite; 
+        }
+        
         .foto-casa-livro { width: 100%; height: clamp(120px, 30vmin, 220px); margin-bottom: 15px; border-radius: 12px; background-image: url('casa_sorrir.png'); background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); }
         #livro-container h2 { color: #FFF; font-size: clamp(20px, 5vmin, 32px); margin-bottom: 8px; text-transform: uppercase; color: #FF69B4; } 
         #livro-container p { font-size: clamp(14px, 3.5vmin, 18px); margin-bottom: 10px; line-height: 1.4;}
