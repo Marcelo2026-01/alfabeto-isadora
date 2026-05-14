@@ -107,7 +107,7 @@
             z-index: 2; 
             width: clamp(200px, 40vw, 550px); 
             height: clamp(250px, 50vw, 700px); 
-            background-image: url('Isadora.png'); /* ⬅️ NOME DA FOTO */
+            background-image: url('Isadora.png'); 
             background-size: contain; 
             background-position: center bottom; 
             background-repeat: no-repeat; 
@@ -144,6 +144,7 @@
         #livro-container .pagina { display: none; animation: fadeInLore 0.8s; flex-grow: 1; } #livro-container .pagina.ativa { display: flex; flex-direction: column; justify-content: center; }
         @keyframes fadeInLore { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* 🌟 FOTO REAL DA ISADORA NO LIVRO DE HISTÓRIA 🌟 */
         .foto-isadora-livro { 
             width: clamp(90px, 20vmin, 140px); 
             height: clamp(180px, 40vmin, 280px); 
@@ -383,6 +384,10 @@
     
     let vidasExtra = 3;
     let invulneravelTimer = 0;
+    
+    // 🌟 NOVO: VARIÁVEIS DA TRANSFORMAÇÃO "SUPER GATINHA" 🌟
+    let isGatinha = false;
+    let hasTransformed = false;
 
     // --- DADOS DO JOGO ---
     const AlfabetoIsadora = [ 
@@ -643,6 +648,10 @@
     function prepararFase(fase) {
         if (gameActive) dispararFlashTransicao();
 
+        // 🌟 ZERA TRANSFORMAÇÃO AO REINICIAR FASE 🌟
+        isGatinha = false;
+        hasTransformed = false;
+
         if(fase === 1) { 
             pontuacao = 0;
             vidasExtra = 3;
@@ -709,7 +718,7 @@
         }
     }
     
-    // GAME OVER MULTI-FASE (Serve para a 1 e para a 8)
+    // GAME OVER MULTI-FASE
     async function dispararGameOverExtra() {
         if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
         gameActive = false; isHolding = false;
@@ -844,7 +853,6 @@
     btnVoltarMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(pauseScreen); });
     btnVitoriaMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(victoryScreen); });
     
-    // MOTOR AAA: REINÍCIO RÁPIDO (MANTÉM O JOGADOR NO "FLOW")
     btnJogarNovamente.addEventListener('click', (e) => { 
         e.preventDefault(); e.stopPropagation(); 
         AudioManager.playHoverTick(); 
@@ -856,7 +864,7 @@
             if(animationId) { cancelAnimationFrame(animationId); animationId = null; } 
             AudioManager.stopAll(); 
             AudioManager.isMutedGlobal = false; 
-            iniciarJogo(); // Lança a Isadora de volta para a pista imediatamente!
+            iniciarJogo(); 
         }, 300); 
     });
 
@@ -890,6 +898,7 @@
     const fundoImg2 = new Image(); fundoImg2.src = 'cenario2.png'; 
     const playerSprite = new Image(); playerSprite.src = 'seu_personagem.png'; 
     const fundoImgExtra = new Image(); fundoImgExtra.src = 'cenario_extra.png'; 
+    const gatinhaSprite = new Image(); gatinhaSprite.src = 'gatinha.png'; // 🌟 NOVO SPRITE CARREGADO
 
     class Particula {
         constructor(x, y, cor, vx, vy, tamanho) {
@@ -927,7 +936,7 @@
             
             if (this.tipo === 'mini_obstaculo') { 
                 this.variation = Math.floor(Math.random() * 3); 
-                this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; // MESMO TAMANHO DA FASE 8
+                this.radius = (this.variation === 1 ? 30 : 25) * scaleMultiplier; 
                 this.x = cw + 100 * scaleMultiplier; 
                 let groundY = ch - alturaChao; 
                 this.y = groundY - this.radius + 12 * scaleMultiplier; 
@@ -943,7 +952,7 @@
                 this.x = cw + 100 * scaleMultiplier; let groundY = ch - alturaChao; this.y = groundY - this.radius + 12 * scaleMultiplier; 
                 this.spin = 0; this.hasLanded = true;
             }
-            else { // LETRAS
+            else { 
                 this.radius = 45 * scaleMultiplier; this.x = cw + 600 * scaleMultiplier; 
                 this.baseY = ch - alturaChao - 120 * scaleMultiplier; 
                 this.y = this.baseY;
@@ -955,17 +964,16 @@
         update(timeScale) { 
             this.x -= (gameSpeed * 1.5) * timeScale; 
             
-            // LETRAS VIVAS MAIS CALMAS E ELEGANTES
             if(this.tipo === 'letra') { 
                 this.spin += 0.05 * timeScale; 
                 this.timerOscilacao += 0.1 * timeScale;
                 
                 if (this.comportamento === 0) {
-                    this.y = this.baseY + Math.sin(this.timerOscilacao * 0.8) * 10 * scaleMultiplier; // Flutua muito suave
+                    this.y = this.baseY + Math.sin(this.timerOscilacao * 0.8) * 10 * scaleMultiplier; 
                 } else if (this.comportamento === 1) {
-                    this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.2)) * -40 * scaleMultiplier; // Pula baixinho e devagar
+                    this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.2)) * -40 * scaleMultiplier; 
                 } else {
-                    this.y = this.baseY - 50 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.5) * 15 * scaleMultiplier; // Fica no alto com balanço leve
+                    this.y = this.baseY - 50 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.5) * 15 * scaleMultiplier; 
                 }
             } 
             else if (this.tipo === 'moeda') {
@@ -996,10 +1004,8 @@
                     let fEsq, fDir, fBaixoEsq, fBaixoDir, glowColor;
                     
                     if (this.tipo === 'mini_obstaculo') {
-                        // CRISTAL ESMERALDA (Fase 1)
                         fEsq = '#00802b'; fDir = '#00e64d'; fBaixoEsq = '#003311'; fBaixoDir = '#006622'; glowColor = '#00ff55';
                     } else {
-                        // Cristal Normal (Fase 8)
                         let ciclo = Math.floor(pontuacao / 500); let isNight = ciclo % 2 !== 0;
                         fEsq = isNight ? '#006699' : '#b30047'; fDir = isNight ? '#00ccff' : '#ff3385';
                         fBaixoEsq = isNight ? '#002244' : '#4d001f'; fBaixoDir = isNight ? '#004466' : '#800033';
@@ -1040,7 +1046,9 @@
         constructor() { 
             this.baseScale = 0.28; this.width = 100; this.height = 200; 
             this.baseX = window.innerWidth * 0.15; this.x = this.baseX; this.y = 0; this.vy = 0; this.gravity = 1.2; this.jumpPower = -22; 
-            this.isJumping = false; this.frameX = 0; this.staggerFrames = 4; this.gameFrame = 0; this.espacoVazio = 0.25; this.tilt = 0; 
+            this.isJumping = false; this.frameX = 0; 
+            this.staggerFrames = 3; // 🌟 GATINHA COM VELOCIDADE SONIC 🌟
+            this.gameFrame = 0; this.espacoVazio = 0.25; this.tilt = 0; 
         }
         update(timeScale) {
             this.scale = this.baseScale * scaleMultiplier; this.baseX = window.innerWidth * 0.15; this.x = this.baseX; 
@@ -1048,22 +1056,41 @@
             
             this.y += this.vy * timeScale;
             if (this.y >= groundY) { 
-                if (this.isJumping) { for(let i=0;i<12;i++) particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } 
+                if (this.isJumping) { 
+                    for(let i=0;i<12;i++) {
+                        let corPo = isGatinha ? '#FF1493' : 'rgba(255, 228, 225, 0.8)'; // Pó rosa se for gatinha
+                        particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, corPo, (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); 
+                    }
+                } 
                 this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt += (0 - this.tilt) * 0.2 * timeScale; 
             } else { 
                 this.vy += this.gravity * timeScale; this.isJumping = true; let targetTilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); this.tilt += (targetTilt - this.tilt) * 0.15 * timeScale;
             }
             if (!this.isJumping) { 
                 if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; } 
-                if (this.gameFrame % 3 === 0) { particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4)); if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2)); }
+                if (this.gameFrame % 3 === 0) { 
+                    if (isGatinha) {
+                        // 🌟 PARTÍCULAS MÁGICAS DA GATINHA 🌟
+                        particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#FF1493', -gameSpeed * 1.5, -1, Math.random() * 8 + 4)); 
+                        if (Math.random() > 0.5) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#FFD700', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 6 + 2));
+                    } else {
+                        // POEIRA NORMAL
+                        particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4)); 
+                        if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2)); 
+                    }
+                }
                 this.gameFrame++; 
             } else { this.frameX = 1; }
         }
         draw(ctx) {
             let prevAlpha = ctx.globalAlpha;
             let rW, rH; let ajustePe = 0; let groundY = window.innerHeight - alturaChao + 20;
-            if (playerSprite.complete && playerSprite.naturalWidth > 0) {
-                rW = playerSprite.naturalWidth / 3; rH = playerSprite.naturalHeight; this.width = rW * this.scale; this.height = rH * this.scale; 
+            
+            // 🌟 MOTOR ESCOLHE A ISADORA OU A GATINHA 🌟
+            let spriteAtual = isGatinha ? gatinhaSprite : playerSprite;
+
+            if (spriteAtual.complete && spriteAtual.naturalWidth > 0) {
+                rW = spriteAtual.naturalWidth / 3; rH = spriteAtual.naturalHeight; this.width = rW * this.scale; this.height = rH * this.scale; 
                 ajustePe = this.height * this.espacoVazio; groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; 
                 if (!this.isJumping && this.y > groundY) this.y = groundY; 
             } else {
@@ -1078,10 +1105,10 @@
             ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height - ajustePe); ctx.rotate(this.tilt); let scl = scaleMultiplier;
             
             let pisadaY = (!this.isJumping && this.frameX === 1) ? (6 * scl) : 0;
-            if (playerSprite.complete && playerSprite.naturalWidth > 0) {
-                ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height);
+            if (spriteAtual.complete && spriteAtual.naturalWidth > 0) {
+                ctx.drawImage(spriteAtual, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height);
             } else {
-                ctx.fillStyle = '#FF69B4'; ctx.beginPath(); ctx.roundRect(-this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height * 0.9, 15); ctx.fill();
+                ctx.fillStyle = isGatinha ? '#FFA500' : '#FF69B4'; ctx.beginPath(); ctx.roundRect(-this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height * 0.9, 15); ctx.fill();
             }
             ctx.restore(); ctx.globalAlpha = prevAlpha;
         }
@@ -1089,7 +1116,10 @@
             if (!this.isJumping) { 
                 if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } 
                 this.vy = this.jumpPower; this.isJumping = true; 
-                for(let i=0;i<10;i++) { particulas.push(new Particula(this.x + this.width/2, this.y + this.height - (this.height*this.espacoVazio), 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*10+5)); }
+                for(let i=0;i<10;i++) { 
+                    let corPo = isGatinha ? '#FFD700' : 'rgba(255, 228, 225, 0.8)';
+                    particulas.push(new Particula(this.x + this.width/2, this.y + this.height - (this.height*this.espacoVazio), corPo, (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*10+5)); 
+                }
             } 
         }
     }
@@ -1182,6 +1212,29 @@
 
         if (faseAtual === 8) {
             pontuacao += (gameSpeed * 0.05) * timeScale; metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao); atualizarProgressoHUD();
+            
+            // 🌟 A TRANSFORMAÇÃO MÁGICA 🌟
+            if (pontuacao >= 2000 && !hasTransformed) {
+                hasTransformed = true;
+                isGatinha = true;
+                hitStopTime = 150; // Trava dramática
+                shakeIntensity = 25; // Terremoto
+                
+                AudioManager.playMagicSFX();
+                AudioManager.playSuccessSFX();
+                dispararFlashTransicao(); // Clarão branco
+                
+                textosFlutuantes.push(new TextoFlutuante("SUPER GATINHA!", player.x - 50, player.y - 100, '#FFF', '#FF1493'));
+                
+                // Explosão gigante de partículas
+                for(let j=0; j<80; j++) {
+                    let angle = Math.random() * Math.PI * 2;
+                    let speed = Math.random() * 15 + 5;
+                    let color = Math.random() > 0.5 ? '#FF1493' : '#FFD700';
+                    particulas.push(new Particula(player.x + player.width/2, player.y + player.height/2, color, Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*20+10));
+                }
+            }
+            
             let ultimoItem = collectibles.length > 0 ? collectibles[collectibles.length - 1] : null;
             let minDistancia = cw * 0.45; let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999;
             let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200));
@@ -1201,7 +1254,6 @@
 
             if (gameSpeed < 11) { gameSpeed += 0.0008 * timeScale; } else { minDistancia = cw * 0.35; }
         } else {
-            // MOTOR DE SPAWN FASE 1: Letras, Mini Cristais Esmeralda e Moedas!
             window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime;
             
             if (itemTimer > itemInterval) { 
@@ -1219,21 +1271,19 @@
                 itemTimer = 0; window.obstaculoTimer = 0;
             }
             else if (window.obstaculoTimer > 1000) {
-                // Sorteio no Tempo Morto (Aventura na Pista)
                 let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier);
                 if (!temItemPerto) {
                     let sorteio = Math.random();
                     if (sorteio > 0.5) {
-                        collectibles.push(new Collectible('mini_obstaculo')); // Cristal Esmeralda
+                        collectibles.push(new Collectible('mini_obstaculo')); 
                     } else if (sorteio > 0.2) {
-                        collectibles.push(new Collectible('moeda')); // Moeda Ouro
+                        collectibles.push(new Collectible('moeda')); 
                     }
                 }
                 window.obstaculoTimer = 0;
             }
         }
         
-        // INTERFACE DE VIDAS (Aparece na Fase 1 e 8)
         let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
         for(let i=0; i<3; i++) {
             ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY);
@@ -1262,7 +1312,6 @@
                 
                 let margemX = player.width * 0.5; let margemY = player.height * 0.45;
 
-                // COLISÃO COM OBSTÁCULO OU MINI-OBSTÁCULO
                 if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
                     let centroYObstaculo = item.y - (item.radius * 1.5); let dyObstaculo = posYPersonagem - centroYObstaculo;
                     margemX = player.width * 0.25; margemY = player.height * 0.35; 
@@ -1281,13 +1330,13 @@
                 else if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
                     if (item.tipo === 'moeda') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 1; 
-                        pontuacao += 100; // PONTOS DA MOEDA
+                        pontuacao += 100;
                         AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
                         for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
                     }
                     else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(item.info.letra); 
-                        pontuacao += 500; // PONTOS DA LETRA
+                        pontuacao += 500;
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); } 
                         for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
