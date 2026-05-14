@@ -1069,8 +1069,7 @@
     }
     // ==========================================
     
-    // GAME OVER DO MODO EXTRA
-   // GAME OVER DO MODO EXTRA COM LIGAÇÃO À NUVEM (VERSÃO FINAL)
+    // GAME OVER DO MODO EXTRA COM LIGAÇÃO À NUVEM (VERSÃO FINAL)
     async function dispararGameOverExtra() {
         if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
         gameActive = false; 
@@ -1848,7 +1847,7 @@
         }
 
         // LIGANDO O NOVO MOTOR VISUAL VIP:
-    if (typeof renderizarCeuVIP === 'function') { renderizarCeuVIP(); }
+        if (typeof renderizarCeuVIP === 'function') { renderizarCeuVIP(); }
         let groundY = ch - alturaChao; 
         if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; 
         if (estradaOffset > 120) estradaOffset -= 120;
@@ -1919,10 +1918,21 @@
                 let reciclado = collectibles.find(c => c.tipo === 'obstaculo' && c.markedForDeletion);
                 if (reciclado) {
                     // Ressuscita o obstáculo sem gastar memória RAM!
-                    reciclado.markedForDeletion = false; reciclado.isResolvido = false; reciclado.ignorarColisao = false;
-                    reciclado.x = cw + 100 * scaleMultiplier; reciclado.hasLanded = true;
-                    reciclado.variation = Math.floor(Math.random() * 3); // Muda o visual para parecer novo
+                    reciclado.markedForDeletion = false; 
+                    reciclado.isResolvido = false; 
+                    reciclado.ignorarColisao = false;
+                    reciclado.x = cw + 100 * scaleMultiplier; 
+                    reciclado.variation = Math.floor(Math.random() * 3);
                     reciclado.radius = (reciclado.variation === 1 ? 48 : 40) * scaleMultiplier;
+                    
+                    // CORREÇÃO CRÍTICA DO BUG DE FLUTUAÇÃO:
+                    let localGroundY = ch - alturaChao;
+                    reciclado.y = localGroundY - reciclado.radius + 12 * scaleMultiplier;
+                    reciclado.resolvidoTempo = 0;
+                    reciclado.scale = 1;
+                    reciclado.opacity = 1;
+                    reciclado.spin = 0;
+                    reciclado.hasLanded = true;
                 } else if (collectibles.filter(c => c.tipo === 'obstaculo').length < 6) {
                     // 2. Só cria um NOVO se a piscina ainda não tiver 6 no total
                     collectibles.push(new Collectible('obstaculo'));
