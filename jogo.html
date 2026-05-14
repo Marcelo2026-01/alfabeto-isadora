@@ -1913,11 +1913,30 @@
             
             let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200));
             
+            // MOTOR AAA: DDA (Ritmo) + OBJECT POOLING (Sem Travamentos)
             if (itemTimer > spawnRate && distanciaLivre > minDistancia) {
-                collectibles.push(new Collectible('obstaculo')); 
-                itemTimer = 0; 
+                // 1. Tenta achar um obstáculo "invisível" na piscina
+                let reciclado = collectibles.find(c => c.tipo === 'obstaculo' && c.markedForDeletion);
+                if (reciclado) {
+                    // Ressuscita o obstáculo sem gastar memória RAM!
+                    reciclado.markedForDeletion = false; reciclado.isResolvido = false; reciclado.ignorarColisao = false;
+                    reciclado.x = cw + 100 * scaleMultiplier; reciclado.hasLanded = true;
+                    reciclado.variation = Math.floor(Math.random() * 3); // Muda o visual para parecer novo
+                    reciclado.radius = (reciclado.variation === 1 ? 48 : 40) * scaleMultiplier;
+                } else if (collectibles.filter(c => c.tipo === 'obstaculo').length < 6) {
+                    // 2. Só cria um NOVO se a piscina ainda não tiver 6 no total
+                    collectibles.push(new Collectible('obstaculo'));
+                }
+                itemTimer = 0;
             }
-            if (gameSpeed < 16) { gameSpeed += 0.001 * timeScale; } 
+
+            // TRAVA DE SEGURANÇA MOBILE: Velocidade máxima 11 (Justo e Humano)
+            if (gameSpeed < 11) {
+                gameSpeed += 0.0008 * timeScale; // Sobe suavemente
+            } else {
+                // Se chegou na velocidade máxima, o desafio passa a ser a distância!
+                minDistancia = cw * 0.35; // Obstáculos vêm mais colados (Desafio Rítmico em vez de Velocidade Cega)
+            }
             
             let faceSize = 35 * scaleMultiplier;
             let startX = cw - (3 * (faceSize + 15)) - 20;
@@ -2031,7 +2050,16 @@
         
         try {
             for (let i = collectibles.length - 1; i >= 0; i--) {
-                let item = collectibles[i]; if(item.markedForDeletion) { collectibles.splice(i, 1); continue; }
+                let item = collectibles[i];
+                if(item.markedForDeletion) {
+                    // AAA POOLING: Na Fase 8, não destruímos os obstáculos (Salva a RAM do celular!)
+                    if (faseAtual === 8 && item.tipo === 'obstaculo') {
+                        item.x = -9999; // Apenas esconde o obstáculo longe da tela
+                    } else {
+                        collectibles.splice(i, 1); // Fases 1 a 7 continuam normais
+                    }
+                    continue;
+                }
                 item.update(timeScale); item.draw(ctx);
                 const dx = (player.x + player.width/2) - item.x; let ajustePe = player.height * player.espacoVazio; 
                 let posYPersonagem;
