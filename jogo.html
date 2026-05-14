@@ -101,7 +101,7 @@
         .ps5-hero-area { width: 50%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; perspective: 1000px; }
         .ps5-hero-glow { position: absolute; width: clamp(250px, 45vw, 600px); height: clamp(250px, 45vw, 600px); background: radial-gradient(circle, rgba(255, 16, 122, 0.4) 0%, rgba(0, 216, 255, 0.2) 40%, transparent 70%); border-radius: 50%; animation: pulsarLuz 3s alternate infinite ease-in-out; filter: blur(20px); will-change: transform, opacity; }
         
-        /* 🌟 EFEITO MAGICO NO MENU: ISADORA -> GATINHA 🌟 */
+        /* 🌟 FOTO REAL DA ISADORA NO MENU PRINCIPAL (PADRÃO PS5 LIMPO) 🌟 */
         .ps5-hero-mascot { 
             position: relative; 
             z-index: 2; 
@@ -114,27 +114,6 @@
             filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.5)); 
             animation: breatheMascot 4s ease-in-out infinite; 
             will-change: transform; 
-        }
-        
-        .ps5-hero-mascot::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('gatinha.png');
-            background-size: contain;
-            background-position: center bottom;
-            background-repeat: no-repeat;
-            opacity: 0;
-            animation: morphGatinha 12s infinite;
-            will-change: opacity, filter, transform;
-        }
-
-        @keyframes morphGatinha {
-            0%, 35% { opacity: 0; filter: brightness(1); transform: scale(1); }
-            40% { opacity: 0.8; filter: brightness(2) drop-shadow(0 0 30px #FFF); transform: scale(1.05); }
-            45%, 85% { opacity: 1; filter: brightness(1); transform: scale(1); }
-            90% { opacity: 0.8; filter: brightness(2) drop-shadow(0 0 30px #FFF); transform: scale(1.05); }
-            100% { opacity: 0; filter: brightness(1); transform: scale(1); }
         }
         
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
@@ -405,9 +384,10 @@
     let vidasExtra = 3;
     let invulneravelTimer = 0;
     
-    // 🌟 NOVO: VARIÁVEIS DA TRANSFORMAÇÃO "SUPER GATINHA" 🌟
+    // 🌟 NOVO: VARIÁVEIS DA "SUPER GATINHA" (IDEIA 1) 🌟
     let isGatinha = false;
-    let hasTransformed = false;
+    window.catTimer = 0; 
+    window.nextCatScore = 1000; // Ponto mágico de transformação
 
     // --- DADOS DO JOGO ---
     const AlfabetoIsadora = [ 
@@ -670,7 +650,8 @@
 
         // 🌟 ZERA TRANSFORMAÇÃO AO REINICIAR FASE 🌟
         isGatinha = false;
-        hasTransformed = false;
+        window.catTimer = 0;
+        window.nextCatScore = 1000;
 
         if(fase === 1) { 
             pontuacao = 0;
@@ -916,7 +897,7 @@
 
     const fundoImg1 = new Image(); fundoImg1.src = 'cenario.png'; 
     const fundoImg2 = new Image(); fundoImg2.src = 'cenario2.png'; 
-    const playerSprite = new Image(); playerSprite.src = 'seu_personagem.png'; 
+    const playerSprite = new Image(); playerSprite.src = 'Isadora.png'; 
     const fundoImgExtra = new Image(); fundoImgExtra.src = 'cenario_extra.png'; 
     const gatinhaSprite = new Image(); gatinhaSprite.src = 'gatinha.png'; 
 
@@ -956,7 +937,6 @@
             
             if (this.tipo === 'mini_obstaculo') { 
                 this.variation = Math.floor(Math.random() * 3); 
-                // 🌟 AJUSTE: MESMO TAMANHO DA FASE 8 🌟
                 this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; 
                 this.x = cw + 100 * scaleMultiplier; 
                 let groundY = ch - alturaChao; 
@@ -983,24 +963,39 @@
         }
         
         update(timeScale) { 
-            this.x -= (gameSpeed * 1.5) * timeScale; 
-            
-            if(this.tipo === 'letra') { 
-                this.spin += 0.05 * timeScale; 
-                this.timerOscilacao += 0.1 * timeScale;
+            // 🌟 ÍMAN DE OURO (GATINHA MODO) 🌟
+            if (faseAtual === 8 && isGatinha && this.tipo === 'moeda' && !this.isResolvido) {
+                let dxToPlayer = (player.x + player.width/2) - this.x;
+                let dyToPlayer = (player.y + player.height/2) - this.y;
+                let dist = Math.sqrt(dxToPlayer*dxToPlayer + dyToPlayer*dyToPlayer);
                 
-                if (this.comportamento === 0) {
-                    this.y = this.baseY + Math.sin(this.timerOscilacao * 0.8) * 10 * scaleMultiplier; 
-                } else if (this.comportamento === 1) {
-                    this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.2)) * -40 * scaleMultiplier; 
+                if (dist < window.innerWidth * 0.8) { 
+                    this.x += (dxToPlayer / dist) * (gameSpeed * 4) * timeScale;
+                    this.y += (dyToPlayer / dist) * (gameSpeed * 4) * timeScale;
                 } else {
-                    this.y = this.baseY - 50 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.5) * 15 * scaleMultiplier; 
+                    this.x -= (gameSpeed * 1.5) * timeScale;
                 }
-            } 
-            else if (this.tipo === 'moeda') {
-                this.spin += 0.05 * timeScale; 
-                this.timerOscilacao += 0.1 * timeScale;
-                this.y += Math.sin(this.timerOscilacao) * 1.5 * timeScale;
+                this.spin += 0.2 * timeScale; 
+            } else {
+                this.x -= (gameSpeed * 1.5) * timeScale; 
+                
+                if(this.tipo === 'letra') { 
+                    this.spin += 0.05 * timeScale; 
+                    this.timerOscilacao += 0.1 * timeScale;
+                    
+                    if (this.comportamento === 0) {
+                        this.y = this.baseY + Math.sin(this.timerOscilacao * 0.8) * 10 * scaleMultiplier; 
+                    } else if (this.comportamento === 1) {
+                        this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.2)) * -40 * scaleMultiplier; 
+                    } else {
+                        this.y = this.baseY - 50 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.5) * 15 * scaleMultiplier; 
+                    }
+                } 
+                else if (this.tipo === 'moeda') {
+                    this.spin += 0.05 * timeScale; 
+                    this.timerOscilacao += 0.1 * timeScale;
+                    this.y += Math.sin(this.timerOscilacao) * 1.5 * timeScale;
+                }
             }
 
             if (this.x < -200) this.markedForDeletion = true; 
@@ -1117,7 +1112,17 @@
             }
             let alturaDoChao = groundY - this.y; let tamanhoSombra = Math.max(10 * scaleMultiplier, (this.width/3) - (alturaDoChao * 0.15)); let opSombra = Math.max(0.1, 0.4 - (alturaDoChao * 0.002)); 
             
-            if (invulneravelTimer > 0) { if (Math.floor(performance.now() / 100) % 2 === 0) { ctx.globalAlpha = 0.5; } }
+            if (invulneravelTimer > 0 && !isGatinha) { if (Math.floor(performance.now() / 100) % 2 === 0) { ctx.globalAlpha = 0.5; } }
+
+            // 🌟 AURA DA SUPER GATINHA 🌟
+            if (isGatinha) {
+                ctx.save();
+                ctx.translate(this.x + this.width/2, this.y + this.height - ajustePe - this.height*0.4);
+                ctx.shadowColor = '#FF1493'; ctx.shadowBlur = 30 * scaleMultiplier;
+                ctx.fillStyle = 'rgba(255, 20, 147, 0.3)';
+                ctx.beginPath(); ctx.ellipse(0, 0, this.width*0.8, this.height*0.6, 0, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+            }
 
             ctx.fillStyle = `rgba(0,0,0,${opSombra})`; ctx.beginPath(); ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); 
             ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height - ajustePe); ctx.rotate(this.tilt); let scl = scaleMultiplier;
@@ -1231,10 +1236,11 @@
         if (faseAtual === 8) {
             pontuacao += (gameSpeed * 0.05) * timeScale; metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao); atualizarProgressoHUD();
             
-            // 🌟 A TRANSFORMAÇÃO MÁGICA (Agora aos 1.000 pontos!) 🌟
-            if (pontuacao >= 1000 && !hasTransformed) {
-                hasTransformed = true;
+            // 🌟 A TRANSFORMAÇÃO MÁGICA 🌟
+            if (pontuacao >= window.nextCatScore && !isGatinha) {
                 isGatinha = true;
+                window.catTimer = 12000; // 12 segundos de poder
+                window.nextCatScore += 1000;
                 hitStopTime = 150; 
                 shakeIntensity = 25; 
                 
@@ -1249,6 +1255,17 @@
                     let speed = Math.random() * 15 + 5;
                     let color = Math.random() > 0.5 ? '#FF1493' : '#FFD700';
                     particulas.push(new Particula(player.x + player.width/2, player.y + player.height/2, color, Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*20+10));
+                }
+            }
+            
+            // 🌟 DESLIGAR A MAGIA 🌟
+            if (isGatinha) {
+                window.catTimer -= deltaTime;
+                if (window.catTimer <= 0) {
+                    isGatinha = false;
+                    AudioManager.playMagicSFX();
+                    dispararFlashTransicao();
+                    textosFlutuantes.push(new TextoFlutuante("FIM DA MAGIA!", player.x - 50, player.y - 100, '#FFF', '#A020F0'));
                 }
             }
             
@@ -1329,11 +1346,25 @@
                 
                 let margemX = player.width * 0.5; let margemY = player.height * 0.45;
 
+                // 🌟 ESMAGANDO CRISTAIS OU LEVANDO DANO 🌟
                 if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
                     let centroYObstaculo = item.y - (item.radius * 1.5); let dyObstaculo = posYPersonagem - centroYObstaculo;
                     margemX = player.width * 0.25; margemY = player.height * 0.35; 
+                    
                     if (Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dyObstaculo) < (item.radius * 1.5 + margemY) && !item.ignorarColisao && !item.isResolvido) {
-                        if (invulneravelTimer <= 0) {
+                        if (isGatinha) {
+                            // GATINHA ESMAGA CRISTAIS!
+                            item.isResolvido = true; item.ignorarColisao = true;
+                            shakeIntensity = 10;
+                            pontuacao += 50;
+                            AudioManager.playSuccessSFX();
+                            textosFlutuantes.push(new TextoFlutuante("DESTRUÍDO!", item.x, item.y - 50, '#FFF', '#FFD700'));
+                            for(let j=0; j<15; j++) {
+                                let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4;
+                                particulas.push(new Particula(item.x, item.y - item.radius, '#00FFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5));
+                            }
+                        } else if (invulneravelTimer <= 0) {
+                            // DANO NORMAL
                             item.isResolvido = true; item.ignorarColisao = true; vidasExtra--;
                             hitStopTime = 100; shakeIntensity = 15; document.getElementById('damage-overlay').classList.add('damage-active'); 
                             setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); 
