@@ -107,11 +107,11 @@
             z-index: 2; 
             width: clamp(200px, 40vw, 550px); 
             height: clamp(250px, 50vw, 700px); 
-            background-image: url('Isadora.png'); /* ⬅️ NOME CORRIGIDO EXATAMENTE COMO NO GITHUB */
-            background-size: contain; /* Encaixa a foto inteira sem cortar */
-            background-position: center bottom; /* Fixa a base da foto em baixo */
+            background-image: url('Isadora.png'); /* ⬅️ NOME DA FOTO */
+            background-size: contain; 
+            background-position: center bottom; 
             background-repeat: no-repeat; 
-            filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.5)); /* Sombra + Brilho Rosa Neon */
+            filter: drop-shadow(0 30px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.5)); 
             animation: breatheMascot 4s ease-in-out infinite; 
             will-change: transform; 
         }
@@ -144,16 +144,15 @@
         #livro-container .pagina { display: none; animation: fadeInLore 0.8s; flex-grow: 1; } #livro-container .pagina.ativa { display: flex; flex-direction: column; justify-content: center; }
         @keyframes fadeInLore { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* 🌟 FOTO REAL DA ISADORA NO LIVRO DE HISTÓRIA 🌟 */
         .foto-isadora-livro { 
             width: clamp(90px, 20vmin, 140px); 
             height: clamp(180px, 40vmin, 280px); 
             margin: 0 auto 10px; 
-            background-image: url('Isadora.png'); /* ⬅️ NOME CORRIGIDO EXATAMENTE COMO NO GITHUB */
-            background-size: cover; /* Ajusta a foto de forma elegante como um retrato */
-            background-position: center 20%; /* Foca mais no rosto lindo dela */
-            border-radius: 15px; /* Deixa os cantos redondinhos parecendo porta-retrato */
-            border: 2px solid rgba(255, 105, 180, 0.5); /* Bordinha rosa suave */
+            background-image: url('Isadora.png'); 
+            background-size: cover; 
+            background-position: center 20%; 
+            border-radius: 15px; 
+            border: 2px solid rgba(255, 105, 180, 0.5); 
             filter: drop-shadow(0 15px 15px rgba(0,0,0,0.8)); 
             animation: flutuarLore 4s infinite; 
         }
@@ -176,7 +175,6 @@
             .ps5-title { font-size: clamp(26px, 6vmin, 40px); } .ps5-subtitle { font-size: clamp(12px, 3vmin, 18px); margin-bottom: 5px; }
             .ps5-btn { font-size: clamp(12px, 3vmin, 16px); padding: 5px 12px; } 
             
-            /* Ajuste mobile para a foto também manter a proporção na tela pequena */
             .ps5-hero-mascot { width: clamp(120px, 28vw, 220px); height: clamp(140px, 35vw, 250px); background-size: contain; background-position: center bottom; }
             
             #ui-layer { margin-top: 0; top: 10px; left: 3vw; padding: 8px 15px; border-radius: 12px; max-width: 60vw; } 
@@ -858,7 +856,7 @@
             if(animationId) { cancelAnimationFrame(animationId); animationId = null; } 
             AudioManager.stopAll(); 
             AudioManager.isMutedGlobal = false; 
-            iniciarJogo(); 
+            iniciarJogo(); // Lança a Isadora de volta para a pista imediatamente!
         }, 300); 
     });
 
@@ -929,7 +927,7 @@
             
             if (this.tipo === 'mini_obstaculo') { 
                 this.variation = Math.floor(Math.random() * 3); 
-                this.radius = (this.variation === 1 ? 30 : 25) * scaleMultiplier; // MENOR QUE O DA FASE 8
+                this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; // MESMO TAMANHO DA FASE 8
                 this.x = cw + 100 * scaleMultiplier; 
                 let groundY = ch - alturaChao; 
                 this.y = groundY - this.radius + 12 * scaleMultiplier; 
@@ -957,17 +955,17 @@
         update(timeScale) { 
             this.x -= (gameSpeed * 1.5) * timeScale; 
             
-            // LETRAS VIVAS MAIS CALMAS
+            // LETRAS VIVAS MAIS CALMAS E ELEGANTES
             if(this.tipo === 'letra') { 
                 this.spin += 0.05 * timeScale; 
                 this.timerOscilacao += 0.1 * timeScale;
                 
                 if (this.comportamento === 0) {
-                    this.y = this.baseY + Math.sin(this.timerOscilacao * 0.8) * 10 * scaleMultiplier; // Onda suave
+                    this.y = this.baseY + Math.sin(this.timerOscilacao * 0.8) * 10 * scaleMultiplier; // Flutua muito suave
                 } else if (this.comportamento === 1) {
-                    this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.2)) * -40 * scaleMultiplier; // Quica baixinho
+                    this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.2)) * -40 * scaleMultiplier; // Pula baixinho e devagar
                 } else {
-                    this.y = this.baseY - 50 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.5) * 15 * scaleMultiplier; // Voa alto e balança suave
+                    this.y = this.baseY - 50 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.5) * 15 * scaleMultiplier; // Fica no alto com balanço leve
                 }
             } 
             else if (this.tipo === 'moeda') {
@@ -992,13 +990,21 @@
             }
             else if (this.tipo === 'obstaculo' || this.tipo === 'mini_obstaculo') {
                 ctx.globalAlpha = bgAlpha; let chaoAjuste = this.radius + 10 * scl; ctx.translate(0, chaoAjuste); 
-                let ciclo = Math.floor(pontuacao / 500); let isNight = ciclo % 2 !== 0;
-
+                
                 const drawFacetedCrystal = (offsetX, hScale, wScale, glowIntensity) => {
                     let h = this.radius * 2.8 * hScale; let w = this.radius * 0.85 * wScale; let base = 0; let apex = -h;
-                    let fEsq = isNight ? '#006699' : '#b30047'; let fDir = isNight ? '#00ccff' : '#ff3385';
-                    let fBaixoEsq = isNight ? '#002244' : '#4d001f'; let fBaixoDir = isNight ? '#004466' : '#800033';
-                    let glowColor = isNight ? '#00f3ff' : '#ff1493';
+                    let fEsq, fDir, fBaixoEsq, fBaixoDir, glowColor;
+                    
+                    if (this.tipo === 'mini_obstaculo') {
+                        // CRISTAL ESMERALDA (Fase 1)
+                        fEsq = '#00802b'; fDir = '#00e64d'; fBaixoEsq = '#003311'; fBaixoDir = '#006622'; glowColor = '#00ff55';
+                    } else {
+                        // Cristal Normal (Fase 8)
+                        let ciclo = Math.floor(pontuacao / 500); let isNight = ciclo % 2 !== 0;
+                        fEsq = isNight ? '#006699' : '#b30047'; fDir = isNight ? '#00ccff' : '#ff3385';
+                        fBaixoEsq = isNight ? '#002244' : '#4d001f'; fBaixoDir = isNight ? '#004466' : '#800033';
+                        glowColor = isNight ? '#00f3ff' : '#ff1493';
+                    }
 
                     ctx.shadowColor = glowColor; ctx.shadowBlur = glowIntensity * scl;
                     ctx.fillStyle = fEsq; ctx.beginPath(); ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX - w, apex + h * 0.6); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
@@ -1195,7 +1201,7 @@
 
             if (gameSpeed < 11) { gameSpeed += 0.0008 * timeScale; } else { minDistancia = cw * 0.35; }
         } else {
-            // MOTOR DE SPAWN FASE 1: Letras, Mini Cristais e Moedas!
+            // MOTOR DE SPAWN FASE 1: Letras, Mini Cristais Esmeralda e Moedas!
             window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime;
             
             if (itemTimer > itemInterval) { 
@@ -1218,16 +1224,16 @@
                 if (!temItemPerto) {
                     let sorteio = Math.random();
                     if (sorteio > 0.5) {
-                        collectibles.push(new Collectible('mini_obstaculo')); // 50% chance de Cristal Pequeno
+                        collectibles.push(new Collectible('mini_obstaculo')); // Cristal Esmeralda
                     } else if (sorteio > 0.2) {
-                        collectibles.push(new Collectible('moeda')); // 30% chance de Moeda Ouro
+                        collectibles.push(new Collectible('moeda')); // Moeda Ouro
                     }
                 }
                 window.obstaculoTimer = 0;
             }
         }
         
-        // INTERFACE DE VIDAS (Agora aparece na Fase 1 e 8)
+        // INTERFACE DE VIDAS (Aparece na Fase 1 e 8)
         let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
         for(let i=0; i<3; i++) {
             ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY);
