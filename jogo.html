@@ -621,8 +621,14 @@
     window.addEventListener('visibilitychange', () => { if(document.hidden) isHolding = false; });
 
     function atualizarProgressoHUD() {
-        if (faseAtual === 1) { progressFill.style.width = isInfinite ? '100%' : ((letrasColetadas.length / letrasParaVencerFase1) * 100) + '%'; }
-        else if (faseAtual === 8) { progressFill.style.width = Math.min(100, ((gameSpeed - baseGameSpeed) / (11 - baseGameSpeed)) * 100) + '%'; } 
+        if (faseAtual === 1) { 
+            metaAlfabeto.innerText = "PONTOS: " + Math.floor(pontuacao) + " | LETRAS: " + letrasColetadas.length + "/26";
+            progressFill.style.width = isInfinite ? '100%' : ((letrasColetadas.length / letrasParaVencerFase1) * 100) + '%'; 
+        }
+        else if (faseAtual === 8) { 
+            metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao);
+            progressFill.style.width = Math.min(100, ((gameSpeed - baseGameSpeed) / (11 - baseGameSpeed)) * 100) + '%'; 
+        } 
     }
 
     function mostrarCinematica(titulo, subtitulo, corBase) {
@@ -640,7 +646,11 @@
         if (gameActive) dispararFlashTransicao();
 
         if(fase === 1) { 
-            metaAlfabeto.innerText = isInfinite ? "TREINO: ALFABETO" : "COLETE O ALFABETO"; 
+            pontuacao = 0;
+            vidasExtra = 3;
+            invulneravelTimer = 0;
+            
+            metaAlfabeto.innerText = "PONTOS: 0 | LETRAS: 0/26"; 
             metaAlfabeto.style.color = "#FFD700"; 
             letraUi.innerText = "Vamos começar..."; 
             mostrarCinematica("ATO I", "O ALFABETO", "#FFD700");
@@ -653,17 +663,20 @@
             }, 1800);
         }
         else if (fase === 8) { 
+            pontuacao = 0;
+            vidasExtra = 3;
+            invulneravelTimer = 0;
+            
             metaAlfabeto.innerText = "PONTUAÇÃO: 0"; 
             metaAlfabeto.style.color = "#FF4500"; 
             letraUi.innerText = "Sobreviva aos Obstáculos!"; 
-            pontuacao = 0;
             mostrarCinematica("MODO EXTRA", "CORRIDA INFINITA", "#FF4500");
         }
         
         atualizarProgressoHUD();
         player.isJumping = true; player.y = 0; isHolding = false;
         itemTimer = fase === 8 ? 1000 : -2500; 
-        window.lamaTimer = 0;
+        window.obstaculoTimer = 0;
     }
 
     // ==========================================
@@ -698,7 +711,7 @@
         }
     }
     
-    // GAME OVER COM LIGAÇÃO À NUVEM
+    // GAME OVER MULTI-FASE (Serve para a 1 e para a 8)
     async function dispararGameOverExtra() {
         if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
         gameActive = false; isHolding = false;
@@ -708,25 +721,35 @@
         let pontosFinais = Math.floor(pontuacao);
         
         victoryScreen.style.display = 'flex'; setTimeout(() => { victoryScreen.style.opacity = '1'; }, 100);
-        document.querySelector('.victory-title').innerText = "A LER A NUVEM...";
-        document.querySelector('.victory-subtitle').innerText = "Consultando recordes...";
-        document.querySelector('.trophy-icon').innerText = "☁️";
+        
+        if (faseAtual === 8) {
+            document.querySelector('.victory-title').innerText = "A LER A NUVEM...";
+            document.querySelector('.victory-subtitle').innerText = "Consultando recordes...";
+            document.querySelector('.trophy-icon').innerText = "☁️";
 
-        let resultado = null;
-        if(window.verificarESalvarRecorde) { resultado = await window.verificarESalvarRecorde(pontosFinais); }
+            let resultado = null;
+            if(window.verificarESalvarRecorde) { resultado = await window.verificarESalvarRecorde(pontosFinais); }
 
-        if (resultado && resultado.bateuRecorde) {
-            AudioManager.playSuccessSFX();
-            document.querySelector('.victory-title').innerText = "NOVO RECORDE!"; document.querySelector('.victory-title').style.color = "#FFD700";
-            document.querySelector('.victory-subtitle').innerText = "A ISADORA É A MELHOR!"; document.querySelector('.trophy-icon').innerText = "🏆";
-            document.querySelector('.credits').innerHTML = "Pontos: " + pontosFinais + "<br><strong>GRAVADO NA NUVEM!</strong>";
-            for(let i=0; i<50; i++) { particulas.push(new Particula(canvas.width/2, canvas.height/2, '#FFD700', (Math.random()*20)-10, (Math.random()*20)-10, 15)); }
+            if (resultado && resultado.bateuRecorde) {
+                AudioManager.playSuccessSFX();
+                document.querySelector('.victory-title').innerText = "NOVO RECORDE!"; document.querySelector('.victory-title').style.color = "#FFD700";
+                document.querySelector('.victory-subtitle').innerText = "A ISADORA É A MELHOR!"; document.querySelector('.trophy-icon').innerText = "🏆";
+                document.querySelector('.credits').innerHTML = "Pontos: " + pontosFinais + "<br><strong>GRAVADO NA NUVEM!</strong>";
+                for(let i=0; i<50; i++) { particulas.push(new Particula(canvas.width/2, canvas.height/2, '#FFD700', (Math.random()*20)-10, (Math.random()*20)-10, 15)); }
+            } else {
+                AudioManager.playErrorVoice(); 
+                document.querySelector('.victory-title').innerText = "FIM DE JOGO!"; document.querySelector('.victory-title').style.color = "#FF1493";
+                document.querySelector('.trophy-icon').innerText = "🌵";
+                let recTexto = resultado ? "<br>Recorde a bater: " + resultado.recorde : "";
+                document.querySelector('.credits').innerHTML = "Pontos: " + pontosFinais + recTexto;
+            }
         } else {
+            // GAME OVER DA FASE 1
             AudioManager.playErrorVoice(); 
             document.querySelector('.victory-title').innerText = "FIM DE JOGO!"; document.querySelector('.victory-title').style.color = "#FF1493";
+            document.querySelector('.victory-subtitle').innerText = "VOCÊ FEZ " + pontosFinais + " PONTOS!";
             document.querySelector('.trophy-icon').innerText = "🌵";
-            let recTexto = resultado ? "<br>Recorde a bater: " + resultado.recorde : "";
-            document.querySelector('.credits').innerHTML = "Pontos: " + pontosFinais + recTexto;
+            document.querySelector('.credits').innerHTML = "Continue treinando o alfabeto!";
         }
     }
 
@@ -757,7 +780,7 @@
             
             let conf = modosDeJogo[modoAtualIndex]; 
             faseAtual = conf.fase; isInfinite = conf.inf;
-            comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0; window.lamaTimer = 0;
+            comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0;
             progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo');
             
             prepararFase(faseAtual);
@@ -835,7 +858,7 @@
             if(animationId) { cancelAnimationFrame(animationId); animationId = null; } 
             AudioManager.stopAll(); 
             AudioManager.isMutedGlobal = false; 
-            iniciarJogo(); // Lança a Isadora de volta para a pista imediatamente!
+            iniciarJogo(); 
         }, 300); 
     });
 
@@ -904,11 +927,13 @@
             this.timerOscilacao = Math.random() * 100;
             let cw = window.innerWidth; let ch = window.innerHeight;
             
-            // LAMA CORRIGIDA: Cravada no chão!
-            if (this.tipo === 'lama') {
-                this.radius = 45 * scaleMultiplier;
-                this.x = cw + 100 * scaleMultiplier;
-                this.y = ch - alturaChao + 18 * scaleMultiplier; // Matemática corrigida. Ajuste exato para não voar.
+            if (this.tipo === 'mini_obstaculo') { 
+                this.variation = Math.floor(Math.random() * 3); 
+                this.radius = (this.variation === 1 ? 30 : 25) * scaleMultiplier; // MENOR QUE O DA FASE 8
+                this.x = cw + 100 * scaleMultiplier; 
+                let groundY = ch - alturaChao; 
+                this.y = groundY - this.radius + 12 * scaleMultiplier; 
+                this.spin = 0; 
                 this.hasLanded = true;
             }
             else if (this.tipo === 'moeda') { 
@@ -920,11 +945,11 @@
                 this.x = cw + 100 * scaleMultiplier; let groundY = ch - alturaChao; this.y = groundY - this.radius + 12 * scaleMultiplier; 
                 this.spin = 0; this.hasLanded = true;
             }
-            else { // LETRA VIVA AAA
+            else { // LETRAS
                 this.radius = 45 * scaleMultiplier; this.x = cw + 600 * scaleMultiplier; 
                 this.baseY = ch - alturaChao - 120 * scaleMultiplier; 
                 this.y = this.baseY;
-                this.comportamento = Math.floor(Math.random() * 3); // 0 = Flutua, 1 = Quica, 2 = Voo Alto
+                this.comportamento = Math.floor(Math.random() * 3); 
             }
             this.gradCache = null;
         }
@@ -932,17 +957,17 @@
         update(timeScale) { 
             this.x -= (gameSpeed * 1.5) * timeScale; 
             
-            // INTELIGÊNCIA DAS LETRAS VIVAS
+            // LETRAS VIVAS MAIS CALMAS
             if(this.tipo === 'letra') { 
                 this.spin += 0.05 * timeScale; 
                 this.timerOscilacao += 0.1 * timeScale;
                 
                 if (this.comportamento === 0) {
-                    this.y = this.baseY + Math.sin(this.timerOscilacao) * 20 * scaleMultiplier; // Onda suave
+                    this.y = this.baseY + Math.sin(this.timerOscilacao * 0.8) * 10 * scaleMultiplier; // Onda suave
                 } else if (this.comportamento === 1) {
-                    this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.5)) * -80 * scaleMultiplier; // Quica no chão
+                    this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.2)) * -40 * scaleMultiplier; // Quica baixinho
                 } else {
-                    this.y = this.baseY - 60 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.8) * 30 * scaleMultiplier; // Voa alto e balança
+                    this.y = this.baseY - 50 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.5) * 15 * scaleMultiplier; // Voa alto e balança suave
                 }
             } 
             else if (this.tipo === 'moeda') {
@@ -955,29 +980,17 @@
         }
         
         draw(ctx) {
-            ctx.save(); ctx.translate(this.x, (this.tipo === 'obstaculo' || this.tipo === 'lama') ? this.y : this.y - 10); 
+            ctx.save(); ctx.translate(this.x, (this.tipo === 'obstaculo' || this.tipo === 'mini_obstaculo') ? this.y : this.y - 10); 
             let scl = scaleMultiplier; let displayTexto = this.info ? this.info.letra : '?';
             let bgAlpha = this.isResolvido ? 0 : 1; let textAlpha = this.isResolvido ? 0 : 1;
             
-            // DESENHO DA LAMA
-            if (this.tipo === 'lama') {
-                ctx.globalAlpha = bgAlpha;
-                ctx.fillStyle = this.ignorarColisao ? 'rgba(101, 67, 33, 0.3)' : '#654321'; 
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.radius * 1.5, this.radius * 0.4, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = this.ignorarColisao ? 'rgba(139, 90, 43, 0.2)' : 'rgba(255, 255, 255, 0.15)';
-                ctx.beginPath();
-                ctx.ellipse(-this.radius*0.4, -this.radius*0.1, this.radius*0.6, this.radius*0.15, 0, 0, Math.PI*2);
-                ctx.fill();
-            }
-            else if (this.tipo === 'moeda') {
+            if (this.tipo === 'moeda') {
                 ctx.globalAlpha = bgAlpha; ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 20;
                 ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fillStyle = '#FFD700'; ctx.fill();
                 ctx.fillStyle = '#FFA500'; ctx.beginPath(); ctx.arc(0,0, this.radius*0.7, 0, Math.PI*2); ctx.fill();
                 ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.fillStyle = '#FFF'; ctx.font = `bold ${this.radius*1.2}px 'Fredoka'`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('★', 0, 2*scl);
             }
-            else if (this.tipo === 'obstaculo') {
+            else if (this.tipo === 'obstaculo' || this.tipo === 'mini_obstaculo') {
                 ctx.globalAlpha = bgAlpha; let chaoAjuste = this.radius + 10 * scl; ctx.translate(0, chaoAjuste); 
                 let ciclo = Math.floor(pontuacao / 500); let isNight = ciclo % 2 !== 0;
 
@@ -1053,7 +1066,7 @@
             }
             let alturaDoChao = groundY - this.y; let tamanhoSombra = Math.max(10 * scaleMultiplier, (this.width/3) - (alturaDoChao * 0.15)); let opSombra = Math.max(0.1, 0.4 - (alturaDoChao * 0.002)); 
             
-            if (faseAtual === 8 && invulneravelTimer > 0) { if (Math.floor(performance.now() / 100) % 2 === 0) { ctx.globalAlpha = 0.5; } }
+            if (invulneravelTimer > 0) { if (Math.floor(performance.now() / 100) % 2 === 0) { ctx.globalAlpha = 0.5; } }
 
             ctx.fillStyle = `rgba(0,0,0,${opSombra})`; ctx.beginPath(); ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); 
             ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height - ajustePe); ctx.rotate(this.tilt); let scl = scaleMultiplier;
@@ -1181,18 +1194,9 @@
             }
 
             if (gameSpeed < 11) { gameSpeed += 0.0008 * timeScale; } else { minDistancia = cw * 0.35; }
-            
-            let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
-            for(let i=0; i<3; i++) {
-                ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY);
-                if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; }
-                if (playerSprite.complete && playerSprite.naturalWidth > 0) { let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } 
-                else { ctx.fillStyle = '#FF1493'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); }
-                ctx.restore();
-            }
         } else {
-            // MOTOR DE SPAWN FASE 1: Letras, Lama e Moedas!
-            window.lamaTimer = (window.lamaTimer || 0) + deltaTime;
+            // MOTOR DE SPAWN FASE 1: Letras, Mini Cristais e Moedas!
+            window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime;
             
             if (itemTimer > itemInterval) { 
                 let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
@@ -1206,21 +1210,35 @@
                 } else { 
                     faseAtual = 8; prepararFase(8); AudioManager.playSuccessSFX(); 
                 }
-                itemTimer = 0; window.lamaTimer = 0;
+                itemTimer = 0; window.obstaculoTimer = 0;
             }
-            else if (window.lamaTimer > 1000) {
+            else if (window.obstaculoTimer > 1000) {
                 // Sorteio no Tempo Morto (Aventura na Pista)
                 let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier);
                 if (!temItemPerto) {
                     let sorteio = Math.random();
-                    if (sorteio > 0.6) {
-                        collectibles.push(new Collectible('lama')); // 40% chance de Lama
+                    if (sorteio > 0.5) {
+                        collectibles.push(new Collectible('mini_obstaculo')); // 50% chance de Cristal Pequeno
                     } else if (sorteio > 0.2) {
-                        collectibles.push(new Collectible('moeda')); // 40% chance de Moeda Ouro
+                        collectibles.push(new Collectible('moeda')); // 30% chance de Moeda Ouro
                     }
                 }
-                window.lamaTimer = 0;
+                window.obstaculoTimer = 0;
             }
+        }
+        
+        // INTERFACE DE VIDAS (Agora aparece na Fase 1 e 8)
+        let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
+        for(let i=0; i<3; i++) {
+            ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY);
+            if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; }
+            if (playerSprite.complete && playerSprite.naturalWidth > 0) { let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } 
+            else { ctx.fillStyle = '#FF1493'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); }
+            ctx.restore();
+        }
+
+        if (faseAtual === 1) {
+            metaAlfabeto.innerText = "PONTOS: " + Math.floor(pontuacao) + " | LETRAS: " + letrasColetadas.length + "/26";
         }
         
         try {
@@ -1238,18 +1256,8 @@
                 
                 let margemX = player.width * 0.5; let margemY = player.height * 0.45;
 
-                // COLISÃO COM LAMA
-                if (item.tipo === 'lama') {
-                    let centroYLama = item.y;
-                    let dyLama = (player.y + player.height) - centroYLama; // Checa o pé do jogador
-                    if (Math.abs(dx) < (item.radius * 0.8 + margemX) && dyLama > -20 && !item.ignorarColisao && !item.isResolvido) {
-                        item.isResolvido = true; item.ignorarColisao = true; 
-                        shakeIntensity = 8; hitStopTime = 40; AudioManager.playErrorSFX(); 
-                        textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 40, '#FFF', '#8B4513'));
-                        for(let j=0; j<15; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 5 + 2; particulas.push(new Particula(item.x, item.y, '#654321', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*8+4)); }
-                    }
-                }
-                else if (item.tipo === 'obstaculo') { 
+                // COLISÃO COM OBSTÁCULO OU MINI-OBSTÁCULO
+                if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
                     let centroYObstaculo = item.y - (item.radius * 1.5); let dyObstaculo = posYPersonagem - centroYObstaculo;
                     margemX = player.width * 0.25; margemY = player.height * 0.35; 
                     if (Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dyObstaculo) < (item.radius * 1.5 + margemY) && !item.ignorarColisao && !item.isResolvido) {
@@ -1266,11 +1274,14 @@
                 }
                 else if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && !item.ignorarColisao && !item.isResolvido) { 
                     if (item.tipo === 'moeda') {
-                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 1; pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
+                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 1; 
+                        pontuacao += 100; // PONTOS DA MOEDA
+                        AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
                         for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
                     }
                     else if (item.tipo === 'letra') {
                         item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(item.info.letra); 
+                        pontuacao += 500; // PONTOS DA LETRA
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); } 
                         for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
