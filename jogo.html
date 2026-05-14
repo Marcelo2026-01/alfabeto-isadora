@@ -7,7 +7,7 @@
     <title>O Sonho Doce de Isadora - O Alfabeto</title>
 
     <meta property="og:title" content="O Alfabeto da Isadora - Jogo AAA">
-    <meta property="og:description" content="Acelere por uma estrada mágica! Ajude Isadora nesta jornada épica para aprender o alfabeto e as sílabas. Jogue grátis!">
+    <meta property="og:description" content="Acelere por uma estrada mágica! Ajude Isadora nesta jornada épica para aprender o alfabeto. Jogue grátis!">
     <meta property="og:image" content="Isadora.png">
     <meta property="og:type" content="website">
 
@@ -28,7 +28,7 @@
         canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 
         /* ========================================================
-           ECRÃ DE CARREGAMENTO SUPREMO (LOADER PS5 NEXT-GEN)
+           ECRÃ DE CARREGAMENTO SUPREMO
            ======================================================== */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #050811; background-image: radial-gradient(circle at 20% 30%, rgba(0, 243, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 0, 127, 0.08) 0%, transparent 50%); z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s; will-change: opacity, visibility; }
         .loader-ring { width: clamp(80px, 15vw, 120px); height: clamp(80px, 15vw, 120px); position: relative; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%); animation: pulseCore 2s ease-in-out infinite alternate; }
@@ -50,7 +50,6 @@
         #flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; pointer-events: none; z-index: 85; opacity: 0; transition: opacity 0.8s ease-out; will-change: opacity; }
         .flash-active { opacity: 1 !important; transition: opacity 0.05s ease-out !important; }
 
-        /* --- SISTEMA DE TÍTULOS CINEMATOGRÁFICOS --- */
         #cinematic-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 75; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .cinematic-text { color: #FFF; font-family: 'Fredoka', sans-serif; font-weight: 900; font-size: clamp(35px, 8vw, 90px); letter-spacing: clamp(10px, 4vw, 25px); text-transform: uppercase; text-shadow: 0 10px 30px rgba(0,0,0,0.8); margin: 0; padding-left: clamp(10px, 4vw, 25px); opacity: 0; transform: scale(1.1) translateY(-20px); filter: blur(10px); transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform, opacity, filter; text-align: center; }
         .cinematic-subtext { color: #FFD700; font-family: 'Fredoka', sans-serif; font-size: clamp(16px, 4vw, 35px); letter-spacing: clamp(5px, 2vw, 15px); font-weight: 700; text-transform: uppercase; text-shadow: 0 5px 20px rgba(0,0,0,0.8); margin: 5px 0 0 0; padding-left: clamp(5px, 2vw, 15px); opacity: 0; transform: translateY(20px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: 0.1s; will-change: transform, opacity, filter; }
@@ -110,7 +109,7 @@
         .idle-active { animation: idleChamada 1.5s ease-in-out !important; }
 
         /* ========================================================
-           ECRÃ DE PAUSA, VITÓRIA & HISTÓRIA (OTIMIZADO MOBILE AAA)
+           ECRÃ DE PAUSA, VITÓRIA & HISTÓRIA
            ======================================================== */
         #pause-screen, #victory-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
         .btn-pause-ui { background: #FFF; color: #1a1a1a; border: none; border-radius: 8px; padding: clamp(8px, 2vmin, 12px) clamp(20px, 5vmin, 30px); font-size: clamp(16px, 4vmin, 22px); font-weight: bold; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s; text-transform: uppercase; width: clamp(250px, 60vw, 350px); margin: 5px 0; }
@@ -149,7 +148,6 @@
             .btn-corner { top: 10px; } #btn-pause { width: 35px; height: 35px; font-size: 14px; right: 3vw; } #btn-som { height: 35px; font-size: 10px; padding: 0 10px; right: calc(3vw + 45px); }
             .btn-pause-ui { font-size: 13px; padding: 8px 15px; margin: 3px 0; width: 220px; } .titulo-jogo { font-size: 28px !important; margin-bottom: 5px; }
             
-            /* Ajustes Finos Mobile Landscape AAA */
             #victory-screen { gap: 5px; }
             .trophy-icon { font-size: clamp(40px, 10vw, 60px); margin-bottom: 0; }
             .victory-title { font-size: clamp(25px, 6vw, 40px); margin-bottom: 0; }
@@ -211,7 +209,7 @@
                 </div>
                 <div class="ps5-menu-options" style="max-height: 50vh; overflow-y: auto; padding-right: 15px;">
                     <button id="btn-jogar" class="ps5-btn active"><span class="ps5-icon">▶</span> INICIAR JOGO</button>
-                    <button id="btn-modo" class="ps5-btn"><span class="ps5-icon">✦</span> MODO: CAMPANHA (COMPLETA)</button>
+                    <button id="btn-modo" class="ps5-btn"><span class="ps5-icon">✦</span> MODO: CAMPANHA</button>
                     <button id="btn-historia" class="ps5-btn"><span class="ps5-icon">≡</span> HISTÓRIA</button>
                     <button id="btn-som-menu" class="ps5-btn"><span class="ps5-icon">♪</span> ÁUDIO: LIGADO</button>
                     <button id="btn-sair-menu" class="ps5-btn"><span class="ps5-icon">✖</span> SAIR DO JOGO</button>
@@ -232,13 +230,12 @@
 
         <div id="victory-screen">
             <div class="trophy-icon">🏆</div>
-            <h1 class="victory-title">PLATINA!</h1>
-            <h2 class="victory-subtitle">VOCÊ DOMINOU O ALFABETO E AS SÍLABAS</h2>
+            <h1 class="victory-title">NOVO RECORDE!</h1>
+            <h2 class="victory-subtitle">VOCÊ É INCRÍVEL!</h2>
             <div class="credits">
                 Protagonista: <strong>Isadora</strong><br>
                 Diretor Criativo: <strong>Papai José Marcelo</strong><br>
                 Apoio Especial: <strong>Casa Sorrir</strong><br><br>
-                <em>A jornada continua!</em>
             </div>
             <button id="btn-vitoria-menu" class="btn-pause-ui">VOLTAR AO MENU</button>
         </div>
@@ -348,16 +345,10 @@
     let shakeIntensity = 0;
     let pontuacao = 0; 
     
-    // Variáveis do MODO EXTRA (Fase 8)
     let vidasExtra = 3;
     let invulneravelTimer = 0;
 
-    let desafioFase2 = null; 
-    let desafioFase4 = null; 
-    let desafioFase5 = null; 
-    let desafioFase6 = null;
-
-    // --- DADOS DO JOGO ---
+    // --- DADOS DO JOGO (SÓ O NECESSÁRIO PARA FASE 1 E 8) ---
     const AlfabetoIsadora = [ 
         { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, 
         { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, 
@@ -372,42 +363,6 @@
     let letrasParaVencerFase1 = 26; 
     let letrasColetadas = [];
     
-    let acertosParaVencerFase2 = 8; 
-    let acertosAtuaisFase2 = 0;
-    
-    const palavrasVitoria = ["ISADORA", "AMOR", "VITORIA"]; 
-    let palavraAtualIndex = 0; 
-    let letraVitoriaIndex = 0;
-    
-    const dadosFase4 = [ 
-        {s:'BO', p:'BOLA', w:['BA','BE','BI','BU']}, {s:'MA', p:'MACACO', w:['ME','MI','MO','MU']}, 
-        {s:'CA', p:'CASA', w:['CE','CI','CO','CU']}, {s:'DA', p:'DADO', w:['DE','DI','DO','DU']}, 
-        {s:'PA', p:'PATO', w:['PE','PI','PO','PU']}, {s:'VA', p:'VACA', w:['VE','VI','VO','VU']}, 
-        {s:'FA', p:'FADA', w:['FE','FI','FO','FU']}, {s:'SA', p:'SAPO', w:['SE','SI','SO','SU']}, 
-        {s:'LA', p:'LATA', w:['LE','LI','LO','LU']}, {s:'GA', p:'GATO', w:['GE','GI','GO','GU']} 
-    ]; 
-    let acertosFase4 = 0;
-    
-    const dadosFase5 = [ 
-        {l:'M', p:'MACACO', w:['N','W']}, {l:'F', p:'FADA', w:['V','T']}, {l:'S', p:'SAPO', w:['Z','C']}, 
-        {l:'B', p:'BOLA', w:['P','D']}, {l:'P', p:'PATO', w:['B','Q']}, {l:'V', p:'VACA', w:['F','U']}, 
-        {l:'L', p:'LEAO', w:['I','R']}, {l:'D', p:'DADO', w:['B','T']}, {l:'G', p:'GATO', w:['C','J']}, 
-        {l:'R', p:'RATO', w:['H','L']} 
-    ]; 
-    let acertosFase5 = 0;
-    
-    const dadosFase6 = [ 
-        {f: 'O _____ BEBE LEITE', p: 'GATO', w: ['PATO', 'RATO']}, 
-        {f: 'A _____ BOTA OVO', p: 'AVE', w: ['UVA', 'PIA']}, 
-        {f: 'O MACACO COME _____', p: 'MACA', w: ['MOLA', 'MATA']}, 
-        {f: 'O _____ LATE MUITO', p: 'CAO', w: ['PAO', 'MAO']}, 
-        {f: 'EU MORO NA _____', p: 'CASA', w: ['CAMA', 'MESA']} 
-    ]; 
-    let acertosFase6 = 0;
-    
-    const numerosVitoria = ['1', '2', '3']; 
-    let numeroAtualIndex = 0;
-
     let isHolding = false; 
 
     // --- IDLE MENU SYSTEM ---
@@ -438,15 +393,9 @@
     }, 1000);
 
     const modosDeJogo = [ 
-        { id: 0, nome: "MODO: CAMPANHA (COMPLETA)", icon: "✦", fase: 1, inf: false }, 
-        { id: 1, nome: "ATO I - ALFABETO", icon: "∞", fase: 1, inf: true }, 
-        { id: 2, nome: "ATO II - O ENIGMA", icon: "∞", fase: 2, inf: true }, 
-        { id: 3, nome: "ATO III - O VOO", icon: "∞", fase: 3, inf: true }, 
-        { id: 4, nome: "ATO IV - AS SILABAS", icon: "∞", fase: 4, inf: true }, 
-        { id: 5, nome: "ATO V - MEMORIA", icon: "∞", fase: 5, inf: true }, 
-        { id: 6, nome: "ATO VI - FRASES", icon: "∞", fase: 6, inf: true }, 
-        { id: 7, nome: "ATO EXTRA - NUMEROS", icon: "★", fase: 7, inf: false },
-        { id: 8, nome: "MODO EXTRA: CORRIDA INFINITA", icon: "∞", fase: 8, inf: true } 
+        { id: 0, nome: "MODO: CAMPANHA", icon: "✦", fase: 1, inf: false }, 
+        { id: 1, nome: "TREINO: ALFABETO", icon: "A", fase: 1, inf: true }, 
+        { id: 2, nome: "MODO EXTRA: CORRIDA", icon: "∞", fase: 8, inf: true } 
     ]; 
     let modoAtualIndex = 0;
 
@@ -481,9 +430,7 @@
     }
     
     function atualizarLivroUI() { 
-        for(let i = 1; i <= totalPaginas; i++) { 
-            document.getElementById(`livro-p${i}`).classList.remove('ativa'); 
-        } 
+        for(let i = 1; i <= totalPaginas; i++) { document.getElementById(`livro-p${i}`).classList.remove('ativa'); } 
         document.getElementById(`livro-p${paginaAtual}`).classList.add('ativa'); 
         prevBtnLivro.disabled = (paginaAtual === 1); 
         nextBtnLivro.disabled = (paginaAtual === totalPaginas); 
@@ -491,47 +438,26 @@
     }
     
     btnHistoria.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); 
-        paginaAtual = 1; 
-        atualizarLivroUI(); 
-        modalHistoria.style.display = 'flex'; 
-        setTimeout(() => { modalHistoria.style.opacity = '1'; }, 50); 
+        e.preventDefault(); e.stopPropagation(); paginaAtual = 1; atualizarLivroUI(); 
+        modalHistoria.style.display = 'flex'; setTimeout(() => { modalHistoria.style.opacity = '1'; }, 50); 
     });
-    
     btnFecharHistoria.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); 
-        modalHistoria.style.opacity = '0'; 
+        e.preventDefault(); e.stopPropagation(); modalHistoria.style.opacity = '0'; 
         setTimeout(() => { modalHistoria.style.display = 'none'; }, 300); 
     });
-    
-    prevBtnLivro.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); 
-        if(paginaAtual > 1) { paginaAtual--; atualizarLivroUI(); }
-    }); 
-    
-    nextBtnLivro.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); 
-        if(paginaAtual < totalPaginas) { paginaAtual++; atualizarLivroUI(); }
-    });
+    prevBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if(paginaAtual > 1) { paginaAtual--; atualizarLivroUI(); } }); 
+    nextBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if(paginaAtual < totalPaginas) { paginaAtual++; atualizarLivroUI(); } });
 
     // ========================================================
-    // ENGINE DE ÁUDIO AAA COM FALLBACK DE VOZ HUMANA E SINTETIZADOR
+    // ENGINE DE ÁUDIO AAA
     // ========================================================
-    if ('speechSynthesis' in window) { 
-        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; 
-    }
+    if ('speechSynthesis' in window) { window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; }
 
     const AudioManager = {
         somAtivo: localStorage.getItem('isadora_som') !== 'false', 
-        audioCtx: null, 
-        masterCompressor: null, 
-        bgmMenu: new Audio('musica_menu.mp3'), 
-        bgmJogo: new Audio('musica_jogo.mp3'), 
-        sfxRisada: new Audio('risada.mp3'), 
-        musicaAtual: null, 
-        ultimaVoz: "", 
-        isMutedGlobal: false,
-        vozHumana: new Audio(),
+        audioCtx: null, masterCompressor: null, 
+        bgmMenu: new Audio('musica_menu.mp3'), bgmJogo: new Audio('musica_jogo.mp3'), sfxRisada: new Audio('risada.mp3'), 
+        musicaAtual: null, ultimaVoz: "", isMutedGlobal: false, vozHumana: new Audio(),
         
         init() { 
             try { 
@@ -545,14 +471,10 @@
                     this.masterCompressor.release.setValueAtTime(0.25, this.audioCtx.currentTime); 
                     this.masterCompressor.connect(this.audioCtx.destination); 
                 } 
-                if (this.audioCtx.state === 'suspended' && this.somAtivo && !this.isMutedGlobal) {
-                    this.audioCtx.resume(); 
-                }
-                this.bgmMenu.loop = true; 
-                this.bgmJogo.loop = true; 
+                if (this.audioCtx.state === 'suspended' && this.somAtivo && !this.isMutedGlobal) { this.audioCtx.resume(); }
+                this.bgmMenu.loop = true; this.bgmJogo.loop = true; 
             } catch(e) {} 
         },
-        
         stopAll() {
             this.isMutedGlobal = true; 
             if (this.bgmMenu) { this.bgmMenu.pause(); this.bgmMenu.currentTime = 0; }
@@ -560,371 +482,137 @@
             if (this.sfxRisada) { this.sfxRisada.pause(); this.sfxRisada.currentTime = 0; }
             if (this.vozHumana) { this.vozHumana.pause(); this.vozHumana.currentTime = 0; }
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-            if (this.audioCtx && this.audioCtx.state === 'running') {
-                this.audioCtx.suspend();
-            }
+            if (this.audioCtx && this.audioCtx.state === 'running') { this.audioCtx.suspend(); }
         },
-
         toggle() { 
-            this.somAtivo = !this.somAtivo; 
-            localStorage.setItem('isadora_som', this.somAtivo); 
-            
-            if (!this.somAtivo) { 
-                this.stopAll();
-            } else { 
-                this.isMutedGlobal = false;
-                this.init(); 
+            this.somAtivo = !this.somAtivo; localStorage.setItem('isadora_som', this.somAtivo); 
+            if (!this.somAtivo) { this.stopAll(); } else { 
+                this.isMutedGlobal = false; this.init(); 
                 if (this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
-                
-                if (gameActive) {
-                    this.playBGM('game');
-                } else {
-                    this.playBGM('menu');
-                }
+                if (gameActive) { this.playBGM('game'); } else { this.playBGM('menu'); }
             } 
-            this.updateUI(); 
-            return this.somAtivo; 
+            this.updateUI(); return this.somAtivo; 
         },
-        
         updateUI() { 
             if(btnSom) btnSom.innerText = this.somAtivo ? '♪ SOM' : 'x MUDO'; 
             if(btnSomMenu) btnSomMenu.innerHTML = this.somAtivo ? '♪ ÁUDIO: LIGADO' : 'x ÁUDIO: MUDO'; 
         },
-        
         fadeVolume(audioObj, targetVol, duration) { 
-            if(!audioObj || this.isMutedGlobal || !this.somAtivo) {
-                if(audioObj) { audioObj.pause(); audioObj.volume = 0; }
-                return;
-            } 
+            if(!audioObj || this.isMutedGlobal || !this.somAtivo) { if(audioObj) { audioObj.pause(); audioObj.volume = 0; } return; } 
             if(audioObj.fadeReqId) cancelAnimationFrame(audioObj.fadeReqId); 
-            
-            let startVol = audioObj.volume; 
-            let startTime = performance.now(); 
-            
+            let startVol = audioObj.volume; let startTime = performance.now(); 
             const step = (t) => { 
-                if (this.isMutedGlobal || !this.somAtivo) {
-                    audioObj.volume = 0;
-                    audioObj.pause();
-                    return;
-                }
-                let elapsed = t - startTime; 
-                let progress = Math.min(elapsed / duration, 1); 
+                if (this.isMutedGlobal || !this.somAtivo) { audioObj.volume = 0; audioObj.pause(); return; }
+                let elapsed = t - startTime; let progress = Math.min(elapsed / duration, 1); 
                 let ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; 
-                
                 audioObj.volume = Math.max(0, Math.min(1, startVol + (targetVol - startVol) * ease)); 
-                
-                if (progress < 1) { 
-                    audioObj.fadeReqId = requestAnimationFrame(step); 
-                } else { 
-                    audioObj.volume = targetVol; 
-                    if(targetVol === 0) {
-                        audioObj.pause(); 
-                        audioObj.currentTime = 0; 
-                    }
-                } 
+                if (progress < 1) { audioObj.fadeReqId = requestAnimationFrame(step); } else { audioObj.volume = targetVol; if(targetVol === 0) { audioObj.pause(); audioObj.currentTime = 0; } } 
             }; 
             audioObj.fadeReqId = requestAnimationFrame(step); 
         },
-        
         playBGM(trackName) { 
             if (this.isMutedGlobal || !this.somAtivo) return;
-
             let nextTrack = trackName === 'menu' ? this.bgmMenu : this.bgmJogo; 
             let otherTrack = trackName === 'menu' ? this.bgmJogo : this.bgmMenu;
-            
-            if (otherTrack) {
-                if(otherTrack.fadeReqId) cancelAnimationFrame(otherTrack.fadeReqId);
-                otherTrack.pause();
-                otherTrack.currentTime = 0;
-            }
-            
+            if (otherTrack) { if(otherTrack.fadeReqId) cancelAnimationFrame(otherTrack.fadeReqId); otherTrack.pause(); otherTrack.currentTime = 0; }
             if (this.musicaAtual === nextTrack && !nextTrack.paused) return; 
-            
-            this.musicaAtual = nextTrack; 
-            this.musicaAtual.volume = 0; 
-            
-            this.init(); 
+            this.musicaAtual = nextTrack; this.musicaAtual.volume = 0; this.init(); 
             let playPromise = this.musicaAtual.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    this.fadeVolume(this.musicaAtual, 0.4, 800); 
-                }).catch(e => {
-                    console.log("Auto-play blocked pending interaction.");
-                });
-            }
+            if (playPromise !== undefined) { playPromise.then(() => { this.fadeVolume(this.musicaAtual, 0.4, 800); }).catch(e => { console.log("Blocked play"); }); }
         },
-        
         playHoverTick() { 
             if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
-            try {
-                const now = this.audioCtx.currentTime; 
-                const gain = this.audioCtx.createGain(); 
-                gain.connect(this.masterCompressor); 
-                gain.gain.setValueAtTime(0, now); 
-                gain.gain.linearRampToValueAtTime(0.08, now + 0.01); 
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); 
-                const osc = this.audioCtx.createOscillator(); 
-                osc.frequency.setValueAtTime(1500, now); 
-                osc.connect(gain); 
-                osc.start(now); 
-                osc.stop(now + 0.15); 
-            } catch(e) {}
+            try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.08, now + 0.01); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); const osc = this.audioCtx.createOscillator(); osc.frequency.setValueAtTime(1500, now); osc.connect(gain); osc.start(now); osc.stop(now + 0.15); } catch(e) {}
         },
-        
         playCinematicSweep() { 
             if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
-            try { 
-                const now = this.audioCtx.currentTime; 
-                const gain = this.audioCtx.createGain(); 
-                gain.connect(this.masterCompressor); 
-                gain.gain.setValueAtTime(0, now); 
-                gain.gain.linearRampToValueAtTime(0.15, now + 0.5); 
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5); 
-                const osc = this.audioCtx.createOscillator(); 
-                osc.type = 'sine'; 
-                osc.frequency.setValueAtTime(200, now); 
-                osc.frequency.exponentialRampToValueAtTime(800, now + 2.5); 
-                osc.connect(gain); 
-                osc.start(now); 
-                osc.stop(now + 2.5); 
-            } catch(e){} 
+            try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.15, now + 0.5); gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5); const osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(200, now); osc.frequency.exponentialRampToValueAtTime(800, now + 2.5); osc.connect(gain); osc.start(now); osc.stop(now + 2.5); } catch(e){} 
         },
-        
         playMagicSFX() { 
             if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try {
-                const now = this.audioCtx.currentTime; 
-                const gainL = this.audioCtx.createGain(); 
-                const gainR = this.audioCtx.createGain(); 
+                const now = this.audioCtx.currentTime; const gainL = this.audioCtx.createGain(); const gainR = this.audioCtx.createGain(); 
                 const pannerL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; 
                 const pannerR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; 
-                
-                if(pannerL && pannerR) { 
-                    pannerL.pan.value = -0.5; 
-                    pannerR.pan.value = 0.5; 
-                    gainL.connect(pannerL); 
-                    pannerL.connect(this.masterCompressor); 
-                    gainR.connect(pannerR); 
-                    pannerR.connect(this.masterCompressor); 
-                } else { 
-                    gainL.connect(this.masterCompressor); 
-                    gainR.connect(this.masterCompressor); 
-                } 
-                
-                [gainL, gainR].forEach(g => { 
-                    g.gain.setValueAtTime(0.001, now); 
-                    g.gain.exponentialRampToValueAtTime(0.15, now + 0.05); 
-                    g.gain.exponentialRampToValueAtTime(0.001, now + 0.8); 
-                }); 
-                
-                [880, 1108, 1318].forEach((f, i) => { 
-                    let o1 = this.audioCtx.createOscillator(); 
-                    let o2 = this.audioCtx.createOscillator(); 
-                    o1.frequency.setValueAtTime(f, now + (i*0.05)); 
-                    o2.frequency.setValueAtTime(f * 1.005, now + (i*0.05)); 
-                    o1.connect(gainL); 
-                    o2.connect(gainR); 
-                    o1.start(now + (i*0.05)); 
-                    o2.start(now + (i*0.05)); 
-                    o1.stop(now + 0.8); 
-                    o2.stop(now + 0.8); 
-                }); 
+                if(pannerL && pannerR) { pannerL.pan.value = -0.5; pannerR.pan.value = 0.5; gainL.connect(pannerL); pannerL.connect(this.masterCompressor); gainR.connect(pannerR); pannerR.connect(this.masterCompressor); } else { gainL.connect(this.masterCompressor); gainR.connect(this.masterCompressor); } 
+                [gainL, gainR].forEach(g => { g.gain.setValueAtTime(0.001, now); g.gain.exponentialRampToValueAtTime(0.15, now + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + 0.8); }); 
+                [880, 1108, 1318].forEach((f, i) => { let o1 = this.audioCtx.createOscillator(); let o2 = this.audioCtx.createOscillator(); o1.frequency.setValueAtTime(f, now + (i*0.05)); o2.frequency.setValueAtTime(f * 1.005, now + (i*0.05)); o1.connect(gainL); o2.connect(gainR); o1.start(now + (i*0.05)); o2.start(now + (i*0.05)); o1.stop(now + 0.8); o2.stop(now + 0.8); }); 
             } catch(e) {}
         },
-        
         playSuccessSFX() { 
             if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
-            try { 
-                const now = this.audioCtx.currentTime; 
-                const gain = this.audioCtx.createGain(); 
-                gain.connect(this.masterCompressor); 
-                gain.gain.setValueAtTime(0, now); 
-                gain.gain.linearRampToValueAtTime(0.15, now + 0.1); 
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); 
-                const freqs = [523.25, 659.25, 783.99, 1046.50]; 
-                let timeOffset = 0; 
-                freqs.forEach(f => { 
-                    let osc = this.audioCtx.createOscillator(); 
-                    osc.type = 'sine'; 
-                    osc.frequency.setValueAtTime(f, now + timeOffset); 
-                    osc.connect(gain); 
-                    osc.start(now + timeOffset); 
-                    osc.stop(now + 0.8); 
-                    timeOffset += 0.1; 
-                }); 
-            } catch (e) {} 
+            try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.15, now + 0.1); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); const freqs = [523.25, 659.25, 783.99, 1046.50]; let timeOffset = 0; freqs.forEach(f => { let osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + timeOffset); osc.connect(gain); osc.start(now + timeOffset); osc.stop(now + 0.8); timeOffset += 0.1; }); } catch (e) {} 
         },
-        
         playErrorSFX() { 
             if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
-            try {
-                const now = this.audioCtx.currentTime; 
-                const gain = this.audioCtx.createGain(); 
-                gain.connect(this.masterCompressor); 
-                gain.gain.setValueAtTime(0.4, now); 
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4); 
-                const osc = this.audioCtx.createOscillator(); 
-                osc.type = 'sine'; 
-                osc.frequency.setValueAtTime(160, now); 
-                osc.frequency.exponentialRampToValueAtTime(40, now + 0.3); 
-                osc.connect(gain); 
-                osc.start(now); 
-                osc.stop(now + 0.4); 
-            } catch(e) {}
+            try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4); const osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(160, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.3); osc.connect(gain); osc.start(now); osc.stop(now + 0.4); } catch(e) {}
         },
-        
         playRisada() { 
-            if (this.somAtivo && !this.isMutedGlobal && this.sfxRisada) { 
-                this.sfxRisada.currentTime = 0; 
-                let playPromise = this.sfxRisada.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => console.log("SFX blocked"));
-                }
-            } 
+            if (this.somAtivo && !this.isMutedGlobal && this.sfxRisada) { this.sfxRisada.currentTime = 0; let playPromise = this.sfxRisada.play(); if (playPromise !== undefined) { playPromise.catch(e => console.log("Blocked")); } } 
         },
-        
         playVoice(texto) { 
             if (!this.somAtivo || this.isMutedGlobal) return; 
             try {
-                this.ultimaVoz = texto; 
-                let src = "";
-                
-                if (texto === "Desafio das Letras! Ache a letra correta.") src = "audios/intro_fase2.mp3";
-                else if (texto === "Castelo das Sílabas! Pegue a sílaba correta.") src = "audios/intro_fase4.mp3";
-                else if (texto === "Vale das Sombras! Escute com atenção.") src = "audios/intro_fase5.mp3";
-                else if (texto === "Ponte das Frases! Leia com atenção.") src = "audios/intro_fase6.mp3";
-                else if (texto === "Complete a frase!") src = "audios/acao_frase.mp3";
-                else if (texto === "Incrível! Você está pegando fogo!") src = "audios/combo_fogo.mp3";
+                this.ultimaVoz = texto; let src = "";
+                if (texto === "Incrível! Você está pegando fogo!") src = "audios/combo_fogo.mp3";
                 else if (texto === "Ops!") src = "audios/erro_ops.mp3";
                 else if (texto === "Quase lá!") src = "audios/erro_quase.mp3";
                 else if (texto === "Tente de novo!") src = "audios/erro_tente.mp3";
-                
-                // CORREÇÃO AAA DE ELITE: Mapeia apenas a letra pura. Nada de prefixos enganosos.
-                else if (texto.length === 1 && texto.match(/[A-Z]/i)) {
-                    src = `audios/som_letra_${texto.toUpperCase()}.mp3`;
-                }
-                else if (texto.startsWith("Ache a letra ")) {
-                    let letra = texto.substring(13, 14);
-                    src = `audios/ache_letra_${letra}.mp3`;
-                }
-                else if (texto.startsWith("Pegue a sílaba ")) {
-                    let silaba = texto.split(" ")[3].replace(",", "");
-                    src = `audios/silaba_${silaba}.mp3`;
-                }
-                else if (texto.startsWith("Ache a caixa com a letra ")) {
-                    let letra = texto.substring(25, 26);
-                    src = `audios/caixa_letra_${letra}.mp3`;
-                }
+                else if (texto.length === 1 && texto.match(/[A-Z]/i)) { src = `audios/som_letra_${texto.toUpperCase()}.mp3`; }
                 
                 if (src !== "") {
                     if(!this.vozHumana) this.vozHumana = new Audio();
-                    this.vozHumana.src = src;
-                    this.vozHumana.currentTime = 0;
+                    this.vozHumana.src = src; this.vozHumana.currentTime = 0;
                     this.vozHumana.play().catch(e => {
-                        if ('speechSynthesis' in window) {
-                            window.speechSynthesis.cancel();
-                            let utter = new SpeechSynthesisUtterance(texto);
-                            utter.lang = 'pt-BR';
-                            utter.rate = 1.0;
-                            window.speechSynthesis.speak(utter);
-                        }
+                        if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR'; window.speechSynthesis.speak(utter); }
                     });
                 } else {
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.cancel();
-                        let utter = new SpeechSynthesisUtterance(texto);
-                        utter.lang = 'pt-BR';
-                        utter.rate = 1.0;
-                        window.speechSynthesis.speak(utter);
-                    }
+                    if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR'; window.speechSynthesis.speak(utter); }
                 }
             } catch(e) {}
         },
-        
         playErrorVoice() { 
             if (!this.somAtivo || this.isMutedGlobal) return; 
-            try {
-                const frases = ["Ops!", "Quase lá!", "Tente de novo!"]; 
-                let fraseEscolhida = frases[Math.floor(Math.random()*frases.length)]; 
-                this.playVoice(fraseEscolhida); 
-                
-                if(this.ultimaVoz && this.ultimaVoz !== fraseEscolhida) { 
-                    setTimeout(() => {
-                        this.playVoice(this.ultimaVoz); 
-                    }, 1500); 
-                } 
-            } catch(e) {}
+            try { const frases = ["Ops!", "Quase lá!", "Tente de novo!"]; let fraseEscolhida = frases[Math.floor(Math.random()*frases.length)]; this.playVoice(fraseEscolhida); } catch(e) {}
         },
-        
         repeatVoice() { 
-            if (this.ultimaVoz !== "" && !this.isMutedGlobal && this.somAtivo) { 
-                this.playVoice(this.ultimaVoz); 
-            } 
+            if (this.ultimaVoz !== "" && !this.isMutedGlobal && this.somAtivo) { this.playVoice(this.ultimaVoz); } 
         },
-        
         playColetaLetra(frase) { 
-            if (this.isMutedGlobal || !this.somAtivo) return;
-            this.playMagicSFX(); 
-            setTimeout(() => this.playVoice(frase), 150); 
+            if (this.isMutedGlobal || !this.somAtivo) return; this.playMagicSFX(); setTimeout(() => this.playVoice(frase), 150); 
         }
     };
     
     AudioManager.updateUI();
 
-    document.querySelectorAll('.ps5-btn, .btn-livro, .btn-corner').forEach(btn => { 
-        btn.addEventListener('mouseenter', () => AudioManager.playHoverTick()); 
-    });
-    
-    btnSom.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); 
-    }); 
-    
-    btnSomMenu.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); 
-    });
-    
-    document.body.addEventListener('click', function initMenuMusic() { 
-        if(!AudioManager.isMutedGlobal) AudioManager.playBGM('menu'); 
-        document.body.removeEventListener('click', initMenuMusic); 
-    }, { once: true });
-
+    document.querySelectorAll('.ps5-btn, .btn-livro, .btn-corner').forEach(btn => { btn.addEventListener('mouseenter', () => AudioManager.playHoverTick()); });
+    btnSom.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); }); 
+    btnSomMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); });
+    document.body.addEventListener('click', function initMenuMusic() { if(!AudioManager.isMutedGlobal) AudioManager.playBGM('menu'); document.body.removeEventListener('click', initMenuMusic); }, { once: true });
     window.addEventListener('blur', () => { isHolding = false; });
     window.addEventListener('visibilitychange', () => { if(document.hidden) isHolding = false; });
 
     function atualizarProgressoHUD() {
         if (faseAtual === 1) { progressFill.style.width = isInfinite ? '100%' : ((letrasColetadas.length / letrasParaVencerFase1) * 100) + '%'; }
-        else if (faseAtual === 2) { progressFill.style.width = isInfinite ? '100%' : ((acertosAtuaisFase2 / acertosParaVencerFase2) * 100) + '%'; }
-        else if (faseAtual === 4) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase4 / dadosFase4.length) * 100) + '%'; }
-        else if (faseAtual === 5) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase5 / dadosFase5.length) * 100) + '%'; }
-        else if (faseAtual === 6) { progressFill.style.width = isInfinite ? '100%' : ((acertosFase6 / dadosFase6.length) * 100) + '%'; }
-        else if (faseAtual === 8) { progressFill.style.width = Math.min(100, ((gameSpeed - baseGameSpeed) / (14 - baseGameSpeed)) * 100) + '%'; } 
+        else if (faseAtual === 8) { progressFill.style.width = Math.min(100, ((gameSpeed - baseGameSpeed) / (11 - baseGameSpeed)) * 100) + '%'; } 
     }
 
     function mostrarCinematica(titulo, subtitulo, corBase) {
-        cinematicTitle.innerText = titulo;
-        cinematicSubtitle.innerText = subtitulo;
-        cinematicSubtitle.style.color = corBase;
-        
-        cinematicOverlay.classList.remove('cinematic-fadeout');
-        cinematicOverlay.classList.add('cinematic-active');
+        cinematicTitle.innerText = titulo; cinematicSubtitle.innerText = subtitulo; cinematicSubtitle.style.color = corBase;
+        cinematicOverlay.classList.remove('cinematic-fadeout'); cinematicOverlay.classList.add('cinematic-active');
         AudioManager.playCinematicSweep();
-
-        setTimeout(() => {
-            cinematicOverlay.classList.remove('cinematic-active');
-            cinematicOverlay.classList.add('cinematic-fadeout');
-        }, 2200);
+        setTimeout(() => { cinematicOverlay.classList.remove('cinematic-active'); cinematicOverlay.classList.add('cinematic-fadeout'); }, 2200);
     }
 
     function dispararFlashTransicao() {
-        flashOverlay.classList.add('flash-active');
-        setTimeout(() => flashOverlay.classList.remove('flash-active'), 50);
+        flashOverlay.classList.add('flash-active'); setTimeout(() => flashOverlay.classList.remove('flash-active'), 50);
     }
 
     function prepararFase(fase) {
         if (gameActive) dispararFlashTransicao();
 
         if(fase === 1) { 
-            metaAlfabeto.innerText = isInfinite ? "ATO 1: ALFABETO" : "COLETE O ALFABETO"; 
+            metaAlfabeto.innerText = isInfinite ? "TREINO: ALFABETO" : "COLETE O ALFABETO"; 
             metaAlfabeto.style.color = "#FFD700"; 
             letraUi.innerText = "Vamos começar..."; 
             mostrarCinematica("ATO I", "O ALFABETO", "#FFD700");
@@ -936,46 +624,6 @@
                 }
             }, 1800);
         }
-        else if (fase === 2) { 
-            metaAlfabeto.innerText = isInfinite ? "ATO 2: ENIGMA" : "DESAFIO DAS LETRAS!"; 
-            metaAlfabeto.style.color = "#FF1493"; 
-            letraUi.innerText = "Prepare-se..."; 
-            setTimeout(() => AudioManager.playVoice("Desafio das Letras! Ache a letra correta."), 800);
-            mostrarCinematica("ATO II", "O ENIGMA", "#FF1493");
-        }
-        else if (fase === 3) { 
-            metaAlfabeto.innerText = isInfinite ? "ATO 3: VOO" : "O VOO DA VITORIA!"; 
-            metaAlfabeto.style.color = "#FFD700"; 
-            atualizarHUDVitoria(); 
-            mostrarCinematica("ATO III", "O VOO DA VITÓRIA", "#FFD700");
-        }
-        else if (fase === 4) { 
-            metaAlfabeto.innerText = isInfinite ? "ATO 4: SILABAS" : "CASTELO DAS SILABAS"; 
-            metaAlfabeto.style.color = "#00FFFF"; 
-            letraUi.innerText = "Junte as silabas..."; 
-            setTimeout(() => AudioManager.playVoice("Castelo das Sílabas! Pegue a sílaba correta."), 800);
-            mostrarCinematica("ATO IV", "SÍLABAS MÁGICAS", "#00FFFF");
-        }
-        else if (fase === 5) { 
-            metaAlfabeto.innerText = isInfinite ? "ATO 5: MEMORIA" : "VALE DAS SOMBRAS"; 
-            metaAlfabeto.style.color = "#8A2BE2"; 
-            letraUi.innerText = "Escute com atencao..."; 
-            setTimeout(() => AudioManager.playVoice("Vale das Sombras! Escute com atenção."), 800);
-            mostrarCinematica("ATO V", "VALE DAS SOMBRAS", "#8A2BE2");
-        }
-        else if (fase === 6) { 
-            metaAlfabeto.innerText = isInfinite ? "ATO 6: FRASES" : "PONTE DAS FRASES"; 
-            metaAlfabeto.style.color = "#00FF7F"; 
-            letraUi.innerText = "Leia com atencao..."; 
-            setTimeout(() => AudioManager.playVoice("Ponte das Frases! Leia com atenção."), 800);
-            mostrarCinematica("ATO VI", "PONTE DAS FRASES", "#00FF7F");
-        }
-        else if (fase === 7) { 
-            metaAlfabeto.innerText = "PRÓLOGO DOS NÚMEROS"; 
-            metaAlfabeto.style.color = "#FFD700"; 
-            letraUi.innerText = "1, 2, 3..."; 
-            mostrarCinematica("PRÓLOGO", "OS NÚMEROS", "#FFD700");
-        }
         else if (fase === 8) { 
             metaAlfabeto.innerText = "PONTUAÇÃO: 0"; 
             metaAlfabeto.style.color = "#FF4500"; 
@@ -985,24 +633,8 @@
         }
         
         atualizarProgressoHUD();
-        player.isJumping = true; 
-        player.y = 0; 
-        isHolding = false;
-        
+        player.isJumping = true; player.y = 0; isHolding = false;
         itemTimer = fase === 8 ? 1000 : -2500; 
-    }
-
-    function atualizarHUDVitoria() {
-        let palavra = palavrasVitoria[palavraAtualIndex]; 
-        let display = "";
-        for(let i=0; i<palavra.length; i++) { 
-            if (i < letraVitoriaIndex) display += palavra[i] + " "; 
-            else display += "_ "; 
-        }
-        letraUi.innerText = display.trim(); 
-        progressFill.style.width = isInfinite ? '100%' : ((letraVitoriaIndex / palavra.length) * 100) + '%';
-        hudLayer.classList.add('hud-punch'); 
-        setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
     }
 
     // ==========================================
@@ -1010,152 +642,63 @@
     // ==========================================
     function renderizarCeuVIP() {
         if (faseAtual === 8 && window.isVIPPrata) {
-            let cw = canvas.width;
-            let ch = canvas.height;
+            let cw = canvas.width; let ch = canvas.height;
+            let ciclo = (pontuacao % 3000) / 3000; let angulo = ciclo * Math.PI * 2;
+            let cx = cw / 2; let cy = ch; let raio = cw / 1.5;
+            let solX = cx - Math.sin(angulo) * raio; let solY = cy - Math.cos(angulo) * raio;
+            let luaX = cx + Math.sin(angulo) * raio; let luaY = cy + Math.cos(angulo) * raio;
             
-            // O ciclo gira conforme a pontuação! (Cada 1000 pontos = 1 Dia Completo)
-            let ciclo = (pontuacao % 3000) / 3000; 
-            let angulo = ciclo * Math.PI * 2;
-            
-            let cx = cw / 2;
-            let cy = ch; // Horizonte (base da tela)
-            let raio = cw / 1.5;
-            
-            let solX = cx - Math.sin(angulo) * raio;
-            let solY = cy - Math.cos(angulo) * raio;
-            
-            let luaX = cx + Math.sin(angulo) * raio;
-            let luaY = cy + Math.cos(angulo) * raio;
-            
-            // 1. Desenhar o Sol Brilhante (Dia)
             if (solY < ch) {
-                ctx.save();
-                ctx.shadowBlur = 80; ctx.shadowColor = "#FFDF00"; ctx.fillStyle = "#FFF700";
-                ctx.beginPath(); ctx.arc(solX, solY, 60, 0, Math.PI*2); ctx.fill();
-                ctx.restore();
+                ctx.save(); ctx.shadowBlur = 80; ctx.shadowColor = "#FFDF00"; ctx.fillStyle = "#FFF700";
+                ctx.beginPath(); ctx.arc(solX, solY, 60, 0, Math.PI*2); ctx.fill(); ctx.restore();
             }
             
-            // 2. Escurecimento do Céu e Estrelas (Noite)
             let escurecer = Math.max(0, Math.cos(angulo + Math.PI)); 
             if (escurecer > 0) {
-                // Tela escurece gradualmente
-                ctx.fillStyle = `rgba(5, 5, 25, ${escurecer * 0.8})`; 
-                ctx.fillRect(0, 0, cw, ch);
-                
-                // Estrelas aparecem quando fica muito escuro
+                ctx.fillStyle = `rgba(5, 5, 25, ${escurecer * 0.8})`; ctx.fillRect(0, 0, cw, ch);
                 if (escurecer > 0.3) {
                     ctx.fillStyle = `rgba(255, 255, 255, ${escurecer})`;
-                    for(let i=1; i<=25; i++) {
-                        let sx = (i * 123) % cw; 
-                        let sy = (i * 77) % (ch / 1.5);
-                        ctx.beginPath(); ctx.arc(sx, sy, (i%3)+1, 0, Math.PI*2); ctx.fill();
-                    }
+                    for(let i=1; i<=25; i++) { let sx = (i * 123) % cw; let sy = (i * 77) % (ch / 1.5); ctx.beginPath(); ctx.arc(sx, sy, (i%3)+1, 0, Math.PI*2); ctx.fill(); }
                 }
             }
-            
-            // 3. Desenhar a Lua Premium
             if (luaY < ch) {
-                ctx.save();
-                ctx.shadowBlur = 50; ctx.shadowColor = "#FFFFFF"; ctx.fillStyle = "#F0F8FF";
+                ctx.save(); ctx.shadowBlur = 50; ctx.shadowColor = "#FFFFFF"; ctx.fillStyle = "#F0F8FF";
                 ctx.beginPath(); ctx.arc(luaX, luaY, 50, 0, Math.PI*2); ctx.fill();
-                // Crateras da lua
-                ctx.fillStyle = "rgba(180, 180, 180, 0.5)";
-                ctx.beginPath(); ctx.arc(luaX - 12, luaY - 15, 10, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(luaX + 18, luaY + 8, 14, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(luaX - 5, luaY + 18, 6, 0, Math.PI*2); ctx.fill();
-                ctx.restore();
+                ctx.fillStyle = "rgba(180, 180, 180, 0.5)"; ctx.beginPath(); ctx.arc(luaX - 12, luaY - 15, 10, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(luaX + 18, luaY + 8, 14, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(luaX - 5, luaY + 18, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
             }
         }
     }
-    // ==========================================
     
-    // GAME OVER DO MODO EXTRA COM LIGAÇÃO À NUVEM (VERSÃO FINAL)
+    // GAME OVER COM LIGAÇÃO À NUVEM
     async function dispararGameOverExtra() {
         if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
-        gameActive = false; 
-        isHolding = false;
-        hudLayer.style.display = 'none'; 
-        btnSom.style.display = 'none'; 
-        btnPause.style.display = 'none';
+        gameActive = false; isHolding = false;
+        hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none';
         
         AudioManager.stopAll();
-        
         let pontosFinais = Math.floor(pontuacao);
         
-        // Ativar tela de vitória para mostrar o status da nuvem
-        victoryScreen.style.display = 'flex'; 
-        setTimeout(() => { victoryScreen.style.opacity = '1'; }, 100);
-
+        victoryScreen.style.display = 'flex'; setTimeout(() => { victoryScreen.style.opacity = '1'; }, 100);
         document.querySelector('.victory-title').innerText = "A LER A NUVEM...";
         document.querySelector('.victory-subtitle').innerText = "Consultando recordes...";
         document.querySelector('.trophy-icon').innerText = "☁️";
 
-        // Tenta falar com o Firebase
         let resultado = null;
-        if(window.verificarESalvarRecorde) {
-            resultado = await window.verificarESalvarRecorde(pontosFinais);
-        }
+        if(window.verificarESalvarRecorde) { resultado = await window.verificarESalvarRecorde(pontosFinais); }
 
         if (resultado && resultado.bateuRecorde) {
-            // EFEITO AAA: NOVO RECORDE GLOBAL!
             AudioManager.playSuccessSFX();
-            document.querySelector('.victory-title').innerText = "NOVO RECORDE!";
-            document.querySelector('.victory-title').style.color = "#FFD700";
-            document.querySelector('.victory-subtitle').innerText = "A ISADORA É A MELHOR!";
-            document.querySelector('.trophy-icon').innerText = "🏆";
+            document.querySelector('.victory-title').innerText = "NOVO RECORDE!"; document.querySelector('.victory-title').style.color = "#FFD700";
+            document.querySelector('.victory-subtitle').innerText = "A ISADORA É A MELHOR!"; document.querySelector('.trophy-icon').innerText = "🏆";
             document.querySelector('.credits').innerHTML = "Pontos: " + pontosFinais + "<br><strong>GRAVADO NA NUVEM!</strong>";
-            
-            // Explosão de Partículas
-            for(let i=0; i<50; i++) {
-                particulas.push(new Particula(canvas.width/2, canvas.height/2, '#FFD700', (Math.random()*20)-10, (Math.random()*20)-10, 15));
-            }
+            for(let i=0; i<50; i++) { particulas.push(new Particula(canvas.width/2, canvas.height/2, '#FFD700', (Math.random()*20)-10, (Math.random()*20)-10, 15)); }
         } else {
-            // FIM DE JOGO NORMAL
             AudioManager.playErrorVoice(); 
-            document.querySelector('.victory-title').innerText = "FIM DE JOGO!";
-            document.querySelector('.victory-title').style.color = "#FF1493";
+            document.querySelector('.victory-title').innerText = "FIM DE JOGO!"; document.querySelector('.victory-title').style.color = "#FF1493";
             document.querySelector('.trophy-icon').innerText = "🌵";
             let recTexto = resultado ? "<br>Recorde a bater: " + resultado.recorde : "";
             document.querySelector('.credits').innerHTML = "Pontos: " + pontosFinais + recTexto;
         }
-    }
-
-    function dispararGrandFinale() {
-        if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
-        gameActive = false; 
-        isHolding = false;
-        hudLayer.style.display = 'none'; 
-        btnSom.style.display = 'none'; 
-        btnPause.style.display = 'none';
-        
-        AudioManager.stopAll();
-        AudioManager.isMutedGlobal = false; // Permite o som de vitoria tocar
-        AudioManager.playSuccessSFX(); 
-        setTimeout(()=> AudioManager.playRisada(), 1000);
-        
-        document.querySelector('.victory-title').innerText = "PLATINA!";
-        document.querySelector('.victory-title').style.color = "#FFD700";
-        document.querySelector('.victory-subtitle').innerText = "VOCÊ DOMINOU O ALFABETO E AS SÍLABAS";
-        document.querySelector('.victory-subtitle').style.color = "#00FFFF";
-        document.querySelector('.trophy-icon').innerText = "🏆";
-
-        for(let i=0; i<100; i++) {
-            particulas.push(new Particula(canvas.width/2, canvas.height/2, Math.random() > 0.5 ? '#FFD700' : '#FF1493', (Math.random()*20)-10, (Math.random()*20)-10, Math.random()*25+10));
-        }
-        
-        function renderVictory() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height);
-            for (let i = particulas.length - 1; i >= 0; i--) {
-                particulas[i].update(1); particulas[i].draw(ctx);
-                if (particulas[i].vida <= 0) particulas.splice(i, 1);
-            }
-            if (particulas.length > 0 && !gameActive) { requestAnimationFrame(renderVictory); }
-        }
-        renderVictory();
-        
-        victoryScreen.style.display = 'flex'; 
-        setTimeout(() => { victoryScreen.style.opacity = '1'; }, 100);
     }
 
     function iniciarJogo() {
@@ -1169,119 +712,64 @@
         if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
         if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; }
         
-        AudioManager.init(); 
-        AudioManager.playMagicSFX(); 
-        AudioManager.playRisada(); 
+        AudioManager.init(); AudioManager.playMagicSFX(); AudioManager.playRisada(); 
         
         const loader = document.getElementById('loading-screen');
         if (loader) {
-            let numDica = Math.floor(Math.random() * 3);
-            let dicas = [
-                "DICA: Para uma melhor experiencia, jogue com o som ligado!", 
-                "DICA: Pule no tempo exato para coletar os itens.", 
-                "DICA: Na duvida, a voz do jogo vai te ajudar a lembrar a missao!"
-            ];
-            document.getElementById('loader-tip-text').innerText = dicas[numDica];
-            loader.style.display = 'flex'; 
-            setTimeout(() => { loader.style.visibility = 'visible'; loader.style.opacity = '1'; }, 10);
+            loader.style.display = 'flex'; setTimeout(() => { loader.style.visibility = 'visible'; loader.style.opacity = '1'; }, 10);
         }
 
         startScreen.style.opacity = '0';
-        desafioFase2 = null; desafioFase4 = null; desafioFase5 = null; desafioFase6 = null;
         
         initTimeoutId = setTimeout(() => {
-            startScreen.style.display = 'none'; 
-            hudLayer.style.display = 'flex'; 
-            btnSom.style.display = 'flex'; 
-            btnPause.style.display = 'flex';
+            startScreen.style.display = 'none'; hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex';
             AudioManager.playBGM('game'); 
-            letrasColetadas = []; 
-            collectibles = []; 
-            particulas = []; 
-            textosFlutuantes = [];
+            letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = [];
             
             let conf = modosDeJogo[modoAtualIndex]; 
-            faseAtual = conf.fase; 
-            isInfinite = conf.inf;
-            
-            acertosAtuaisFase2 = 0; palavraAtualIndex = 0; letraVitoriaIndex = 0; 
-            acertosFase4 = 0; acertosFase5 = 0; acertosFase6 = 0; 
-            numeroAtualIndex = 0; comboAtual = 0; pontuacao = 0;
-            
-            vidasExtra = 3;
-            invulneravelTimer = 0;
-            window.extraGroundOffset = 0;
-            window.nextGap8 = 0;
-
-            progressFill.classList.remove('combo-ativo'); 
-            letraUi.classList.remove('texto-combo-ativo');
+            faseAtual = conf.fase; isInfinite = conf.inf;
+            comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0;
+            progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo');
             
             prepararFase(faseAtual);
-            gameActive = true; 
-            isPaused = false; 
-            lastTime = performance.now(); 
-            gameSpeed = baseGameSpeed; 
-            hitStopTime = 0; 
-            shakeIntensity = 0;
-            
+            gameActive = true; isPaused = false; lastTime = performance.now(); gameSpeed = baseGameSpeed; hitStopTime = 0; shakeIntensity = 0;
             animationId = requestAnimationFrame(animate);
 
-            if (loader) { 
-                loader.style.opacity = '0'; 
-                loader.style.visibility = 'hidden'; 
-                setTimeout(() => loader.style.display = 'none', 800); 
-            }
+            if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); }
         }, 1800); 
     }
 
-    btnJogar.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); iniciarJogo(); 
-    });
-    
+    btnJogar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); iniciarJogo(); });
     btnSairMenu.addEventListener('click', (e) => { 
         e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); 
         try { window.close(); } catch(err) {} 
-        exitScreen.style.display = 'flex'; 
-        setTimeout(() => { exitScreen.style.opacity = '1'; }, 50); 
+        exitScreen.style.display = 'flex'; setTimeout(() => { exitScreen.style.opacity = '1'; }, 50); 
     });
-    
     btnCancelarSair.addEventListener('click', (e) => { 
         e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); 
-        exitScreen.style.opacity = '0'; 
-        setTimeout(() => { exitScreen.style.display = 'none'; }, 300); 
+        exitScreen.style.opacity = '0'; setTimeout(() => { exitScreen.style.display = 'none'; }, 300); 
     });
-    
     btnPause.addEventListener('click', (e) => { 
         e.preventDefault(); e.stopPropagation();
         if(gameActive && !isPaused) { 
             isPaused = true; isHolding = false; 
             if(animationId) { cancelAnimationFrame(animationId); animationId = null; } 
-            pauseScreen.style.display = 'flex'; 
-            setTimeout(() => { pauseScreen.style.opacity = '1'; }, 50); 
+            pauseScreen.style.display = 'flex'; setTimeout(() => { pauseScreen.style.opacity = '1'; }, 50); 
         } 
     });
-    
     btnContinuar.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); 
-        isPaused = false; 
-        pauseScreen.style.opacity = '0'; 
+        e.preventDefault(); e.stopPropagation(); isPaused = false; pauseScreen.style.opacity = '0'; 
         setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); 
-        lastTime = performance.now(); 
-        if(!animationId) { animationId = requestAnimationFrame(animate); } 
+        lastTime = performance.now(); if(!animationId) { animationId = requestAnimationFrame(animate); } 
     });
     
     function voltarAoMenu(screenElement) {
         if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; }
-        isPaused = false; 
-        screenElement.style.opacity = '0'; 
-        setTimeout(() => { screenElement.style.display = 'none'; }, 300);
+        isPaused = false; screenElement.style.opacity = '0'; setTimeout(() => { screenElement.style.display = 'none'; }, 300);
         if(animationId) { cancelAnimationFrame(animationId); animationId = null; }
         
         const loader = document.getElementById('loading-screen');
-        if (loader) { 
-            loader.style.opacity = '0'; loader.style.visibility = 'hidden'; 
-            setTimeout(() => loader.style.display = 'none', 800); 
-        }
+        if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); }
         
         gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0;
         cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout');
@@ -1289,24 +777,17 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height); 
         if (fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height);
         
-        AudioManager.stopAll();
-        AudioManager.isMutedGlobal = false;
+        AudioManager.stopAll(); AudioManager.isMutedGlobal = false;
         if(AudioManager.somAtivo) AudioManager.playBGM('menu'); 
         
-        startScreen.style.display = 'flex'; 
-        setTimeout(() => { startScreen.style.opacity = '1'; }, 50); 
-        resetIdleTimer();
+        startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50); resetIdleTimer();
     }
     
     btnReiniciar.addEventListener('click', (e) => { 
-        e.preventDefault(); e.stopPropagation(); 
-        isPaused = false; pauseScreen.style.opacity = '0'; 
-        setTimeout(() => { 
-            pauseScreen.style.display = 'none'; gameActive = false; 
+        e.preventDefault(); e.stopPropagation(); isPaused = false; pauseScreen.style.opacity = '0'; 
+        setTimeout(() => { pauseScreen.style.display = 'none'; gameActive = false; 
             if(animationId) { cancelAnimationFrame(animationId); animationId = null; } 
-            AudioManager.stopAll();
-            AudioManager.isMutedGlobal = false;
-            iniciarJogo(); 
+            AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogo(); 
         }, 300); 
     });
     
@@ -1314,50 +795,28 @@
     btnVitoriaMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(victoryScreen); });
 
     function redimensionarCanvas() {
-        let dpr = window.devicePixelRatio || 1; 
-        canvas.style.width = window.innerWidth + 'px'; 
-        canvas.style.height = window.innerHeight + 'px'; 
-        canvas.width = window.innerWidth * dpr; 
-        canvas.height = window.innerHeight * dpr;
-        
-        ctx.scale(dpr, dpr); 
-        ctx.imageSmoothingEnabled = true; 
-        ctx.imageSmoothingQuality = "high";
-        
+        let dpr = window.devicePixelRatio || 1; canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px'; 
+        canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
         alturaChao = window.innerHeight * 0.18; 
         
         if (window.innerHeight < 500 || window.innerWidth < 768) { 
-            scaleMultiplier = window.innerHeight < 400 ? 0.45 : 0.60; 
-            baseGameSpeed = 4.5; 
-            if(player) { player.jumpPower = -15.5; player.gravity = 0.8; } 
+            scaleMultiplier = window.innerHeight < 400 ? 0.45 : 0.60; baseGameSpeed = 4.5; if(player) { player.jumpPower = -15.5; player.gravity = 0.8; } 
         } else { 
-            scaleMultiplier = 1; 
-            baseGameSpeed = 6.5; 
-            if(player) { player.jumpPower = -21; player.gravity = 1.1; } 
+            scaleMultiplier = 1; baseGameSpeed = 6.5; if(player) { player.jumpPower = -21; player.gravity = 1.1; } 
         }
         gameSpeed = baseGameSpeed; 
-        if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) { 
-            avisoRotacao.style.display = 'flex'; 
-        } else { 
-            avisoRotacao.style.display = 'none'; 
-        }
+        if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) { avisoRotacao.style.display = 'flex'; } else { avisoRotacao.style.display = 'none'; }
     }
     
-    window.addEventListener('resize', redimensionarCanvas); 
-    window.addEventListener('orientationchange', () => { setTimeout(redimensionarCanvas, 100); setTimeout(redimensionarCanvas, 500); });
+    window.addEventListener('resize', redimensionarCanvas); window.addEventListener('orientationchange', () => { setTimeout(redimensionarCanvas, 100); setTimeout(redimensionarCanvas, 500); });
 
     if (btnForcarGiro) { 
         btnForcarGiro.addEventListener('click', (e) => { 
-            e.preventDefault(); 
-            btnForcarGiro.innerText = "VIRE O APARELHO..."; 
-            let docEl = document.documentElement; 
+            e.preventDefault(); btnForcarGiro.innerText = "VIRE O APARELHO..."; let docEl = document.documentElement; 
             let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; 
             if (requestFS) { requestFS.call(docEl).catch(()=>{}); } 
-            if (screen.orientation && screen.orientation.lock) { 
-                screen.orientation.lock('landscape').catch(() => { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; }); 
-            } else { 
-                btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; 
-            } 
+            if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(() => { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; }); } else { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; } 
         }); 
     }
 
@@ -1368,100 +827,47 @@
 
     class Particula {
         constructor(x, y, cor, vx, vy, tamanho) {
-            this.x = x; this.y = y; this.cor = cor;
-            this.vx = vx; this.vy = vy;
-            this.tamanho = tamanho * scaleMultiplier; 
-            this.vida = 1.0;
+            this.x = x; this.y = y; this.cor = cor; this.vx = vx; this.vy = vy; this.tamanho = tamanho * scaleMultiplier; this.vida = 1.0;
         }
         update(timeScale) {
-            this.vx *= Math.pow(0.92, timeScale);
-            this.vy *= Math.pow(0.92, timeScale);
-            this.x += (this.vx - (gameSpeed * 0.7)) * timeScale;
-            this.y += (this.vy - 0.5) * timeScale;
-            this.vida -= 0.02 * timeScale;
-            this.tamanho *= Math.pow(0.95, timeScale);
+            this.vx *= Math.pow(0.92, timeScale); this.vy *= Math.pow(0.92, timeScale);
+            this.x += (this.vx - (gameSpeed * 0.7)) * timeScale; this.y += (this.vy - 0.5) * timeScale;
+            this.vida -= 0.02 * timeScale; this.tamanho *= Math.pow(0.95, timeScale);
         }
         draw(ctx) {
-            ctx.save();
-            ctx.globalAlpha = Math.max(0, this.vida);
-            if (this.cor !== '#555' && !this.cor.includes('rgba(200')) {
-                ctx.globalCompositeOperation = 'lighter';
-            }
-            ctx.fillStyle = this.cor;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, Math.max(0, this.tamanho), 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+            ctx.save(); ctx.globalAlpha = Math.max(0, this.vida);
+            if (this.cor !== '#555' && !this.cor.includes('rgba(200')) { ctx.globalCompositeOperation = 'lighter'; }
+            ctx.fillStyle = this.cor; ctx.beginPath(); ctx.arc(this.x, this.y, Math.max(0, this.tamanho), 0, Math.PI * 2); ctx.fill(); ctx.restore();
         }
     }
 
     class TextoFlutuante {
         constructor(texto, x, y, cor = '#FFF', contorno = '#FF1493') {
-            this.texto = texto; this.x = x; this.y = y;
-            this.vida = 1.0; this.cor = cor; this.contorno = contorno; this.vy = -3;
+            this.texto = texto; this.x = x; this.y = y; this.vida = 1.0; this.cor = cor; this.contorno = contorno; this.vy = -3;
         }
-        update(timeScale) {
-            this.y += this.vy * timeScale;
-            this.vy *= Math.pow(0.92, timeScale);
-            this.vida -= 0.015 * timeScale;
-        }
+        update(timeScale) { this.y += this.vy * timeScale; this.vy *= Math.pow(0.92, timeScale); this.vida -= 0.015 * timeScale; }
         draw(ctx) {
-            ctx.save();
-            ctx.globalAlpha = Math.max(0, this.vida);
-            ctx.fillStyle = this.cor;
-            ctx.font = `bold ${40 * scaleMultiplier}px 'Fredoka', sans-serif`;
-            ctx.strokeStyle = this.contorno;
-            ctx.lineWidth = 6 * scaleMultiplier;
-            ctx.strokeText(this.texto, this.x, this.y);
-            ctx.fillText(this.texto, this.x, this.y);
-            ctx.restore();
+            ctx.save(); ctx.globalAlpha = Math.max(0, this.vida); ctx.fillStyle = this.cor; ctx.font = `bold ${40 * scaleMultiplier}px 'Fredoka', sans-serif`;
+            ctx.strokeStyle = this.contorno; ctx.lineWidth = 6 * scaleMultiplier; ctx.strokeText(this.texto, this.x, this.y); ctx.fillText(this.texto, this.x, this.y); ctx.restore();
         }
     }
 
     class Collectible {
-        constructor(tipo = 'letra', info = null, xOverride = null, isCorrect = true) {
-            this.tipo = tipo; this.info = info; this.isCorrect = isCorrect; 
-            this.markedForDeletion = false; this.spin = 0; 
-            this.timerOscilacao = Math.random() * 100;
-            this.ignorarColisao = false; this.isResolvido = false; this.resolvidoTempo = 0;
-            this.scale = 1; this.opacity = 1;
-            
+        constructor(tipo = 'letra', info = null) {
+            this.tipo = tipo; this.info = info; 
+            this.markedForDeletion = false; this.spin = 0; this.ignorarColisao = false; this.isResolvido = false; 
             let cw = window.innerWidth; let ch = window.innerHeight;
             
-            if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') { 
-                this.radius = (cw < 600 || ch < 500) ? 65 * scaleMultiplier : 75 * scaleMultiplier; 
-                this.x = xOverride; 
-                this.y = -this.radius * 2 - (Math.random() * 150); 
-                this.vy = Math.random() * 3; 
-                this.gravity = 0.8 * scaleMultiplier; 
-                this.hasLanded = false; 
-            } 
-            else if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') { 
-                this.radius = 60 * scaleMultiplier; this.x = xOverride; 
-                this.y = ch - alturaChao - 280 * scaleMultiplier; 
-            }
-            else if (this.tipo === 'estrela_vitoria') { 
-                this.radius = 65 * scaleMultiplier; this.x = xOverride; 
-                let safeTop = ch * 0.15; 
-                let safeBottom = ch - alturaChao - (this.radius * 2.5);
-                if (safeTop > safeBottom) safeTop = safeBottom - 20; 
-                this.y = Math.random() * (safeBottom - safeTop) + safeTop; 
-            } 
-            else if (this.tipo === 'moeda') { 
+            if (this.tipo === 'moeda') { 
                 this.radius = 35 * scaleMultiplier; this.x = cw + 100 * scaleMultiplier; 
-                let groundY = ch - alturaChao;
-                this.y = Math.random() > 0.5 ? groundY - 60 * scaleMultiplier : groundY - 220 * scaleMultiplier; 
+                let groundY = ch - alturaChao; this.y = Math.random() > 0.5 ? groundY - 60 * scaleMultiplier : groundY - 220 * scaleMultiplier; 
             }
             else if (this.tipo === 'obstaculo') { 
-                this.variation = Math.floor(Math.random() * 3); 
-                this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; 
-                this.x = cw + 100 * scaleMultiplier; 
-                let groundY = ch - alturaChao;
-                this.y = groundY - this.radius + 12 * scaleMultiplier; 
-                this.spin = 0; 
-                this.hasLanded = true;
+                this.variation = Math.floor(Math.random() * 3); this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; 
+                this.x = cw + 100 * scaleMultiplier; let groundY = ch - alturaChao; this.y = groundY - this.radius + 12 * scaleMultiplier; 
+                this.spin = 0; this.hasLanded = true;
             }
-            else { 
+            else { // letra
                 this.radius = 45 * scaleMultiplier; this.x = cw + 600 * scaleMultiplier; 
                 this.y = Math.random() > 0.5 ? ch - alturaChao - this.radius - 60 : ch - alturaChao - 260 * scaleMultiplier; 
             }
@@ -1469,219 +875,60 @@
         }
         
         update(timeScale) { 
-            if (this.isResolvido) { 
-                this.resolvidoTempo += 0.02 * timeScale;
-                if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                    let t = Math.min(this.resolvidoTempo * 1.5, 1);
-                    let easeOut = 1 - Math.pow(1 - t, 4);
-                    this.scale = 1 + (0.8 * easeOut); 
-                    this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.2)); 
-                    this.y -= 1.0 * timeScale * easeOut; 
-                    this.x -= (gameSpeed * 0.3) * timeScale; 
-                } else {
-                    let t = Math.min(this.resolvidoTempo * 1.5, 1);
-                    let easeOut = 1 - Math.pow(1 - t, 3);
-                    this.scale = 1 + (1.2 * easeOut);
-                    this.opacity = Math.max(0, 1 - (this.resolvidoTempo * 1.5));
-                    this.y -= 2.0 * timeScale * easeOut; 
-                    this.x -= (gameSpeed * 0.7) * timeScale;
-                    this.spin += 0.05 * timeScale;
-                }
-                if (this.opacity <= 0) this.markedForDeletion = true; 
-                return; 
-            }
-            
             this.x -= (gameSpeed * 1.5) * timeScale; 
-            this.timerOscilacao += 0.1 * timeScale;
-            
-            if(this.tipo === 'letra' || this.tipo === 'numero' || this.tipo === 'moeda') { 
-                this.spin += 0.05 * timeScale; 
-                this.y += Math.sin(this.spin*2) * 1.5 * timeScale; 
+            if(this.tipo === 'letra' || this.tipo === 'moeda') { 
+                this.spin += 0.05 * timeScale; this.y += Math.sin(this.spin*2) * 1.5 * timeScale; 
             } 
-            else if (this.tipo === 'estrela_vitoria') { 
-                this.spin += 0.02 * timeScale; 
-                this.y += Math.sin(this.timerOscilacao) * 0.8 * timeScale; 
-            }
-            else if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') { 
-                this.y += Math.sin(this.timerOscilacao) * 0.5 * timeScale; 
-            }
-            else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                this.spin -= 0.08 * timeScale; 
-                let groundY = window.innerHeight - alturaChao - this.radius - (10 * scaleMultiplier);
-                if (this.y < groundY || this.vy !== 0) {
-                    this.vy += this.gravity * timeScale; 
-                    this.y += this.vy * timeScale;
-                    if (!this.hasLanded && Math.random() > 0.4) {
-                        particulas.push(new Particula(this.x + (Math.random()*40-20), this.y - this.radius, 'rgba(0, 255, 255, 0.4)', -gameSpeed * 0.5, -2, Math.random()*8+4));
-                    }
-                    if (this.y >= groundY) { 
-                        this.y = groundY; this.vy *= -0.35; 
-                        if (Math.abs(this.vy) < 2) { 
-                            this.vy = 0; 
-                            if (!this.hasLanded) { 
-                                this.hasLanded = true; 
-                                for(let i=0; i<8; i++) {
-                                    particulas.push(new Particula(this.x, this.y + this.radius, 'rgba(255, 255, 255, 0.7)', (Math.random()*8)-4, (Math.random()*-4)-1, Math.random()*10+5)); 
-                                }
-                            } 
-                        } 
-                    }
-                }
-            }
             if (this.x < -200) this.markedForDeletion = true; 
         }
         
         draw(ctx) {
-            ctx.save(); 
-            if (this.tipo === 'obstaculo') {
-                ctx.translate(this.x, this.y); 
-            } else {
-                ctx.translate(this.x, this.y - 10); 
-            }
+            ctx.save(); ctx.translate(this.x, this.tipo === 'obstaculo' ? this.y : this.y - 10); 
+            let scl = scaleMultiplier; let displayTexto = this.info ? this.info.letra : '?';
+            let bgAlpha = this.isResolvido ? 0 : 1; let textAlpha = this.isResolvido ? 0 : 1;
             
-            let scl = scaleMultiplier; 
-            let displayTexto = this.info ? (this.info.letra || this.info.s || this.info.palavra || this.info) : '?';
-            let bgAlpha = this.isResolvido ? Math.max(0, 1 - (this.resolvidoTempo * 5)) : 1; 
-            let textAlpha = this.isResolvido ? this.opacity : 1;
-            let currentScale = this.isResolvido ? this.scale : 1;
-            
-            if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') {
-                let isFrase = this.tipo === 'caixa_frase'; 
-                let bWidth = isFrase ? this.radius * 3 : this.radius * 2; 
-                let bHeight = this.radius * 2; let bX = -bWidth / 2; let bY = -bHeight / 2;
-                ctx.globalAlpha = bgAlpha;
-                ctx.shadowColor = this.isResolvido ? '#FFF' : (this.ignorarColisao ? '#555' : (isFrase ? '#00FF7F' : '#8A2BE2')); 
-                ctx.shadowBlur = this.isResolvido ? 40 : (this.ignorarColisao ? 0 : 20); 
-                ctx.fillStyle = this.isResolvido ? (isFrase ? '#00FF7F' : '#8A2BE2') : (this.ignorarColisao ? 'rgba(50, 50, 50, 0.8)' : (isFrase ? 'rgba(10, 30, 20, 0.85)' : 'rgba(20, 10, 40, 0.8)')); 
-                ctx.strokeStyle = this.isResolvido ? '#FFF' : (this.ignorarColisao ? '#888' : (isFrase ? '#00FF7F' : '#00FFFF')); 
-                ctx.lineWidth = 4; ctx.beginPath(); ctx.roundRect(bX, bY, bWidth, bHeight, 15); ctx.fill(); ctx.stroke();
-                ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.scale(currentScale, currentScale);
-                ctx.fillStyle = this.ignorarColisao && !this.isResolvido ? '#AAA' : '#FFF'; 
-                let fontSize = isFrase ? this.radius * 0.7 : this.radius;
-                ctx.font = `900 ${fontSize}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 5);
-            }
-            else if (this.tipo === 'moeda') {
+            if (this.tipo === 'moeda') {
                 ctx.globalAlpha = bgAlpha; ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 20;
                 ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fillStyle = '#FFD700'; ctx.fill();
                 ctx.fillStyle = '#FFA500'; ctx.beginPath(); ctx.arc(0,0, this.radius*0.7, 0, Math.PI*2); ctx.fill();
-                ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.scale(currentScale, currentScale);
-                ctx.fillStyle = '#FFF'; ctx.font = `bold ${this.radius*1.2}px 'Fredoka'`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('★', 0, 2*scl);
+                ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.fillStyle = '#FFF'; ctx.font = `bold ${this.radius*1.2}px 'Fredoka'`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('★', 0, 2*scl);
             }
-           else if (this.tipo === 'obstaculo') {
-                ctx.globalAlpha = bgAlpha;
-                let chaoAjuste = this.radius + 10 * scl; 
-                ctx.translate(0, chaoAjuste); 
-                
-                // Coleta info do ciclo atual (dia/noite na Fase 8) dinamicamente
-                let ciclo = Math.floor(pontuacao / 500);
-                let isNight = ciclo % 2 !== 0;
+            else if (this.tipo === 'obstaculo') {
+                ctx.globalAlpha = bgAlpha; let chaoAjuste = this.radius + 10 * scl; ctx.translate(0, chaoAjuste); 
+                let ciclo = Math.floor(pontuacao / 500); let isNight = ciclo % 2 !== 0;
 
                 const drawFacetedCrystal = (offsetX, hScale, wScale, glowIntensity) => {
-                    let h = this.radius * 2.8 * hScale;
-                    let w = this.radius * 0.85 * wScale;
-                    let base = 0;
-                    let apex = -h;
-
-                    // Paleta Dinâmica Premium (Cyber Cyan para noite / Neon Magenta para dia)
-                    let fEsq = isNight ? '#006699' : '#b30047';
-                    let fDir = isNight ? '#00ccff' : '#ff3385';
-                    let fBaixoEsq = isNight ? '#002244' : '#4d001f';
-                    let fBaixoDir = isNight ? '#004466' : '#800033';
+                    let h = this.radius * 2.8 * hScale; let w = this.radius * 0.85 * wScale; let base = 0; let apex = -h;
+                    let fEsq = isNight ? '#006699' : '#b30047'; let fDir = isNight ? '#00ccff' : '#ff3385';
+                    let fBaixoEsq = isNight ? '#002244' : '#4d001f'; let fBaixoDir = isNight ? '#004466' : '#800033';
                     let glowColor = isNight ? '#00f3ff' : '#ff1493';
 
-                    ctx.shadowColor = glowColor;
-                    ctx.shadowBlur = glowIntensity * scl;
-
-                    // Face Superior Esquerda
-                    ctx.fillStyle = fEsq;
-                    ctx.beginPath(); ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX - w, apex + h * 0.6); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
-
-                    // Face Superior Direita
-                    ctx.fillStyle = fDir;
-                    ctx.beginPath(); ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX + w, apex + h * 0.5); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
-
-                    // OTIMIZAÇÃO AAA: Desativar glow na base para salvar FPS no PC/Mobile e evitar reflexo sujo no chão
+                    ctx.shadowColor = glowColor; ctx.shadowBlur = glowIntensity * scl;
+                    ctx.fillStyle = fEsq; ctx.beginPath(); ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX - w, apex + h * 0.6); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
+                    ctx.fillStyle = fDir; ctx.beginPath(); ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX + w, apex + h * 0.5); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
                     ctx.shadowBlur = 0;
-
-                    // Face Inferior Esquerda
-                    ctx.fillStyle = fBaixoEsq;
-                    ctx.beginPath(); ctx.moveTo(offsetX - w, apex + h * 0.6); ctx.lineTo(offsetX, base); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
-
-                    // Face Inferior Direita
-                    ctx.fillStyle = fBaixoDir;
-                    ctx.beginPath(); ctx.moveTo(offsetX + w, apex + h * 0.5); ctx.lineTo(offsetX, base); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
-
-                    // Highlight de Refração (Simulação Falso Fresnel)
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-                    ctx.beginPath(); ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX + w * 0.5, apex + h * 0.45); ctx.lineTo(offsetX, apex + h * 0.7); ctx.fill();
-                    
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-                    ctx.beginPath(); ctx.moveTo(offsetX, apex + h * 0.85); ctx.lineTo(offsetX - w * 0.3, apex + h * 0.7); ctx.lineTo(offsetX, base); ctx.fill();
-
-                    // Arestas de Cristal (Wireframe de Luz)
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-                    ctx.lineWidth = 1.5 * scl;
-                    ctx.beginPath();
-                    ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX, apex + h * 0.85); // Espinha dorsal
-                    ctx.moveTo(offsetX, apex + h * 0.85); ctx.lineTo(offsetX, base); // Base central
-                    ctx.moveTo(offsetX - w, apex + h * 0.6); ctx.lineTo(offsetX, apex + h * 0.85); // Diagonal Esq
-                    ctx.moveTo(offsetX + w, apex + h * 0.5); ctx.lineTo(offsetX, apex + h * 0.85); // Diagonal Dir
-                    ctx.stroke();
+                    ctx.fillStyle = fBaixoEsq; ctx.beginPath(); ctx.moveTo(offsetX - w, apex + h * 0.6); ctx.lineTo(offsetX, base); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
+                    ctx.fillStyle = fBaixoDir; ctx.beginPath(); ctx.moveTo(offsetX + w, apex + h * 0.5); ctx.lineTo(offsetX, base); ctx.lineTo(offsetX, apex + h * 0.85); ctx.fill();
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'; ctx.beginPath(); ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX + w * 0.5, apex + h * 0.45); ctx.lineTo(offsetX, apex + h * 0.7); ctx.fill();
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.beginPath(); ctx.moveTo(offsetX, apex + h * 0.85); ctx.lineTo(offsetX - w * 0.3, apex + h * 0.7); ctx.lineTo(offsetX, base); ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; ctx.lineWidth = 1.5 * scl; ctx.beginPath();
+                    ctx.moveTo(offsetX, apex); ctx.lineTo(offsetX, apex + h * 0.85); ctx.moveTo(offsetX, apex + h * 0.85); ctx.lineTo(offsetX, base); 
+                    ctx.moveTo(offsetX - w, apex + h * 0.6); ctx.lineTo(offsetX, apex + h * 0.85); ctx.moveTo(offsetX + w, apex + h * 0.5); ctx.lineTo(offsetX, apex + h * 0.85); ctx.stroke();
                 };
 
-                // Sombra de contato para aterrar o objeto (Evita que o cristal pareça flutuar)
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.radius * 1.3, this.radius * 0.35, 0, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Desenho das Variações respeitando a ordem Z-Index de profundidade
-                if (this.variation === 0) { 
-                    drawFacetedCrystal(0, 0.85, 1.1, 20);
-                } else if (this.variation === 1) { 
-                    drawFacetedCrystal(0, 1.25, 1.2, 25);
-                } else { 
-                    // Variante dupla: Desenha primeiro o de trás, depois o da frente
-                    drawFacetedCrystal(this.radius * 0.45, 0.75, 0.8, 10);
-                    drawFacetedCrystal(-this.radius * 0.35, 0.95, 0.9, 15);
-                }
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; ctx.beginPath(); ctx.ellipse(0, 0, this.radius * 1.3, this.radius * 0.35, 0, 0, Math.PI * 2); ctx.fill();
+                if (this.variation === 0) { drawFacetedCrystal(0, 0.85, 1.1, 20); } 
+                else if (this.variation === 1) { drawFacetedCrystal(0, 1.25, 1.2, 25); } 
+                else { drawFacetedCrystal(this.radius * 0.45, 0.75, 0.8, 10); drawFacetedCrystal(-this.radius * 0.35, 0.95, 0.9, 15); }
             }
-            else if (this.tipo === 'numero') {
-                ctx.globalAlpha = bgAlpha;
-                if(!this.gradCache) { 
-                    this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius); 
-                    this.gradCache.addColorStop(0, '#FFFFFF'); this.gradCache.addColorStop(0.7, '#00FFFF'); this.gradCache.addColorStop(1, '#0000FF'); 
-                }
-                ctx.shadowColor = '#00FFFF'; ctx.shadowBlur = 25; ctx.beginPath(); ctx.arc(0, 0, Math.max(0, this.radius), 0, Math.PI * 2); ctx.fillStyle = this.gradCache; ctx.fill(); 
+            else if (this.tipo === 'letra') {
+                ctx.globalAlpha = bgAlpha; ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 25; 
+                if(!this.gradCache) { this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius); this.gradCache.addColorStop(0, '#FFFFEE'); this.gradCache.addColorStop(0.7, '#FFD700'); this.gradCache.addColorStop(1, '#B8860B'); }
+                ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.gradCache; ctx.fill(); 
                 ctx.save(); ctx.rotate(this.spin); ctx.beginPath(); ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 1.5); ctx.strokeStyle = '#FFF'; ctx.lineWidth = 3; 
                 if (!this.isResolvido) ctx.stroke(); ctx.restore();
-                ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.scale(currentScale, currentScale); ctx.fillStyle = '#000'; ctx.font = `bold ${this.radius * 1.2}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 4); 
-            }
-            else if (this.tipo === 'letra' || this.tipo === 'estrela_vitoria') {
-                ctx.globalAlpha = bgAlpha;
-                ctx.shadowColor = '#FFD700'; ctx.shadowBlur = this.tipo === 'estrela_vitoria' ? 40 : 25; 
-                if (this.tipo === 'estrela_vitoria') {
-                    if(!this.gradCache) { this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius * 1.3); this.gradCache.addColorStop(0, '#FFF'); this.gradCache.addColorStop(0.4, '#FFD700'); this.gradCache.addColorStop(1, '#FF8C00'); }
-                    ctx.save(); ctx.rotate(this.spin); ctx.beginPath(); let spikes = 5; let oR = this.radius * 1.3; let iR = this.radius * 0.6;
-                    for (let i = 0; i < spikes * 2; i++) { let r = i % 2 === 0 ? oR : iR; let a = (i * Math.PI) / spikes; if (i === 0) ctx.moveTo(0, -r); else ctx.lineTo(Math.cos(a - Math.PI/2) * r, Math.sin(a - Math.PI/2) * r); } 
-                    ctx.closePath(); ctx.fillStyle = this.gradCache; ctx.fill(); 
-                    if (!this.isResolvido) { ctx.strokeStyle = '#FFF'; ctx.lineWidth = 3*scl; ctx.stroke(); } ctx.restore();
-                } else {
-                    if(!this.gradCache) { this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius); this.gradCache.addColorStop(0, '#FFFFEE'); this.gradCache.addColorStop(0.7, '#FFD700'); this.gradCache.addColorStop(1, '#B8860B'); }
-                    ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.gradCache; ctx.fill(); 
-                    ctx.save(); ctx.rotate(this.spin); ctx.beginPath(); ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 1.5); ctx.strokeStyle = '#FFF'; ctx.lineWidth = 3; 
-                    if (!this.isResolvido) ctx.stroke(); ctx.restore();
-                }
-                ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.scale(currentScale, currentScale); ctx.fillStyle = this.tipo === 'estrela_vitoria' ? '#FFF' : '#FF1493'; ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 4*scl); 
+                ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.fillStyle = '#FF1493'; ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 4*scl); 
             } 
-            else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
-                ctx.globalAlpha = bgAlpha * 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, this.radius + 10*scl, this.radius*0.8, 8*scl, 0, 0, Math.PI*2); ctx.fill();
-                ctx.globalAlpha = bgAlpha; ctx.shadowColor = this.ignorarColisao ? '#555' : (this.tipo === 'silaba' ? '#FF1493' : '#00FFFF'); ctx.shadowBlur = this.ignorarColisao ? 0 : 30;
-                if(!this.gradCache) { this.gradCache = ctx.createRadialGradient(0, -this.radius*0.3, this.radius*0.1, 0, 0, this.radius); this.gradCache.addColorStop(0, this.ignorarColisao ? '#888' : '#FFFFFF'); this.gradCache.addColorStop(0.3, this.ignorarColisao ? '#666' : (this.tipo === 'silaba' ? '#FF69B4' : '#00BFFF')); this.gradCache.addColorStop(1, this.ignorarColisao ? '#444' : '#8A2BE2'); }
-                ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fillStyle = this.gradCache; ctx.fill();
-                ctx.save(); ctx.rotate(this.spin); ctx.beginPath(); ctx.arc(0, 0, this.radius + 10*scl, 0, Math.PI * 1.5); ctx.strokeStyle = this.ignorarColisao ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 4*scl; ctx.stroke(); ctx.restore();
-                ctx.shadowBlur = 0; ctx.scale(currentScale, currentScale); ctx.globalAlpha = textAlpha; ctx.fillStyle = this.ignorarColisao && !this.isResolvido ? '#DDD' : '#FFFFFF'; ctx.strokeStyle = this.ignorarColisao && !this.isResolvido ? '#222' : '#4B0082'; ctx.lineWidth = 6 * scl; ctx.font = `900 ${this.tipo === 'silaba' ? this.radius * 0.9 : this.radius * 1.2}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.strokeText(displayTexto, 0, 5*scl); ctx.fillText(displayTexto, 0, 5*scl);
-            }
             ctx.restore();
         }
     }
@@ -1690,33 +937,24 @@
         constructor() { 
             this.baseScale = 0.28; this.width = 100; this.height = 200; 
             this.baseX = window.innerWidth * 0.15; this.x = this.baseX; this.y = 0; this.vy = 0; this.gravity = 1.2; this.jumpPower = -22; 
-            this.isJumping = false; this.frameX = 0; this.staggerFrames = 4; this.gameFrame = 0; this.espacoVazio = 0.25; this.tilt = 0; this.gradCache = null; 
+            this.isJumping = false; this.frameX = 0; this.staggerFrames = 4; this.gameFrame = 0; this.espacoVazio = 0.25; this.tilt = 0; 
         }
         update(timeScale) {
             this.scale = this.baseScale * scaleMultiplier; this.baseX = window.innerWidth * 0.15; this.x = this.baseX; 
             let ajustePe = this.height * this.espacoVazio; let ch = window.innerHeight; let groundY = ch - alturaChao - (this.height - ajustePe) + 20;
             
-            if (faseAtual === 3) {
-                let thrust = ch < 500 ? 0.65 : 0.85; let grav = ch < 500 ? 0.15 : 0.25;
-                if (isHolding) { this.vy -= thrust * timeScale; if (Math.random() > 0.4) particulas.push(new Particula(this.x + this.width/2, this.y - this.height*0.6, 'rgba(255, 69, 0, 0.8)', (Math.random()*-1)-0.5, Math.random()*2+1, Math.random()*8+4)); } else { this.vy += grav * timeScale; }
-                this.vy *= Math.pow(0.94, timeScale); if (this.vy > 9) this.vy = 9; if (this.vy < -9) this.vy = -9; this.y += this.vy * timeScale;
-                let floorY = ch - alturaChao - this.height + 30; if (this.y > floorY) { this.y = floorY; this.vy = 0; } 
-                let teto = -this.height * 0.1; if (this.y < teto) { this.y = teto; this.vy = 0; }
-                this.isJumping = true; this.frameX = 1; let targetTilt = Math.min(Math.max(this.vy * 0.02, -0.12), 0.12); this.tilt += (targetTilt - this.tilt) * 0.1 * timeScale; 
-            } else {
-                this.y += this.vy * timeScale;
-                if (this.y >= groundY) { 
-                    if (this.isJumping) { for(let i=0;i<12;i++) particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } 
-                    this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt += (0 - this.tilt) * 0.2 * timeScale; 
-                } else { 
-                    this.vy += this.gravity * timeScale; this.isJumping = true; let targetTilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); this.tilt += (targetTilt - this.tilt) * 0.15 * timeScale;
-                }
-                if (!this.isJumping) { 
-                    if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; } 
-                    if (this.gameFrame % 3 === 0 && faseAtual !== 3) { particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4)); if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2)); }
-                    this.gameFrame++; 
-                } else { this.frameX = 1; }
+            this.y += this.vy * timeScale;
+            if (this.y >= groundY) { 
+                if (this.isJumping) { for(let i=0;i<12;i++) particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } 
+                this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt += (0 - this.tilt) * 0.2 * timeScale; 
+            } else { 
+                this.vy += this.gravity * timeScale; this.isJumping = true; let targetTilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); this.tilt += (targetTilt - this.tilt) * 0.15 * timeScale;
             }
+            if (!this.isJumping) { 
+                if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; } 
+                if (this.gameFrame % 3 === 0) { particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4)); if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2)); }
+                this.gameFrame++; 
+            } else { this.frameX = 1; }
         }
         draw(ctx) {
             let prevAlpha = ctx.globalAlpha;
@@ -1724,48 +962,28 @@
             if (playerSprite.complete && playerSprite.naturalWidth > 0) {
                 rW = playerSprite.naturalWidth / 3; rH = playerSprite.naturalHeight; this.width = rW * this.scale; this.height = rH * this.scale; 
                 ajustePe = this.height * this.espacoVazio; groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; 
-                if (!this.isJumping && this.y > groundY && faseAtual !== 3) this.y = groundY; 
+                if (!this.isJumping && this.y > groundY) this.y = groundY; 
             } else {
                 this.width = 100 * this.scale; this.height = 150 * this.scale; ajustePe = 10 * this.scale; groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20;
-                if (!this.isJumping && this.y > groundY && faseAtual !== 3) this.y = groundY;
+                if (!this.isJumping && this.y > groundY) this.y = groundY;
             }
             let alturaDoChao = groundY - this.y; let tamanhoSombra = Math.max(10 * scaleMultiplier, (this.width/3) - (alturaDoChao * 0.15)); let opSombra = Math.max(0.1, 0.4 - (alturaDoChao * 0.002)); 
             
-            if (faseAtual === 8 && invulneravelTimer > 0) {
-                if (Math.floor(performance.now() / 100) % 2 === 0) {
-                    ctx.globalAlpha = 0.5;
-                }
-            }
+            if (faseAtual === 8 && invulneravelTimer > 0) { if (Math.floor(performance.now() / 100) % 2 === 0) { ctx.globalAlpha = 0.5; } }
 
             ctx.fillStyle = `rgba(0,0,0,${opSombra})`; ctx.beginPath(); ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); 
             ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height - ajustePe); ctx.rotate(this.tilt); let scl = scaleMultiplier;
-            if (faseAtual === 3) {
-                let bW = this.width * 1.2; let bH = this.height * 1.2; let envY = -this.height * 1.0; let basketW = this.width * 1.2; let basketH = this.height * 0.35; let basketX = -basketW / 2; let basketY = -this.height * 0.3;
-                if(!this.gradCache) { this.gradCache = ctx.createLinearGradient(0, basketY, 0, basketY + basketH); this.gradCache.addColorStop(0, '#C17D3F'); this.gradCache.addColorStop(0.5, '#8B5A2B'); this.gradCache.addColorStop(1, '#5C3A21'); }
-                ctx.fillStyle = '#2A1608'; ctx.beginPath(); ctx.rect(basketX, basketY, basketW, basketH); ctx.fill();
-                ctx.strokeStyle = '#B8860B'; ctx.lineWidth = 2*scl; ctx.beginPath(); ctx.moveTo(basketX + 10*scl, basketY); ctx.lineTo(-bW*0.4, envY + bH/2 - 10*scl); ctx.stroke(); ctx.beginPath(); ctx.moveTo(basketX + basketW - 10*scl, basketY); ctx.lineTo(bW*0.4, envY + bH/2 - 10*scl); ctx.stroke();
-                ctx.shadowColor = 'rgba(255, 105, 180, 0.5)'; ctx.shadowBlur = 15*scl; let gradBalao = ctx.createRadialGradient(0, envY - bH/6, 10*scl, 0, envY, bW); gradBalao.addColorStop(0, 'rgba(255, 230, 150, 0.95)'); gradBalao.addColorStop(0.4, 'rgba(255, 105, 180, 0.9)'); gradBalao.addColorStop(0.8, 'rgba(138, 43, 226, 0.85)'); gradBalao.addColorStop(1, 'rgba(75, 0, 130, 0.8)'); 
-                ctx.beginPath(); ctx.moveTo(0, envY + bH/2); ctx.quadraticCurveTo(bW*0.4, envY + bH/4, bW*0.7, envY - bH/6); ctx.arc(0, envY - bH/6, bW*0.7, 0, Math.PI, true); ctx.quadraticCurveTo(-bW*0.4, envY + bH/4, 0, envY + bH/2); ctx.fillStyle = gradBalao; ctx.fill(); ctx.shadowBlur = 0;
-                ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'; ctx.lineWidth = 2*scl; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.moveTo(0, envY + bH/2); ctx.quadraticCurveTo(bW*0.4*i, envY, 0, envY - bH/6 - bW*0.7); ctx.stroke(); } ctx.beginPath(); ctx.ellipse(-bW/4, envY - bH/6, bW/5, bH/3, Math.PI/6, 0, Math.PI*2); ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'; ctx.fill(); ctx.restore();
-                ctx.fillStyle = '#444'; ctx.fillRect(-12*scl, envY + bH/2 - 5*scl, 24*scl, 10*scl);
-                if (isHolding) { ctx.shadowColor = '#FF4500'; ctx.shadowBlur = 20*scl; ctx.fillStyle = '#FFA500'; ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 15*scl + Math.random()*5*scl, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#FFFF00'; ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 8*scl + Math.random()*4*scl, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0; }
-            }
-            let pisadaY = (!this.isJumping && faseAtual !== 3 && this.frameX === 1) ? (6 * scl) : 0;
+            
+            let pisadaY = (!this.isJumping && this.frameX === 1) ? (6 * scl) : 0;
             if (playerSprite.complete && playerSprite.naturalWidth > 0) {
                 ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height);
             } else {
                 ctx.fillStyle = '#FF69B4'; ctx.beginPath(); ctx.roundRect(-this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height * 0.9, 15); ctx.fill();
             }
-            if (faseAtual === 3) {
-                let bW = this.width * 1.2; let basketW = this.width * 1.2; let basketH = this.height * 0.35; let basketX = -basketW / 2; let basketY = -this.height * 0.3;
-                ctx.fillStyle = this.gradCache; ctx.beginPath(); let r = 8*scl; ctx.moveTo(basketX + r, basketY); ctx.lineTo(basketX + basketW - r, basketY); ctx.quadraticCurveTo(basketX + basketW, basketY, basketX + basketW, basketY + r); ctx.lineTo(basketX + basketW, basketY + basketH - r); ctx.quadraticCurveTo(basketX + basketW, basketY + basketH, basketX + basketW - r, basketY + basketH); ctx.lineTo(basketX + r, basketY + basketH); ctx.quadraticCurveTo(basketX, battlefieldY + basketH, basketX, basketY + basketH - r); ctx.lineTo(basketX, basketY + r); ctx.quadraticCurveTo(basketX, basketY, basketX + r, basketY); ctx.fill();
-                ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2*scl; for(let i=1; i<4; i++) { ctx.beginPath(); ctx.moveTo(basketX, basketY + (basketH/4)*i); ctx.lineTo(basketX+basketW, basketY + (basketH/4)*i); ctx.stroke(); }
-            }
-            ctx.restore();
-            ctx.globalAlpha = prevAlpha;
+            ctx.restore(); ctx.globalAlpha = prevAlpha;
         }
         jump() { 
-            if (!this.isJumping && faseAtual !== 3) { 
+            if (!this.isJumping) { 
                 if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } 
                 this.vy = this.jumpPower; this.isJumping = true; 
                 for(let i=0;i<10;i++) { particulas.push(new Particula(this.x + this.width/2, this.y + this.height - (this.height*this.espacoVazio), 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*10+5)); }
@@ -1781,8 +999,7 @@
         if (e.target.closest('button') || e.target.closest('.ps5-btn') || e.target.closest('.btn-corner') || document.getElementById('modal-historia').style.display === 'flex' || document.getElementById('exit-screen').style.display === 'flex' || !gameActive) return; 
         isHolding = true; 
         if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } 
-        if(gameActive && !isPaused && faseAtual !== 3) { e.preventDefault(); player.jump(); } 
-        if(faseAtual === 3) e.preventDefault(); 
+        if(gameActive && !isPaused) { e.preventDefault(); player.jump(); } 
     }
     function handleUp(e) { isHolding = false; }
     window.addEventListener('mousedown', handleDown); window.addEventListener('mouseup', handleUp); 
@@ -1791,7 +1008,7 @@
         if (e.code === 'Space' || e.code === 'ArrowUp') { 
             isHolding = true; 
             if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } 
-            if(gameActive && !isPaused && faseAtual !== 3) player.jump(); 
+            if(gameActive && !isPaused) player.jump(); 
         } 
     }); 
     window.addEventListener('keyup', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') isHolding = false; });
@@ -1799,22 +1016,15 @@
     let lastTime = 0;
     let particulas = []; 
     
-    // --- LAÇO PRINCIPAL (ANIMATE AAA) ---
+    // --- LAÇO PRINCIPAL ---
     function animate(timeStamp) {
         if (!gameActive || isPaused) return; 
         
-        let deltaTime = timeStamp - lastTime; 
-        if (deltaTime > 100) deltaTime = 16; 
-        lastTime = timeStamp; 
-        let timeScale = deltaTime / 16.666;
+        let deltaTime = timeStamp - lastTime; if (deltaTime > 100) deltaTime = 16; 
+        lastTime = timeStamp; let timeScale = deltaTime / 16.666;
 
-        if (hitStopTime > 0) { 
-            hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; 
-        }
-
-        itemTimer += deltaTime; 
-
-        if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
+        if (hitStopTime > 0) { hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; }
+        itemTimer += deltaTime; if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
 
         let cw = window.innerWidth; let ch = window.innerHeight;
         ctx.clearRect(0, 0, cw, ch); ctx.save();
@@ -1824,237 +1034,92 @@
             ctx.translate(sx, sy); shakeIntensity -= deltaTime * 0.05; if(shakeIntensity < 0) shakeIntensity = 0;
         }
 
-        let isDarkPhase = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6 || faseAtual === 8);
-        
-        let fundoAtual;
-        if (faseAtual === 8 && fundoImgExtra.complete && fundoImgExtra.naturalWidth > 0) {
-            fundoAtual = fundoImgExtra;
-        } else {
-            fundoAtual = isDarkPhase ? fundoImg2 : fundoImg1;
-        }
-        
         let isNightMode = false;
-        if (faseAtual === 8) {
-            let ciclo = Math.floor(pontuacao / 500); 
-            isNightMode = ciclo % 2 !== 0; 
-        }
+        if (faseAtual === 8) { let ciclo = Math.floor(pontuacao / 500); isNightMode = ciclo % 2 !== 0; }
+        
+        let fundoAtual = (faseAtual === 8 && fundoImgExtra.complete && fundoImgExtra.naturalWidth > 0) ? fundoImgExtra : fundoImg1;
 
         if (fundoAtual.complete && fundoAtual.naturalWidth !== 0) { 
-            bgX -= (gameSpeed * 0.04) * timeScale; let bgW = cw; 
-            if (bgX <= -bgW * 2) bgX += bgW * 2; 
+            bgX -= (gameSpeed * 0.04) * timeScale; let bgW = cw; if (bgX <= -bgW * 2) bgX += bgW * 2; 
             ctx.drawImage(fundoAtual, bgX, 0, bgW, ch); ctx.save(); ctx.translate(bgX + bgW * 2, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore(); 
             ctx.drawImage(fundoAtual, bgX + bgW * 2, 0, bgW, ch); ctx.save(); ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore();
         }
 
-        // LIGANDO O NOVO MOTOR VISUAL VIP:
         if (typeof renderizarCeuVIP === 'function') { renderizarCeuVIP(); }
-        let groundY = ch - alturaChao; 
-        if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; 
-        if (estradaOffset > 120) estradaOffset -= 120;
+        let groundY = ch - alturaChao; if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; if (estradaOffset > 120) estradaOffset -= 120;
         
         ctx.save(); let groundGrad = ctx.createLinearGradient(0, groundY, 0, ch);
+        if (faseAtual === 8 && isNightMode) { groundGrad.addColorStop(0, '#11001c'); groundGrad.addColorStop(1, '#05000a'); } 
+        else { groundGrad.addColorStop(0, '#e68a3c'); groundGrad.addColorStop(1, '#8e4a1a'); }
         
-        if (faseAtual === 8) {
-            if (isNightMode) {
-                groundGrad.addColorStop(0, '#11001c'); groundGrad.addColorStop(1, '#05000a'); 
-            } else {
-                groundGrad.addColorStop(0, '#e68a3c'); groundGrad.addColorStop(1, '#8e4a1a'); 
-            }
-        } else if (isDarkPhase) {
-            groundGrad.addColorStop(0, '#2a164b'); groundGrad.addColorStop(1, '#0f071c'); 
-        } else {
-            groundGrad.addColorStop(0, '#e68a3c'); groundGrad.addColorStop(1, '#8e4a1a'); 
-        }
         ctx.fillStyle = groundGrad; ctx.fillRect(0, groundY, cw, alturaChao); 
 
-        ctx.fillStyle = faseAtual === 8 ? (isNightMode ? '#FF1493' : '#FF4500') : (isDarkPhase ? '#00FFFF' : '#FFF5EE'); 
+        ctx.fillStyle = faseAtual === 8 ? (isNightMode ? '#FF1493' : '#FF4500') : '#FFF5EE'; 
         ctx.beginPath(); ctx.moveTo(0, groundY); 
-        for(let i=0; i<=cw; i+=40) { 
-            let waveHeight = faseAtual === 8 ? 0 : 5; 
-            ctx.lineTo(i, groundY + Math.sin(i*0.05 + bgX*0.1) * waveHeight); 
-        } 
+        for(let i=0; i<=cw; i+=40) { let waveHeight = faseAtual === 8 ? 0 : 5; ctx.lineTo(i, groundY + Math.sin(i*0.05 + bgX*0.1) * waveHeight); } 
         ctx.lineTo(cw, groundY + 15); ctx.lineTo(0, groundY + 15); ctx.fill(); 
         ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(0, groundY + 15, cw, 4); 
 
         if (faseAtual === 8) {
-            window.extraGroundOffset = (window.extraGroundOffset || 0) + (gameSpeed * 1.5) * timeScale;
-            let offset = window.extraGroundOffset % 120;
-            ctx.strokeStyle = isNightMode ? 'rgba(0, 243, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 2;
-            for(let x = -offset; x < cw + 150; x += 120) {
-                ctx.beginPath(); ctx.moveTo(x, groundY + 19); ctx.lineTo(x - 80, ch); ctx.stroke();
-            }
+            window.extraGroundOffset = (window.extraGroundOffset || 0) + (gameSpeed * 1.5) * timeScale; let offset = window.extraGroundOffset % 120;
+            ctx.strokeStyle = isNightMode ? 'rgba(0, 243, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)'; ctx.lineWidth = 2;
+            for(let x = -offset; x < cw + 150; x += 120) { ctx.beginPath(); ctx.moveTo(x, groundY + 19); ctx.lineTo(x - 80, ch); ctx.stroke(); }
         } else {
-            ctx.fillStyle = isDarkPhase ? 'rgba(0, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.15)'; 
-            for(let x = -150 - estradaOffset; x < cw + 300; x += 120) { 
-                ctx.beginPath(); ctx.moveTo(x, groundY + 19); ctx.lineTo(x + 24, groundY + 19); ctx.lineTo(x - 50, ch); ctx.lineTo(x - 110, ch); ctx.fill(); 
-            } 
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; 
+            for(let x = -150 - estradaOffset; x < cw + 300; x += 120) { ctx.beginPath(); ctx.moveTo(x, groundY + 19); ctx.lineTo(x + 24, groundY + 19); ctx.lineTo(x - 50, ch); ctx.lineTo(x - 110, ch); ctx.fill(); } 
         }
 
         let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.6)');
         ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); ctx.restore();
 
-        if (particulas.length > 150) {
-            particulas.splice(0, particulas.length - 150);
-        }
+        if (particulas.length > 150) particulas.splice(0, particulas.length - 150);
         for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
         
         player.update(timeScale); player.draw(ctx);
 
         if (faseAtual === 8) {
-            pontuacao += (gameSpeed * 0.05) * timeScale;
-            metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao);
-            atualizarProgressoHUD();
-
+            pontuacao += (gameSpeed * 0.05) * timeScale; metaAlfabeto.innerText = "PONTUAÇÃO: " + Math.floor(pontuacao); atualizarProgressoHUD();
             let ultimoItem = collectibles.length > 0 ? collectibles[collectibles.length - 1] : null;
-            let minDistancia = cw * 0.45; 
-            let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999;
-            
+            let minDistancia = cw * 0.45; let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999;
             let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200));
             
-            // MOTOR AAA: DDA (Ritmo) + OBJECT POOLING (Sem Travamentos)
             if (itemTimer > spawnRate && distanciaLivre > minDistancia) {
-                // 1. Tenta achar um obstáculo "invisível" na piscina
                 let reciclado = collectibles.find(c => c.tipo === 'obstaculo' && c.markedForDeletion);
                 if (reciclado) {
-                    // Ressuscita o obstáculo sem gastar memória RAM!
-                    reciclado.markedForDeletion = false; 
-                    reciclado.isResolvido = false; 
-                    reciclado.ignorarColisao = false;
-                    reciclado.x = cw + 100 * scaleMultiplier; 
-                    reciclado.variation = Math.floor(Math.random() * 3);
+                    reciclado.markedForDeletion = false; reciclado.isResolvido = false; reciclado.ignorarColisao = false;
+                    reciclado.x = cw + 100 * scaleMultiplier; reciclado.variation = Math.floor(Math.random() * 3);
                     reciclado.radius = (reciclado.variation === 1 ? 48 : 40) * scaleMultiplier;
-                    
-                    // CORREÇÃO CRÍTICA DO BUG DE FLUTUAÇÃO:
-                    let localGroundY = ch - alturaChao;
-                    reciclado.y = localGroundY - reciclado.radius + 12 * scaleMultiplier;
-                    reciclado.resolvidoTempo = 0;
-                    reciclado.scale = 1;
-                    reciclado.opacity = 1;
-                    reciclado.spin = 0;
-                    reciclado.hasLanded = true;
+                    let localGroundY = ch - alturaChao; reciclado.y = localGroundY - reciclado.radius + 12 * scaleMultiplier;
                 } else if (collectibles.filter(c => c.tipo === 'obstaculo').length < 6) {
-                    // 2. Só cria um NOVO se a piscina ainda não tiver 6 no total
                     collectibles.push(new Collectible('obstaculo'));
                 }
                 itemTimer = 0;
             }
 
-            // TRAVA DE SEGURANÇA MOBILE: Velocidade máxima 11 (Justo e Humano)
-            if (gameSpeed < 11) {
-                gameSpeed += 0.0008 * timeScale; // Sobe suavemente
-            } else {
-                // Se chegou na velocidade máxima, o desafio passa a ser a distância!
-                minDistancia = cw * 0.35; // Obstáculos vêm mais colados (Desafio Rítmico em vez de Velocidade Cega)
-            }
+            if (gameSpeed < 11) { gameSpeed += 0.0008 * timeScale; } else { minDistancia = cw * 0.35; }
             
-            let faceSize = 35 * scaleMultiplier;
-            let startX = cw - (3 * (faceSize + 15)) - 20;
-            let startY = 20;
-            
+            let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
             for(let i=0; i<3; i++) {
-                ctx.save();
-                ctx.translate(startX + i * (faceSize + 15), startY);
-                if (i >= vidasExtra) {
-                    ctx.globalAlpha = 0.3; 
-                    ctx.filter = 'grayscale(100%)';
-                }
-                
-                if (playerSprite.complete && playerSprite.naturalWidth > 0) {
-                    let rW = playerSprite.naturalWidth / 3;
-                    ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize);
-                } else {
-                    ctx.fillStyle = '#FF1493';
-                    ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill();
-                }
+                ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY);
+                if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; }
+                if (playerSprite.complete && playerSprite.naturalWidth > 0) { let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } 
+                else { ctx.fillStyle = '#FF1493'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); }
                 ctx.restore();
             }
-
         } else {
             if (itemTimer > itemInterval) { 
-                let podeSpawnar = true;
-                if (faseAtual === 1) {
-                    let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
-                    if (letrasFaltantes.length > 0 || isInfinite) { 
-                        let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; 
-                        
-                        if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { 
-                            let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo);
-                            collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
-                            letraUi.innerText = `[ ${letraAlvo} ]`;
-                        }
-                    } else { faseAtual = 2; prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX(); }
-                    itemTimer = 0;
-                } 
-                else if (faseAtual === 2) {
-                    if (!isInfinite && acertosAtuaisFase2 >= acertosParaVencerFase2) { faseAtual = 3; prepararFase(3); podeSpawnar = false; AudioManager.playSuccessSFX(); } 
-                    else if (collectibles.length === 0) { 
-                        if (!desafioFase2) { 
-                            let certa = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)]; let errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)]; 
-                            while (errada.letra === certa.letra) errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)]; 
-                            desafioFase2 = {certa, errada, ordem: Math.random() > 0.5}; 
-                        }
-                        letraUi.innerText = `ACHE A LETRA [ ${desafioFase2.certa.letra} ] DE ${desafioFase2.certa.palavra.toUpperCase()}`; AudioManager.playVoice(`Ache a letra ${desafioFase2.certa.letra}, de ${desafioFase2.certa.palavra}`);
-                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.certa : desafioFase2.errada, cw + 100, desafioFase2.ordem)); 
-                        collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.errada : desafioFase2.certa, cw + 700, !desafioFase2.ordem)); 
-                    } itemTimer = 0;
-                } 
-                else if (faseAtual === 3) {
-                    if (collectibles.length === 0) { 
-                        let palavra = palavrasVitoria[palavraAtualIndex]; 
-                        if (letraVitoriaIndex < palavra.length) { collectibles.push(new Collectible('estrela_vitoria', {letra: palavra[letraVitoriaIndex]}, cw + 100, true)); } else { 
-                            palavraAtualIndex++; letraVitoriaIndex = 0; AudioManager.playSuccessSFX(); 
-                            if (palavraAtualIndex >= palavrasVitoria.length) { if(isInfinite) { palavraAtualIndex = 0; atualizarHUDVitoria(); itemTimer = -1000; } else { faseAtual = 4; prepararFase(4); itemTimer = -1000; } } else { atualizarHUDVitoria(); itemTimer = -1000; } 
-                        } 
-                    } itemTimer = 0;
+                let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
+                if (letrasFaltantes.length > 0 || isInfinite) { 
+                    let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; 
+                    if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { 
+                        let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo);
+                        collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
+                        letraUi.innerText = `[ ${letraAlvo} ]`;
+                    }
+                } else { 
+                    faseAtual = 8; prepararFase(8); AudioManager.playSuccessSFX(); 
                 }
-                else if (faseAtual === 4) {
-                    if (!isInfinite && acertosFase4 >= dadosFase4.length) { faseAtual = 5; prepararFase(5); podeSpawnar = false; AudioManager.playSuccessSFX(); } 
-                    else if (collectibles.length === 0) { 
-                        if (!desafioFase4) { 
-                            let obj = isInfinite ? dadosFase4[Math.floor(Math.random() * dadosFase4.length)] : dadosFase4[acertosFase4]; let errada = obj.w[Math.floor(Math.random() * obj.w.length)]; 
-                            desafioFase4 = {obj, errada, ordem: Math.random() > 0.5}; 
-                        }
-                        letraUi.innerText = `PEGUE A SÍLABA [ ${desafioFase4.obj.s} ] DE ${desafioFase4.obj.p}`; AudioManager.playVoice(`Pegue a sílaba ${desafioFase4.obj.s}, de ${desafioFase4.obj.p}`);
-                        collectibles.push(new Collectible('silaba', {s: desafioFase4.ordem ? desafioFase4.obj.s : desafioFase4.errada}, cw + 100, desafioFase4.ordem)); 
-                        collectibles.push(new Collectible('silaba', {s: desafioFase4.ordem ? desafioFase4.errada : desafioFase4.obj.s}, cw + 700, !desafioFase4.ordem));
-                    } itemTimer = 0;
-                }
-                else if (faseAtual === 5) {
-                    if (!isInfinite && acertosFase5 >= dadosFase5.length) { faseAtual = 6; prepararFase(6); podeSpawnar = false; AudioManager.playSuccessSFX(); } 
-                    else if (collectibles.length === 0) { 
-                        if (!desafioFase5) { 
-                            let obj = isInfinite ? dadosFase5[Math.floor(Math.random() * dadosFase5.length)] : dadosFase5[acertosFase5]; 
-                            let opcoes = [ {l: obj.l, c: true}, {l: obj.w[0], c: false}, {l: obj.w[1], c: false} ]; opcoes.sort(() => Math.random() - 0.5); desafioFase5 = {obj, opcoes}; 
-                        }
-                        letraUi.innerText = `ACHE A LETRA [ ${desafioFase5.obj.l} ] DE ${desafioFase5.obj.p}`; AudioManager.playVoice(`Ache a caixa com a letra ${desafioFase5.obj.l}, de ${desafioFase5.obj.p}`);
-                        collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[0].l}, cw + 200, desafioFase5.opcoes[0].c)); 
-                        collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[1].l}, cw + 600, desafioFase5.opcoes[1].c)); 
-                        collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[2].l}, cw + 1000, desafioFase5.opcoes[2].c));
-                    } itemTimer = 0;
-                }
-                else if (faseAtual === 6) {
-                    if (!isInfinite && acertosFase6 >= dadosFase6.length) { faseAtual = 7; prepararFase(7); podeSpawnar = false; AudioManager.playSuccessSFX(); } 
-                    else if (collectibles.length === 0) { 
-                        if (!desafioFase6) { 
-                            let obj = isInfinite ? dadosFase6[Math.floor(Math.random() * dadosFase6.length)] : dadosFase6[acertosFase6]; 
-                            let opcoes = [ {p: obj.p, c: true}, {p: obj.w[0], c: false}, {p: obj.w[1], c: false} ]; opcoes.sort(() => Math.random() - 0.5); desafioFase6 = {obj, opcoes}; 
-                        }
-                        letraUi.innerText = desafioFase6.obj.f; AudioManager.playVoice("Complete a frase!"); hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
-                        collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[0].p}, cw + 200, desafioFase6.opcoes[0].c)); 
-                        collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[1].p}, cw + 650, desafioFase6.opcoes[1].c)); 
-                        collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[2].p}, cw + 1100, desafioFase6.opcoes[2].c));
-                    } itemTimer = 0;
-                }
-                else if (faseAtual === 7) {
-                    if (collectibles.length === 0) { 
-                        if (numeroAtualIndex < numerosVitoria.length) { 
-                            let n = numerosVitoria[numeroAtualIndex]; letraUi.innerText = `COLETE O NÚMERO: ${n}`; collectibles.push(new Collectible('numero', n)); 
-                        } else { dispararGrandFinale(); itemTimer = -999999; } 
-                    } itemTimer = 0;
-                }
-            } else { 
-                if (itemTimer > 8000 && (faseAtual === 2 || faseAtual === 4 || faseAtual === 5 || faseAtual === 6) && !isPaused) { AudioManager.repeatVoice(); itemTimer = 0; }
+                itemTimer = 0;
             }
         }
         
@@ -2062,62 +1127,27 @@
             for (let i = collectibles.length - 1; i >= 0; i--) {
                 let item = collectibles[i];
                 if(item.markedForDeletion) {
-                    // AAA POOLING: Na Fase 8, não destruímos os obstáculos (Salva a RAM do celular!)
-                    if (faseAtual === 8 && item.tipo === 'obstaculo') {
-                        item.x = -9999; // Apenas esconde o obstáculo longe da tela
-                    } else {
-                        collectibles.splice(i, 1); // Fases 1 a 7 continuam normais
-                    }
+                    if (faseAtual === 8 && item.tipo === 'obstaculo') { item.x = -9999; } else { collectibles.splice(i, 1); }
                     continue;
                 }
                 item.update(timeScale); item.draw(ctx);
+                
                 const dx = (player.x + player.width/2) - item.x; let ajustePe = player.height * player.espacoVazio; 
-                let posYPersonagem;
-                if (faseAtual === 3) { posYPersonagem = player.y - player.height * 0.7; } else { posYPersonagem = player.y + (player.height - ajustePe)/2; }
-                
-                if (item.tipo === 'caixa_memoria' || item.tipo === 'caixa_frase') {
-                    let isFrase = item.tipo === 'caixa_frase'; let hitWidth = isFrase ? item.radius * 1.5 : item.radius; 
-                    let baseCaixa = item.y + item.radius; let centroPlayer = player.y + player.height/2;
-                    if (player.isJumping && player.vy < 0 && Math.abs(dx) < hitWidth + (player.width * 0.5) && centroPlayer > item.y - item.radius && !item.ignorarColisao && !item.isResolvido) {
-                        player.vy = 3; 
-                        if(item.isCorrect) {
-                            item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 4; 
-                            if (isFrase) { acertosFase6++; desafioFase6 = null; letraUi.innerText = letraUi.innerText.replace('_____', item.info.palavra); hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200); } else { acertosFase5++; desafioFase5 = null; }
-                            gerenciarCombo(true); AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("PERFEITO!", item.x, item.y - 60, '#FFF', isFrase ? '#00FF7F' : '#8A2BE2'));
-                            for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, isFrase ? '#00FF7F' : '#00FFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
-                            collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; }); atualizarProgressoHUD();
-                        } else {
-                            item.markedForDeletion = true; hitStopTime = 80; shakeIntensity = 12; document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); gerenciarCombo(false); AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("TENTE DE NOVO!", item.x, item.y - 60, '#FFF', '#FF0000'));
-                            for(let j=0; j<15; j++) { let angle = Math.random() * Math.PI * 2; particulas.push(new Particula(item.x, item.y, '#555', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*10+5)); } setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
-                        }
-                    } continue; 
-                }
-                
+                let posYPersonagem = player.y + (player.height - ajustePe)/2;
                 const dy = posYPersonagem - item.y; 
-                let margemX = faseAtual === 3 ? player.width * 1.0 : player.width * 0.5;
-                let margemY = faseAtual === 3 ? player.height * 0.9 : player.height * 0.45;
+                
+                let margemX = player.width * 0.5; let margemY = player.height * 0.45;
 
                 if (item.tipo === 'obstaculo') { 
-                    let centroYObstaculo = item.y - (item.radius * 1.5);
-                    let dyObstaculo = posYPersonagem - centroYObstaculo;
-                    margemX = player.width * 0.25; 
-                    margemY = player.height * 0.35; 
-                    
+                    let centroYObstaculo = item.y - (item.radius * 1.5); let dyObstaculo = posYPersonagem - centroYObstaculo;
+                    margemX = player.width * 0.25; margemY = player.height * 0.35; 
                     if (Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dyObstaculo) < (item.radius * 1.5 + margemY) && !item.ignorarColisao && !item.isResolvido) {
-                        
                         if (invulneravelTimer <= 0) {
-                            item.isResolvido = true; item.ignorarColisao = true; 
-                            vidasExtra--;
-                            hitStopTime = 100; shakeIntensity = 15; 
-                            document.getElementById('damage-overlay').classList.add('damage-active'); 
-                            setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); 
-                            AudioManager.playErrorSFX(); 
-                            
-                            if (vidasExtra <= 0) {
-                                dispararGameOverExtra();
-                            } else {
-                                invulneravelTimer = 2000;
-                                textosFlutuantes.push(new TextoFlutuante("-1 VIDA", player.x, player.y - 50, '#FFF', '#FF0000'));
+                            item.isResolvido = true; item.ignorarColisao = true; vidasExtra--;
+                            hitStopTime = 100; shakeIntensity = 15; document.getElementById('damage-overlay').classList.add('damage-active'); 
+                            setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); 
+                            if (vidasExtra <= 0) { dispararGameOverExtra(); } else {
+                                invulneravelTimer = 2000; textosFlutuantes.push(new TextoFlutuante("-1 VIDA", player.x, player.y - 50, '#FFF', '#FF0000'));
                                 for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#FF0000', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); }
                             }
                         }
@@ -2129,38 +1159,16 @@
                         for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
                     }
                     else if (item.tipo === 'letra') {
-                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); 
-                        AudioManager.playColetaLetra(item.info.letra); 
+                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(item.info.letra); 
                         textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
                         if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); } 
                         for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
                     } 
-                    else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
-                        if (item.isCorrect) {
-                            item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 4; if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } else { acertosFase4++; desafioFase4 = null; }
-                            gerenciarCombo(true); AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
-                            for(let j=0; j<25; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 10 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
-                            collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; }); atualizarProgressoHUD();
-                        } else {
-                            item.markedForDeletion = true; hitStopTime = 80; shakeIntensity = 12; document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); gerenciarCombo(false); AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
-                            for(let j=0; j<15; j++) { let angle = Math.random() * Math.PI * 2; particulas.push(new Particula(item.x, item.y, '#555', Math.cos(angle)*4, Math.sin(angle)*4, Math.random()*10+5)); } setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
-                        }
-                    } 
-                    else if (item.tipo === 'estrela_vitoria') {
-                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 4; gerenciarCombo(true); letraVitoriaIndex++; atualizarHUDVitoria(); AudioManager.playMagicSFX(); textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x, item.y - 40, '#FFF', '#FFD700'));
-                        for(let j=0; j<25; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 10 + 4; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
-                    } 
-                    else if (item.tipo === 'numero') {
-                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 3; gerenciarCombo(true); numeroAtualIndex++; AudioManager.playMagicSFX(); textosFlutuantes.push(new TextoFlutuante(item.info, item.x, item.y - 40, '#FFF', '#00FFFF'));
-                        for(let j=0; j<25; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 10 + 4; particulas.push(new Particula(item.x, item.y, '#00FFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
-                    }
                 }
             }
         } catch (error) {}
         
-        if (textosFlutuantes.length > 10) {
-            textosFlutuantes.splice(0, textosFlutuantes.length - 10);
-        }
+        if (textosFlutuantes.length > 10) { textosFlutuantes.splice(0, textosFlutuantes.length - 10); }
         for (let i = textosFlutuantes.length - 1; i >= 0; i--) { let t = textosFlutuantes[i]; t.update(timeScale); t.draw(ctx); if(t.vida <= 0) textosFlutuantes.splice(i, 1); }
         
         ctx.restore(); if(gameActive && !isPaused) { animationId = requestAnimationFrame(animate); }
@@ -2168,8 +1176,7 @@
 
     window.onload = () => { 
         hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; 
-        redimensionarCanvas(); 
-        if (!gameActive && fundoImg1.complete) { ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height); }
+        redimensionarCanvas(); if (!gameActive && fundoImg1.complete) { ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height); }
         setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); 
     }
 </script>
@@ -2178,71 +1185,36 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyD_gYdKNnnhFr-bg1u0HT-O8kUsBWS9akY",
-    authDomain: "isadora-game.firebaseapp.com",
-    projectId: "isadora-game",
-    storageBucket: "isadora-game.firebasestorage.app",
-    messagingSenderId: "256153804637",
-    appId: "1:256153804637:web:34e19d317f1e41ba1892b4"
-  };
+  const firebaseConfig = { apiKey: "AIzaSyD_gYdKNnnhFr-bg1u0HT-O8kUsBWS9akY", authDomain: "isadora-game.firebaseapp.com", projectId: "isadora-game", storageBucket: "isadora-game.firebasestorage.app", messagingSenderId: "256153804637", appId: "1:256153804637:web:34e19d317f1e41ba1892b4" };
+  const app = initializeApp(firebaseConfig); const db = getFirestore(app); window.db = db;
 
-  const app = initializeApp(firebaseConfig); 
-  const db = getFirestore(app); 
-  window.db = db;
+  window.recordeGlobal = 0; window.isVIPPrata = false; window.isVIPOuro = false;  
 
-  // 🌟 NOVO: VARIÁVEIS DO ESTATUTO VIP DA ISADORA
-  window.recordeGlobal = 0;
-  window.isVIPPrata = false; // Ativa Sol e Lua (1.000+ pontos)
-  window.isVIPOuro = false;  // Ativa Aura Dourada (2.000+ pontos)
-
-  // 🌟 NOVO: FUNÇÃO QUE LÊ A NUVEM AO LIGAR O JOGO
   async function carregarEstatutoVIP() {
       try {
-          const docRef = doc(db, "recordes", "fase8_recorde");
-          const docSnap = await getDoc(docRef);
-          
+          const docRef = doc(db, "recordes", "fase8_recorde"); const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
               window.recordeGlobal = docSnap.data().pontuacao;
-              
               if (window.recordeGlobal >= 1000) window.isVIPPrata = true;
               if (window.recordeGlobal >= 2000) window.isVIPOuro = true;
-              
-              console.log("🌟 NUVEM LIDA! Recorde: " + window.recordeGlobal + " | Sol/Lua: " + window.isVIPPrata + " | Aura: " + window.isVIPOuro);
           }
-      } catch (e) {
-          console.error("Erro ao carregar VIP:", e);
-      }
+      } catch (e) { console.error("Erro VIP:", e); }
   }
-
-  // Executa a leitura assim que a página carrega
   carregarEstatutoVIP();
 
-  // Função Antiga (Mantida Intacta para o Game Over)
   window.verificarESalvarRecorde = async function(pontosAtuais) {
       try {
-          const docRef = doc(db, "recordes", "fase8_recorde");
-          const docSnap = await getDoc(docRef);
-          let recordeAntigo = 0;
-          if (docSnap.exists()) { recordeAntigo = docSnap.data().pontuacao; }
+          const docRef = doc(db, "recordes", "fase8_recorde"); const docSnap = await getDoc(docRef);
+          let recordeAntigo = 0; if (docSnap.exists()) { recordeAntigo = docSnap.data().pontuacao; }
 
           if (pontosAtuais > recordeAntigo) {
               await setDoc(docRef, { pontuacao: pontosAtuais });
-              // Atualiza o VIP na hora se ela bater a meta durante a corrida!
               window.recordeGlobal = pontosAtuais;
-              if (pontosAtuais >= 1000) window.isVIPPrata = true;
-              if (pontosAtuais >= 2000) window.isVIPOuro = true;
-              
+              if (pontosAtuais >= 1000) window.isVIPPrata = true; if (pontosAtuais >= 2000) window.isVIPOuro = true;
               return { bateuRecorde: true, recorde: pontosAtuais };
-          } else {
-              return { bateuRecorde: false, recorde: recordeAntigo };
-          }
-      } catch (e) {
-          console.error("Erro na nuvem:", e);
-          return { bateuRecorde: false, recorde: 0 };
-      }
+          } else { return { bateuRecorde: false, recorde: recordeAntigo }; }
+      } catch (e) { return { bateuRecorde: false, recorde: 0 }; }
   };
 </script>
-
 </body>
 </html>
