@@ -12,17 +12,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* ========================================================
-           BASE & RESET AAA
-           ======================================================== */
+        /* BASE & RESET AAA */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #1a252f; overflow: hidden; font-family: 'Fredoka', sans-serif; user-select: none; touch-action: none; -webkit-touch-callout: none; -webkit-font-smoothing: antialiased; }
         #game-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%); }
         canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 
-        /* ========================================================
-           ECRÃ DE CARREGAMENTO SUPREMO
-           ======================================================== */
+        /* ECRÃ DE CARREGAMENTO */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #050811; background-image: radial-gradient(circle at 20% 30%, rgba(0, 243, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 0, 127, 0.08) 0%, transparent 50%); z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s, visibility 0.6s; cursor: pointer; }
         .loader-ring { width: clamp(80px, 15vw, 120px); height: clamp(80px, 15vw, 120px); position: relative; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%); animation: pulseCore 2s ease-in-out infinite alternate; }
         .loader-ring::before, .loader-ring::after { content: ''; position: absolute; border-radius: 50%; border: 4px solid transparent; }
@@ -35,9 +31,7 @@
         @keyframes pulseCore { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
         @keyframes shimmerText { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 
-        /* ========================================================
-           EFEITOS DE IMPACTO E TRANSIÇÕES AAA
-           ======================================================== */
+        /* IMPACTOS E TRANSIÇÕES */
         #damage-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 80px rgba(255, 0, 0, 0); pointer-events: none; z-index: 80; transition: box-shadow 0.4s; }
         .damage-active { box-shadow: inset 0 0 150px rgba(255, 0, 40, 0.85) !important; transition: box-shadow 0.05s ease-out; }
         #flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; pointer-events: none; z-index: 85; opacity: 0; transition: opacity 0.8s; }
@@ -51,9 +45,7 @@
         .cinematic-fadeout .cinematic-text { opacity: 0; transform: scale(0.95); filter: blur(15px); }
         .cinematic-fadeout .cinematic-subtext { opacity: 0; transform: scale(0.95); filter: blur(15px); }
 
-        /* ========================================================
-           HUD DO JOGO
-           ======================================================== */
+        /* HUD DO JOGO */
         #ui-layer { position: absolute; top: 15px; left: 5vw; background: rgba(15, 25, 40, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: clamp(10px, 2vmin, 15px) clamp(15px, 4vmin, 25px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #FFF; font-weight: 700; pointer-events: none; z-index: 20; display: flex; flex-direction: column; max-width: 75vw; margin-top: clamp(45px, 9vmin, 60px); }
         #meta-alfabeto { font-size: clamp(12px, 2.5vw, 18px); color: #FFD700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
         #letra-ui { display: block; font-size: clamp(18px, 4.5vw, 28px); line-height: 1.2; letter-spacing: 2px; }
@@ -68,9 +60,7 @@
         #btn-pause { right: 5vw; border-radius: 50%; width: clamp(35px, 9vw, 55px); height: clamp(35px, 9vw, 55px); display: flex; justify-content: center; align-items: center; font-size: clamp(16px, 4vw, 24px); font-weight: 900; }
         #btn-som { right: calc(5vw + clamp(45px, 11vw, 70px)); border-radius: 30px; padding: 0 clamp(10px, 2.5vw, 20px); height: clamp(35px, 9vw, 55px); display: flex; align-items: center; font-size: clamp(12px, 2.5vw, 16px); font-weight: 700; letter-spacing: 1px; }
 
-        /* ========================================================
-           MENUS PS5 E TUTORIAL
-           ======================================================== */
+        /* MENUS PS5 */
         #tutorial-ui { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 40; pointer-events: none; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
         .ps5-tutorial-box { background: rgba(15, 20, 30, 0.75); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(10px, 3vw, 25px) clamp(20px, 5vw, 40px); color: #FFF; font-size: clamp(14px, 3vw, 24px); letter-spacing: 2px; text-transform: uppercase; text-align: center; animation: pulseTutorial 1.5s infinite alternate; }
         @keyframes pulseTutorial { 0% { transform: scale(1) translateY(0); opacity: 0.85; } 100% { transform: scale(1.05) translateY(-5px); opacity: 1; } }
@@ -100,9 +90,7 @@
         @keyframes breatheMascot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes pulsarLuz { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(1.1); opacity: 0.6; } }
 
-        /* ========================================================
-           SISTEMA DE RANKING E NOME
-           ======================================================== */
+        /* RANKING E NOME */
         .modal-padrao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 25, 0.9); backdrop-filter: blur(20px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
         .caixa-modal { background: rgba(20, 25, 35, 0.8); border: 1px solid rgba(0, 255, 255, 0.3); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 255, 255, 0.1); padding: clamp(20px, 5vmin, 40px); text-align: center; color: #FFF; width: 90vw; max-width: 500px; animation: popModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popModal { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -132,9 +120,7 @@
         ::-webkit-scrollbar-thumb { background: rgba(0, 255, 255, 0.5); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 255, 0.8); }
 
-        /* ========================================================
-           PAUSA, VITÓRIA, HISTÓRIA E SAÍDA
-           ======================================================== */
+        /* TELAS PAUSA, VITÓRIA, EXIT */
         #pause-screen, #victory-screen, #exit-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
         #exit-screen { z-index: 99999; }
         .exit-box { background: rgba(15, 20, 35, 0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 80%; display: flex; flex-direction: column; align-items: center; }
@@ -418,7 +404,7 @@
         { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, 
         { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, 
         { letra: 'J', palavra: 'Jacare' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leao' }, 
-        { letra: 'M', palavra: 'Macaco' }, { letra: 'N', multi: true }, { letra: 'O', palavra: 'Ovo' }, 
+        { letra: 'M', palavra: 'Macaco' }, { letra: 'N', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, 
         { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, 
         { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, 
         { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xicara' }, 
@@ -609,7 +595,8 @@
             this.musicaAtual = nextTrack; this.musicaAtual.volume = 0; this.init(); 
             let playPromise = this.musicaAtual.play();
             if (playPromise !== undefined) { playPromise.then(() => { this.fadeVolume(this.musicaAtual, 0.4, 800); }).catch(e => { console.log("Blocked play"); }); }
-        },
+        }
+,
         playHoverTick() { 
             if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.08, now + 0.01); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); const osc = this.audioCtx.createOscillator(); osc.frequency.setValueAtTime(1500, now); osc.connect(gain); osc.start(now); osc.stop(now + 0.15); } catch(e) {}
@@ -728,7 +715,7 @@
             player.y = window.innerHeight / 2; player.vy = 0;
             
             tutorialUI.style.display = 'flex';
-            document.getElementById('txt-tutorial').innerText = "SEGURE A TELA PARA VOAR";
+            document.getElementById('txt-tutorial').innerText = "SEGURE NO ECRÃ PARA VOAR";
             setTimeout(()=> tutorialUI.style.opacity = '1', 100);
         }
         else if (fase === 8) { 
@@ -797,20 +784,20 @@
                 document.getElementById('titulo-vitoria').style.color = "#FFD700";
                 document.getElementById('subtitulo-vitoria').innerText = `${nomeJogador} FEZ ${pontosFinais} PTS!`; 
                 document.querySelector('.trophy-icon').innerText = "🏆";
-                document.getElementById('creditos-vitoria').innerHTML = "Seu recorde está no Ranking Global!";
+                document.getElementById('creditos-vitoria').innerHTML = "O seu recorde está no Ranking Global!";
                 for(let i=0; i<30; i++) { particulas.push(new Particula(canvas.width/2, canvas.height/2, '#FFD700', (Math.random()*20)-10, (Math.random()*20)-10, 15)); }
             } else {
                 AudioManager.playErrorVoice(); 
                 document.querySelector('.trophy-icon').innerText = "🌵";
                 document.getElementById('subtitulo-vitoria').innerText = `PONTOS: ${pontosFinais}`; 
-                document.getElementById('creditos-vitoria').innerHTML = "Jogue novamente para bater seu recorde!";
+                document.getElementById('creditos-vitoria').innerHTML = "Jogue novamente para bater o seu recorde!";
             }
         } else {
             AudioManager.playErrorVoice(); 
             document.getElementById('titulo-vitoria').innerText = "FIM DE JOGO!"; document.getElementById('titulo-vitoria').style.color = "#FF1493";
             document.getElementById('subtitulo-vitoria').innerText = "VOCÊ FEZ " + pontosFinais + " PONTOS!";
             document.querySelector('.trophy-icon').innerText = "🌵";
-            document.getElementById('creditos-vitoria').innerHTML = "Continue treinando!";
+            document.getElementById('creditos-vitoria').innerHTML = "Continue a treinar!";
         }
     }
 
@@ -980,6 +967,7 @@
             this.timerOscilacao = Math.random() * 100;
             let cw = window.innerWidth; let ch = window.innerHeight;
             
+            // CORREÇÃO: Posicionando os cristais exatamente na linha dos pés da Isadora
             let laneY = ch - alturaChao + 15 * scaleMultiplier; 
 
             if (faseAtual === 2) {
@@ -1281,6 +1269,7 @@
 
         // ================= 1. DESENHO DO CENÁRIO =================
         if (faseAtual === 2) {
+            // CORREÇÃO DO CÉU: Rolagem contínua sem quebras
             if (ceuFundo.complete && ceuFundo.naturalWidth !== 0) { 
                 let prop = ch / ceuFundo.naturalHeight;
                 let bgW = ceuFundo.naturalWidth * prop;
@@ -1428,7 +1417,7 @@
         }
 
         // ================= 3. DESENHO / Z-INDEX CORRIGIDO (OBSTÁCULOS PRIMEIRO) =================
-        // O obstáculo é desenhado antes do Player. Assim a Isadora passa *por cima* deles visualmente!
+        // CORREÇÃO Z-INDEX: O obstáculo é desenhado antes do Player. Assim o Player passa *por cima* deles visualmente!
         try {
             for (let i = collectibles.length - 1; i >= 0; i--) {
                 let item = collectibles[i];
@@ -1517,7 +1506,7 @@
         player.draw(ctx);
 
         // ================= 5. DESENHO DAS PARTÍCULAS E UI =================
-        if (particulas.length > 150) particulas.splice(0, particulas.length - 150);
+if (particulas.length > 150) particulas.splice(0, particulas.length - 150);
         for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
         
         let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
