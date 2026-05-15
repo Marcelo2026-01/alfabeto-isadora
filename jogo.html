@@ -7,22 +7,19 @@
     <title>O Sonho Doce de Isadora - O Alfabeto</title>
 
     <meta property="og:title" content="O Alfabeto da Isadora - Jogo AAA">
-    <meta property="og:description" content="Acelere por uma estrada mágica e voe pelos céus! Ajude Isadora nesta jornada épica.">
+    <meta property="og:description" content="Acelere por uma estrada mágica! Ajude Isadora nesta jornada épica para aprender o alfabeto. Jogue grátis!">
+    <meta property="og:image" content="Isadora.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* ========================================================
-           BASE & RESET AAA
-           ======================================================== */
+        /* BASE & RESET AAA */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #1a252f; overflow: hidden; font-family: 'Fredoka', sans-serif; user-select: none; touch-action: none; -webkit-touch-callout: none; -webkit-font-smoothing: antialiased; }
         #game-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%); }
         canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 
-        /* ========================================================
-           ECRÃ DE CARREGAMENTO SUPREMO
-           ======================================================== */
+        /* ECRÃ DE CARREGAMENTO */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #050811; background-image: radial-gradient(circle at 20% 30%, rgba(0, 243, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 0, 127, 0.08) 0%, transparent 50%); z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s, visibility 0.6s; cursor: pointer; }
         .loader-ring { width: clamp(80px, 15vw, 120px); height: clamp(80px, 15vw, 120px); position: relative; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%); animation: pulseCore 2s ease-in-out infinite alternate; }
         .loader-ring::before, .loader-ring::after { content: ''; position: absolute; border-radius: 50%; border: 4px solid transparent; }
@@ -35,9 +32,7 @@
         @keyframes pulseCore { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
         @keyframes shimmerText { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 
-        /* ========================================================
-           EFEITOS DE IMPACTO E TRANSIÇÕES AAA
-           ======================================================== */
+        /* IMPACTOS E TRANSIÇÕES */
         #damage-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 80px rgba(255, 0, 0, 0); pointer-events: none; z-index: 80; transition: box-shadow 0.4s; }
         .damage-active { box-shadow: inset 0 0 150px rgba(255, 0, 40, 0.85) !important; transition: box-shadow 0.05s ease-out; }
         #flash-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; pointer-events: none; z-index: 85; opacity: 0; transition: opacity 0.8s; }
@@ -51,9 +46,7 @@
         .cinematic-fadeout .cinematic-text { opacity: 0; transform: scale(0.95); filter: blur(15px); }
         .cinematic-fadeout .cinematic-subtext { opacity: 0; transform: scale(0.95); filter: blur(15px); }
 
-        /* ========================================================
-           HUD DO JOGO
-           ======================================================== */
+        /* HUD DO JOGO */
         #ui-layer { position: absolute; top: 15px; left: 5vw; background: rgba(15, 25, 40, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: clamp(10px, 2vmin, 15px) clamp(15px, 4vmin, 25px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #FFF; font-weight: 700; pointer-events: none; z-index: 20; display: flex; flex-direction: column; max-width: 75vw; margin-top: clamp(45px, 9vmin, 60px); }
         #meta-alfabeto { font-size: clamp(12px, 2.5vw, 18px); color: #FFD700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
         #letra-ui { display: block; font-size: clamp(18px, 4.5vw, 28px); line-height: 1.2; letter-spacing: 2px; }
@@ -68,9 +61,7 @@
         #btn-pause { right: 5vw; border-radius: 50%; width: clamp(35px, 9vw, 55px); height: clamp(35px, 9vw, 55px); display: flex; justify-content: center; align-items: center; font-size: clamp(16px, 4vw, 24px); font-weight: 900; }
         #btn-som { right: calc(5vw + clamp(45px, 11vw, 70px)); border-radius: 30px; padding: 0 clamp(10px, 2.5vw, 20px); height: clamp(35px, 9vw, 55px); display: flex; align-items: center; font-size: clamp(12px, 2.5vw, 16px); font-weight: 700; letter-spacing: 1px; }
 
-        /* ========================================================
-           MENUS PS5 E TUTORIAL
-           ======================================================== */
+        /* MENUS PS5 */
         #tutorial-ui { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 40; pointer-events: none; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
         .ps5-tutorial-box { background: rgba(15, 20, 30, 0.75); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(10px, 3vw, 25px) clamp(20px, 5vw, 40px); color: #FFF; font-size: clamp(14px, 3vw, 24px); letter-spacing: 2px; text-transform: uppercase; text-align: center; animation: pulseTutorial 1.5s infinite alternate; }
         @keyframes pulseTutorial { 0% { transform: scale(1) translateY(0); opacity: 0.85; } 100% { transform: scale(1.05) translateY(-5px); opacity: 1; } }
@@ -85,7 +76,7 @@
         
         .ps5-menu-options { display: flex; flex-direction: column; gap: clamp(6px, 1.5vmin, 12px); align-items: flex-start; }
         .ps5-btn { background: transparent; border: none; outline: none; color: rgba(255, 255, 255, 0.6); font-size: clamp(13px, 2.5vw, 26px); font-family: 'Fredoka', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(5px, 1.2vw, 8px) clamp(12px, 2.5vw, 20px); border-radius: 8px; display: flex; align-items: center; gap: clamp(8px, 2vw, 15px); transition: all 0.3s; animation: slideInLeft 1s both; }
-        .ps5-btn:nth-child(1) { animation-delay: 0.1s; } .ps5-btn:nth-child(2) { animation-delay: 0.2s; } .ps5-btn:nth-child(3) { animation-delay: 0.3s; } .ps5-btn:nth-child(4) { animation-delay: 0.4s; } .ps5-btn:nth-child(5) { animation-delay: 0.5s; }
+        .ps5-btn:nth-child(1) { animation-delay: 0.1s; } .ps5-btn:nth-child(2) { animation-delay: 0.2s; } .ps5-btn:nth-child(3) { animation-delay: 0.3s; } .ps5-btn:nth-child(4) { animation-delay: 0.4s; }
         .ps5-icon { font-size: 0.8em; opacity: 0.5; transition: opacity 0.3s; }
         .ps5-btn:hover { color: #1a1a1a; background: #FFF; transform: translateX(20px) scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
         .ps5-btn:hover .ps5-icon { opacity: 1; color: #FF1493; }
@@ -100,9 +91,7 @@
         @keyframes breatheMascot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes pulsarLuz { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(1.1); opacity: 0.6; } }
 
-        /* ========================================================
-           SISTEMA DE RANKING E NOME
-           ======================================================== */
+        /* SISTEMA DE RANKING E NOME */
         .modal-padrao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 25, 0.9); backdrop-filter: blur(20px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
         .caixa-modal { background: rgba(20, 25, 35, 0.8); border: 1px solid rgba(0, 255, 255, 0.3); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 255, 255, 0.1); padding: clamp(20px, 5vmin, 40px); text-align: center; color: #FFF; width: 90vw; max-width: 500px; animation: popModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popModal { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -132,8 +121,11 @@
         ::-webkit-scrollbar-thumb { background: rgba(0, 255, 255, 0.5); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 255, 0.8); }
 
-        /* PAUSA, VITÓRIA & HISTÓRIA */
-        #pause-screen, #victory-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
+        /* PAUSA, VITÓRIA, HISTÓRIA E SAÍDA */
+        #pause-screen, #victory-screen, #exit-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 15px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
+        #exit-screen { z-index: 99999; }
+        .exit-box { background: rgba(15, 20, 35, 0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 80%; display: flex; flex-direction: column; align-items: center; }
+        
         .btn-pause-ui { background: #FFF; color: #1a1a1a; border: none; border-radius: 8px; padding: clamp(8px, 2vmin, 12px) clamp(20px, 5vmin, 30px); font-size: clamp(16px, 4vmin, 22px); font-weight: bold; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s; text-transform: uppercase; width: clamp(250px, 60vw, 350px); margin: 5px 0; }
         .btn-pause-ui:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.5); } .btn-pause-ui.sair { background: #FF6347; color: #FFF; }
         
@@ -144,12 +136,6 @@
         .victory-title { color: #FFD700; font-size: clamp(35px, 8vw, 70px); font-weight: 900; margin-bottom: 5px; text-transform: uppercase; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
         .victory-subtitle { color: #00FFFF; font-size: clamp(16px, 4vw, 24px); margin-bottom: 25px; font-weight: 700; letter-spacing: 1px; }
         .credits { color: #A0AAB5; font-size: clamp(12px, 3vw, 16px); margin-bottom: 30px; line-height: 1.8; }
-
-        /* TELA DE SAÍDA (EXIT SCREEN) */
-        #exit-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; opacity: 0; transition: opacity 0.5s ease; text-align: center; }
-        .exit-box { background: rgba(15, 20, 35, 0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 80%; display: flex; flex-direction: column; align-items: center; }
-        .exit-title { color: #FF107A; font-size: clamp(24px, 6vw, 35px); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
-        .exit-text { color: #A0AAB5; font-size: clamp(14px, 3.5vw, 18px); margin-bottom: 25px; line-height: 1.5; }
 
         #modal-historia { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 25, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
         #btn-fechar-historia { position: absolute; top: 25px; right: 35px; background: rgba(255,255,255,0.1); color: #FFF; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 50px; height: 50px; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10001; transition: all 0.3s; }
@@ -288,8 +274,8 @@
 
         <div id="exit-screen">
             <div class="exit-box">
-                <h1 class="exit-title">Sistema</h1>
-                <p class="exit-text">Para encerrar sua sessão, minimize ou feche este aplicativo no seu celular.</p>
+                <h1 style="color: #FF107A; font-size: clamp(24px, 6vw, 35px); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;">Sistema</h1>
+                <p style="color: #A0AAB5; font-size: clamp(14px, 3.5vw, 18px); margin-bottom: 25px; line-height: 1.5;">Para encerrar sua sessão, minimize ou feche este aplicativo no seu celular.</p>
                 <button id="btn-cancelar-sair" class="btn-pause-ui">VOLTAR AO JOGO</button>
             </div>
         </div>
@@ -343,7 +329,6 @@
     const nextBtnLivro = document.getElementById('nextBtnLivro');
     const paginacaoLivro = document.getElementById('paginacaoLivro'); 
     
-    // BOTOES DA TELA DE SAÍDA (Com segurança de existência)
     const btnSairMenu = document.getElementById('btn-sair-menu');
     const exitScreen = document.getElementById('exit-screen');
     const btnCancelarSair = document.getElementById('btn-cancelar-sair');
@@ -443,7 +428,6 @@
     window.addEventListener('keydown', resetIdleTimer);
     
     setInterval(() => { 
-        // Adicionada a checagem segura do exitScreen para não dar erro
         let isExitOpen = exitScreen && exitScreen.style.display === 'flex';
         if (!gameActive && startScreen.style.display !== 'none' && modalNome.style.display !== 'flex' && modalRanking.style.display !== 'flex' && !isExitOpen) { 
             idleTime += 1; 
@@ -459,7 +443,6 @@
         } 
     }, 1000);
 
-    // MODO FASE 2 ADICIONADO AQUI:
     const modosDeJogo = [ 
         { id: 0, nome: "MODO: CAMPANHA", icon: "✦", fase: 1, inf: false }, 
         { id: 1, nome: "TREINO: ALFABETO", icon: "A", fase: 1, inf: true },
@@ -520,7 +503,6 @@
         setTimeout(() => { modalRanking.style.display = 'none'; }, 300);
     });
 
-    // EVENTOS DE BOTÃO SAIR BLINDADOS
     if(btnSairMenu) {
         btnSairMenu.addEventListener('click', (e) => { 
             e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); 
@@ -785,7 +767,7 @@
         
         victoryScreen.style.display = 'flex'; setTimeout(() => { victoryScreen.style.opacity = '1'; }, 100);
         
-        if (faseAtual === 8) {
+        if (faseAtual === 8 || faseAtual === 2) {
             document.getElementById('titulo-vitoria').innerText = "FIM DE JOGO!";
             document.getElementById('titulo-vitoria').style.color = "#FF1493";
             document.getElementById('subtitulo-vitoria').innerText = "A ENVIAR PONTOS PARA A NUVEM...";
@@ -1282,6 +1264,7 @@
             ctx.translate(sx, sy); shakeIntensity -= deltaTime * 0.05; if(shakeIntensity < 0) shakeIntensity = 0;
         }
 
+        // ================= DESENHO DO CENÁRIO =================
         if (faseAtual === 2) {
             if (ceuFundo.complete && ceuFundo.naturalWidth !== 0) { 
                 bgX -= (gameSpeed * 0.3) * timeScale; if (bgX <= -cw) bgX += cw; 
@@ -1333,10 +1316,8 @@
             ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); ctx.restore();
         }
 
-        if (particulas.length > 150) particulas.splice(0, particulas.length - 150);
-        for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
-        
-        player.update(timeScale); player.draw(ctx);
+        // ================= LÓGICA E ATUALIZAÇÃO =================
+        player.update(timeScale);
 
         if (faseAtual === 2) {
             pontuacao += (gameSpeed * 0.05) * timeScale; atualizarProgressoHUD();
@@ -1409,7 +1390,6 @@
                         letraUi.innerText = `[ ${letraAlvo} ]`;
                     }
                 } else { 
-                    // FASE 1 CONCLUÍDA -> VAI PARA FASE 2
                     faseAtual = 2; prepararFase(2); AudioManager.playSuccessSFX(); 
                 }
                 itemTimer = 0; window.obstaculoTimer = 0;
@@ -1424,21 +1404,8 @@
                 window.obstaculoTimer = 0;
             }
         }
-        
-        let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
-        for(let i=0; i<3; i++) {
-            ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY);
-            if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; }
-            if (faseAtual === 2) {
-                if (passaroSprite.complete && passaroSprite.naturalWidth > 0) { let rW = passaroSprite.naturalWidth / 3; ctx.drawImage(passaroSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } 
-                else { ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); }
-            } else {
-                if (playerSprite.complete && playerSprite.naturalWidth > 0) { let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } 
-                else { ctx.fillStyle = '#FF1493'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); }
-            }
-            ctx.restore();
-        }
 
+        // ================= DESENHO DOS OBSTÁCULOS (Z-INDEX 1) =================
         try {
             for (let i = collectibles.length - 1; i >= 0; i--) {
                 let item = collectibles[i];
@@ -1446,31 +1413,37 @@
                     if (faseAtual === 8 && item.tipo === 'obstaculo') { item.x = -9999; } else { collectibles.splice(i, 1); }
                     continue;
                 }
-                item.update(timeScale); item.draw(ctx);
+                item.update(timeScale); 
+                item.draw(ctx); // Desenhado ANTES do jogador
                 
                 let dx, dy;
                 let margemX, margemY;
 
+                // 🌟 MATEMÁTICA DE COLISÃO CORRIGIDA 🌟
                 if (faseAtual === 2) {
-                    dx = (player.x + (player.width*player.scale)/2) - item.x; 
-                    dy = (player.y + (player.height*player.scale)/2) - item.y;
-                    margemX = (player.width*player.scale)/2; margemY = (player.height*player.scale)/2;
+                    dx = (player.x + player.width/2) - item.x; 
+                    dy = (player.y + player.height/2) - item.y;
+                    let birdHitbox = player.width * 0.35; // Raio exato para o passarinho
+                    margemX = birdHitbox; 
+                    margemY = birdHitbox;
                 } else {
                     let ajustePe = player.height * player.espacoVazio; 
                     let posYPersonagem = player.y + (player.height - ajustePe)/2;
                     dx = (player.x + player.width/2) - item.x; 
                     dy = posYPersonagem - item.y; 
-                    margemX = player.width * 0.5; margemY = player.height * 0.45;
+                    margemX = player.width * 0.35; 
+                    margemY = player.height * 0.40;
 
                     if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
                         let centroYObstaculo = item.y - (item.radius * 1.5); 
                         dy = posYPersonagem - centroYObstaculo;
-                        margemX = player.width * 0.25; margemY = player.height * 0.35; 
+                        margemX = player.width * 0.25; 
+                        margemY = player.height * 0.35; 
                     }
                 }
 
                 if (faseAtual === 2 && item.tipo === 'nuvem') {
-                    if (Math.sqrt(dx*dx + dy*dy) < (margemX + item.radius * 0.8) && !item.isResolvido) {
+                    if (Math.sqrt(dx*dx + dy*dy) < (margemX + item.radius * 0.7) && !item.isResolvido) {
                         if (invulneravelTimer <= 0) {
                             item.isResolvido = true; vidasExtra--;
                             hitStopTime = 150; shakeIntensity = 20; document.getElementById('damage-overlay').classList.add('damage-active'); 
@@ -1482,7 +1455,7 @@
                         }
                     }
                 }
-                else if ((faseAtual === 2 && Math.sqrt(dx*dx + dy*dy) < (margemX + item.radius) && !item.ignorarColisao && !item.isResolvido) || 
+                else if ((faseAtual === 2 && Math.sqrt(dx*dx + dy*dy) < (margemX + item.radius * 0.8) && !item.ignorarColisao && !item.isResolvido) || 
                          (faseAtual !== 2 && Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dy) < (item.radius * 1.5 + margemY) && (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') && !item.ignorarColisao && !item.isResolvido) ||
                          (faseAtual !== 2 && Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo' && !item.ignorarColisao && !item.isResolvido)) {
                     
@@ -1517,7 +1490,29 @@
                 }
             }
         } catch (error) {}
+
+        // ================= DESENHO DAS PARTÍCULAS (Z-INDEX 2) =================
+        if (particulas.length > 150) particulas.splice(0, particulas.length - 150);
+        for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
         
+        // ================= DESENHO DO JOGADOR (Z-INDEX 3 - FRENTE DE TUDO) =================
+        player.draw(ctx);
+        
+        // ================= DESENHO DA UI =================
+        let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
+        for(let i=0; i<3; i++) {
+            ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY);
+            if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; }
+            if (faseAtual === 2) {
+                if (passaroSprite.complete && passaroSprite.naturalWidth > 0) { let rW = passaroSprite.naturalWidth / 3; ctx.drawImage(passaroSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } 
+                else { ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); }
+            } else {
+                if (playerSprite.complete && playerSprite.naturalWidth > 0) { let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } 
+                else { ctx.fillStyle = '#FF1493'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); }
+            }
+            ctx.restore();
+        }
+
         if (textosFlutuantes.length > 10) { textosFlutuantes.splice(0, textosFlutuantes.length - 10); }
         for (let i = textosFlutuantes.length - 1; i >= 0; i--) { let t = textosFlutuantes[i]; t.update(timeScale); t.draw(ctx); if(t.vida <= 0) textosFlutuantes.splice(i, 1); }
         
