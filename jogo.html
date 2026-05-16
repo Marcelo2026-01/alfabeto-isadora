@@ -349,7 +349,7 @@
     let vidasExtra = 3; let invulneravelTimer = 0;
     let isGatinha = false; window.catTimer = 0; window.nextCatScore = 1000; 
 
-    const AlfabetoIsadora = [ { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, { letra: 'J', palavra: 'Jacare' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leao' }, { letra: 'M', palavra: 'Macaco' }, { letra: 'N', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xicara' }, { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } ];
+    const AlfabetoIsadora = [ { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, { letra: 'J', palavra: 'Jacare' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leao' }, { letra: 'M', palavra: 'Macaco' }, { letra: 'N', initial: 'Nuvem', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xicara' }, { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } ];
     let letrasParaVencerFase1 = 26; let letrasColetadas = []; let isHolding = false; let idleTime = 0;
     
     function resetIdleTimer() { idleTime = 0; const mascot = document.querySelector('.ps5-hero-mascot'); if(mascot) mascot.classList.remove('idle-active'); }
@@ -399,7 +399,7 @@
     document.querySelectorAll('.ps5-btn, .btn-livro, .btn-corner').forEach(btn => { btn.addEventListener('mouseenter', () => AudioManager.playHoverTick()); });
     btnSom.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); }); 
     btnSomMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle();
-   });
+    });
     document.body.addEventListener('click', function initMenuMusic() { if(!AudioManager.isMutedGlobal) AudioManager.playBGM('menu'); document.body.removeEventListener('click', initMenuMusic); }, { once: true });
     window.addEventListener('blur', () => { isHolding = false; }); window.addEventListener('visibilitychange', () => { if(document.hidden) isHolding = false; });
 
@@ -476,8 +476,8 @@
             this.tipo = tipo; this.info = info; this.markedForDeletion = false; this.spin = 0; this.ignorarColisao = false; this.isResolvido = false; this.timerOscilacao = Math.random() * 100;
             let cw = window.innerWidth; let ch = window.innerHeight;
             
-            // FIX DEFINITIVO DE ALINHAMENTO: A âncora visual usa matematicamente +20 pixels exatos (idêntico ao pé da Isadora) em todas as telas
-            let laneY = ch - alturaChao + 20; 
+            // MATEMÁTICA ORIGINAL RESTAURADA: Mantém os objetos na mesma pista visual original (Sem alterar posição Y)
+            let laneY = ch - alturaChao + 15 * scaleMultiplier; 
             
             if (faseAtual === 2) {
                 this.x = cw + 100 * scaleMultiplier; this.y = Math.random() * (ch - 250 * scaleMultiplier) + 100 * scaleMultiplier; 
@@ -568,12 +568,25 @@
         let cw = window.innerWidth; let ch = window.innerHeight; ctx.clearRect(0, 0, cw, ch); ctx.save();
         if (shakeIntensity > 0) { let sx = Math.sin(timeStamp * 0.05) * shakeIntensity; let sy = Math.cos(timeStamp * 0.04) * shakeIntensity; ctx.translate(sx, sy); shakeIntensity -= deltaTime * 0.05; if(shakeIntensity < 0) shakeIntensity = 0; }
 
-        // ================= 1. DESENHO DO CENÁRIO (CÉU FASE 2 INTACTO) =================
+        // ================= 1. DESENHO DO CENÁRIO (CÉU FASE 2 CORRIGIDO E INFINITO) =================
         if (faseAtual === 2) {
             if (ceuFundo.complete && ceuFundo.naturalWidth !== 0) { 
-                let prop = ch / ceuFundo.naturalHeight; let bgW = ceuFundo.naturalWidth * prop; if (bgW < cw) bgW = cw; 
-                bgX -= (gameSpeed * 0.3) * timeScale; if (bgX <= -bgW) bgX += bgW; 
-                ctx.drawImage(ceuFundo, bgX, 0, bgW, ch); ctx.drawImage(ceuFundo, bgX + bgW, 0, bgW, ch); 
+                let prop = ch / ceuFundo.naturalHeight; let bgW = ceuFundo.naturalWidth * prop;
+                bgX -= (gameSpeed * 0.3) * timeScale;
+                
+                let patternWidth = bgW * 2;
+                while (bgX <= -patternWidth) bgX += patternWidth;
+                
+                let tilesCount = Math.ceil(cw / bgW) + 2;
+                for (let i = 0; i < tilesCount; i++) {
+                    let currentX = bgX + (i * bgW);
+                    if (i % 2 !== 0) {
+                        ctx.save(); ctx.translate(currentX + bgW, 0); ctx.scale(-1, 1);
+                        ctx.drawImage(ceuFundo, 0, 0, bgW, ch); ctx.restore();
+                    } else {
+                        ctx.drawImage(ceuFundo, currentX, 0, bgW, ch);
+                    }
+                }
             } else { let bgGrad = ctx.createLinearGradient(0,0,0,ch); bgGrad.addColorStop(0,'#87CEEB'); bgGrad.addColorStop(1,'#E0F6FF'); ctx.fillStyle=bgGrad; ctx.fillRect(0,0,cw,ch); }
             let nevoaGrad = ctx.createLinearGradient(0, ch - 150, 0, ch); nevoaGrad.addColorStop(0, 'rgba(255,255,255,0)'); nevoaGrad.addColorStop(1, 'rgba(255,255,255,0.8)'); ctx.fillStyle = nevoaGrad; ctx.fillRect(0, ch - 150, cw, 150);
         } else {
@@ -587,19 +600,19 @@
             let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.6)'); ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); ctx.restore();
         }
 
-        // ================= 2. ATUALIZAÇÕES DA LÓGICA E FÍSICA =================
+        // ================= 2. ATUALIZAÇÕES DA LÓGICA DE JOGO E RECICLAGEM ORIGINAL =================
         player.update(timeScale);
         if (faseAtual === 2) { pontuacao += (gameSpeed * 0.05) * timeScale; atualizarProgressoHUD(); if (pontuacao >= 1500 && !isInfinite) { faseAtual = 8; prepararFase(8); AudioManager.playSuccessSFX(); } let spawnRate = Math.max(800, 1800 - ((gameSpeed - baseGameSpeed) * 200)); if (itemTimer > spawnRate) { let sorteio = Math.random(); if (sorteio > 0.6) { let letraAlvo = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: ''})); } else if (sorteio > 0.3) { collectibles.push(new Collectible('nuvem')); } else { collectibles.push(new Collectible('moeda')); } itemTimer = 0; } if (gameSpeed < 10) gameSpeed += 0.0005 * timeScale; }
         else if (faseAtual === 8) { pontuacao += (gameSpeed * 0.05) * timeScale; atualizarProgressoHUD(); if (pontuacao >= window.nextCatScore && !isGatinha) { isGatinha = true; window.catTimer = 12000; window.nextCatScore += 1000; hitStopTime = 150; shakeIntensity = 25; AudioManager.playMagicSFX(); AudioManager.playSuccessSFX(); dispararFlashTransicao(); textosFlutuantes.push(new TextoFlutuante("SUPER GATINHA!", player.x - 50, player.y - 100, '#FFF', '#FF1493')); for(let j=0; j<80; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 15 + 5; let color = Math.random() > 0.5 ? '#FF1493' : '#FFD700'; particulas.push(new Particula(player.x + player.width/2, player.y + player.height/2, color, Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*20+10)); } } if (isGatinha) { window.catTimer -= deltaTime; if (window.catTimer <= 0) { isGatinha = false; AudioManager.playMagicSFX(); dispararFlashTransicao(); textosFlutuantes.push(new TextoFlutuante("FIM DA MAGIA!", player.x - 50, player.y - 100, '#FFF', '#A020F0')); } } let ultimoItem = collectibles.length > 0 ? collectibles[collectibles.length - 1] : null; let minDistancia = cw * 0.45; let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999; let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200)); if (itemTimer > spawnRate && distanciaLivre > minDistancia) { let reciclado = collectibles.find(c => c.tipo === 'obstaculo' && c.markedForDeletion); if (reciclado) { reciclado.markedForDeletion = false; reciclado.isResolvido = false; reciclado.ignorarColisao = false; reciclado.x = cw + 100 * scaleMultiplier; reciclado.variation = Math.floor(Math.random() * 3); reciclado.radius = (reciclado.variation === 1 ? 48 : 40) * scaleMultiplier; 
         
-        // FIX DEFINITIVO DE ALINHAMENTO NA RECICLAGEM DA FASE 8 (+20 Exato)
-        let localGroundY = ch - alturaChao + 20; 
-        reciclado.y = localGroundY - reciclado.radius; 
+        // MATEMÁTICA ORIGINAL DE RECICLAGEM RESTAURADA
+        let localGroundY = ch - alturaChao; reciclado.y = localGroundY - reciclado.radius + 12 * scaleMultiplier; 
         
         } else if (collectibles.filter(c => c.tipo === 'obstaculo').length < 6) { collectibles.push(new Collectible('obstaculo')); } itemTimer = 0; } if (gameSpeed < 11) { gameSpeed += 0.0008 * timeScale; } } 
         else { window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime; if (itemTimer > itemInterval) { let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra)); if (letrasFaltantes.length > 0 || isInfinite) { let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo); collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); letraUi.innerText = `[ ${letraAlvo} ]`; } } else { faseAtual = 2; prepararFase(2); AudioManager.playSuccessSFX(); } itemTimer = 0; window.obstaculoTimer = 0; } else if (window.obstaculoTimer > 1000) { let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier); if (!temItemPerto) { let sorteio = Math.random(); if (sorteio > 0.5) collectibles.push(new Collectible('mini_obstaculo')); else if (sorteio > 0.2) collectibles.push(new Collectible('moeda')); } window.obstaculoTimer = 0; } }
 
-        // LÓGICA DE DETECÇÃO DE COLISÃO
+        // ================= 3. RENDER ORDER CORRETA (SEM ALTERAR POSIÇÃO) =================
+        // Atualiza a posição de tudo e verifica colisão primeiro
         for (let i = collectibles.length - 1; i >= 0; i--) {
             let item = collectibles[i];
             if(item.markedForDeletion) { if (faseAtual === 8 && item.tipo === 'obstaculo') { item.x = -9999; } else { collectibles.splice(i, 1); } continue; }
@@ -622,9 +635,7 @@
             }
         }
 
-        // ================= 3. RENDERIZAÇÃO ESTREITAMENTE ALINHADA (Z-INDEX E EIXO Y) =================
-        
-        // 3.1 Cenario Fundo: Letras, Moedas e Nuvens são desenhados ATRÁS de tudo.
+        // DESENHO: Fundo -> Meio (Isadora) -> Frente (Cristal)
         for (let i = collectibles.length - 1; i >= 0; i--) {
             let item = collectibles[i];
             if (item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo') {
@@ -632,10 +643,8 @@
             }
         }
 
-        // 3.2 Camada Média: A Isadora é desenhada NO MEIO (Agora perfeitamente partilhando Y=20 com os obstáculos)
         player.draw(ctx);
 
-        // 3.3 Frente: Os Cristais e Obstáculos são desenhados SOBRE a Isadora
         for (let i = collectibles.length - 1; i >= 0; i--) {
             let item = collectibles[i];
             if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') {
