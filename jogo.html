@@ -967,7 +967,7 @@
             this.timerOscilacao = Math.random() * 100;
             let cw = window.innerWidth; let ch = window.innerHeight;
             
-            // CORREÇÃO: Posicionando os cristais exatamente na linha dos pés da Isadora
+            // 🌟 CORREÇÃO DE PROFUNDIDADE: Cravando o obstáculo na mesma linha (Y) dos pés da personagem!
             let laneY = ch - alturaChao + 15 * scaleMultiplier; 
 
             if (faseAtual === 2) {
@@ -1269,7 +1269,7 @@
 
         // ================= 1. DESENHO DO CENÁRIO =================
         if (faseAtual === 2) {
-            // CORREÇÃO DO CÉU: Rolagem contínua sem quebras
+            // 🌟 CORREÇÃO DE CÉU: Loop perfeito sem cortes!
             if (ceuFundo.complete && ceuFundo.naturalWidth !== 0) { 
                 let prop = ch / ceuFundo.naturalHeight;
                 let bgW = ceuFundo.naturalWidth * prop;
@@ -1416,97 +1416,96 @@
             }
         }
 
-        // ================= 3. DESENHO / Z-INDEX CORRIGIDO (OBSTÁCULOS PRIMEIRO) =================
-        // CORREÇÃO Z-INDEX: O obstáculo é desenhado antes do Player. Assim o Player passa *por cima* deles visualmente!
-        try {
-            for (let i = collectibles.length - 1; i >= 0; i--) {
-                let item = collectibles[i];
-                if(item.markedForDeletion) {
-                    if (faseAtual === 8 && item.tipo === 'obstaculo') { item.x = -9999; } else { collectibles.splice(i, 1); }
-                    continue;
+        // ================= 3. DESENHO / Z-INDEX CORRIGIDO =================
+        // 🌟 CORREÇÃO 3: PRIMEIRO desenha a Isadora.
+        player.draw(ctx);
+
+        // 🌟 CORREÇÃO 3: DEPOIS desenha os itens e cristais por cima dela, dando o efeito de choque frontal!
+        for (let i = collectibles.length - 1; i >= 0; i--) {
+            let item = collectibles[i];
+            if(item.markedForDeletion) {
+                if (faseAtual === 8 && item.tipo === 'obstaculo') { item.x = -9999; } else { collectibles.splice(i, 1); }
+                continue;
+            }
+            item.update(timeScale); 
+            item.draw(ctx); 
+            
+            let dx, dy;
+            let margemX, margemY;
+
+            // 🌟 CORREÇÃO 4: Hitbox amigável e precisa para a Fase 2 (Passarinho)
+            if (faseAtual === 2) {
+                dx = (player.x + player.width/2) - item.x; 
+                dy = (player.y + player.height/2) - item.y;
+                let birdHitbox = player.width * 0.40; 
+                margemX = birdHitbox; 
+                margemY = birdHitbox;
+            } else {
+                let ajustePe = player.height * player.espacoVazio; 
+                let posYPersonagem = player.y + (player.height - ajustePe)/2;
+                dx = (player.x + player.width/2) - item.x; 
+                dy = posYPersonagem - item.y; 
+                margemX = player.width * 0.35; 
+                margemY = player.height * 0.40;
+
+                if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
+                    let centroYObstaculo = item.y - (item.radius * 1.5); 
+                    dy = posYPersonagem - centroYObstaculo;
+                    margemX = player.width * 0.25; 
+                    margemY = player.height * 0.35; 
                 }
-                item.update(timeScale); 
-                item.draw(ctx); 
+            }
+
+            if (faseAtual === 2 && item.tipo === 'nuvem') {
+                if (Math.sqrt(dx*dx + dy*dy) < (margemX + item.radius * 0.7) && !item.isResolvido) {
+                    if (invulneravelTimer <= 0) {
+                        item.isResolvido = true; vidasExtra--;
+                        hitStopTime = 150; shakeIntensity = 20; document.getElementById('damage-overlay').classList.add('damage-active'); 
+                        setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); 
+                        if (vidasExtra <= 0) { dispararGameOverExtra(); } else {
+                            invulneravelTimer = 2000; textosFlutuantes.push(new TextoFlutuante("-1 VIDA", player.x, player.y - 50, '#FFF', '#FF0000'));
+                            for(let j=0;j<15;j++){ let a = Math.random()*Math.PI*2; let s = Math.random()*8+4; particulas.push(new Particula(item.x, item.y, '#4a5568', Math.cos(a)*s, Math.sin(a)*s, Math.random()*12+5)); }
+                        }
+                    }
+                }
+            }
+            else if ((faseAtual === 2 && Math.sqrt(dx*dx + dy*dy) < (margemX + item.radius * 0.8) && !item.ignorarColisao && !item.isResolvido) || 
+                     (faseAtual !== 2 && Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dy) < (item.radius * 1.5 + margemY) && (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') && !item.ignorarColisao && !item.isResolvido) ||
+                     (faseAtual !== 2 && Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo' && !item.ignorarColisao && !item.isResolvido)) {
                 
-                let dx, dy;
-                let margemX, margemY;
-
-                if (faseAtual === 2) {
-                    dx = (player.x + player.width/2) - item.x; 
-                    dy = (player.y + player.height/2) - item.y;
-                    let birdHitbox = player.width * 0.40; 
-                    margemX = birdHitbox; 
-                    margemY = birdHitbox;
+                if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') {
+                    if (isGatinha) {
+                        item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 10; pontuacao += 50; AudioManager.playSuccessSFX();
+                        textosFlutuantes.push(new TextoFlutuante("DESTRUÍDO!", item.x, item.y - 50, '#FFF', '#FFD700'));
+                        for(let j=0; j<15; j++) { let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#00FFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); }
+                    } else if (invulneravelTimer <= 0) {
+                        item.isResolvido = true; item.ignorarColisao = true; vidasExtra--;
+                        hitStopTime = 100; shakeIntensity = 15; document.getElementById('damage-overlay').classList.add('damage-active'); 
+                        setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); 
+                        if (vidasExtra <= 0) { dispararGameOverExtra(); } else {
+                            invulneravelTimer = 2000; textosFlutuantes.push(new TextoFlutuante("-1 VIDA", player.x, player.y - 50, '#FFF', '#FF0000'));
+                            for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#FF0000', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); }
+                        }
+                    }
                 } else {
-                    let ajustePe = player.height * player.espacoVazio; 
-                    let posYPersonagem = player.y + (player.height - ajustePe)/2;
-                    dx = (player.x + player.width/2) - item.x; 
-                    dy = posYPersonagem - item.y; 
-                    margemX = player.width * 0.35; 
-                    margemY = player.height * 0.40;
-
-                    if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
-                        let centroYObstaculo = item.y - (item.radius * 1.5); 
-                        dy = posYPersonagem - centroYObstaculo;
-                        margemX = player.width * 0.25; 
-                        margemY = player.height * 0.35; 
+                    item.isResolvido = true; item.ignorarColisao = true; item.markedForDeletion = (faseAtual === 2); shakeIntensity = 1; 
+                    if (item.tipo === 'moeda') {
+                        pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
+                        for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
                     }
-                }
-
-                if (faseAtual === 2 && item.tipo === 'nuvem') {
-                    if (Math.sqrt(dx*dx + dy*dy) < (margemX + item.radius * 0.7) && !item.isResolvido) {
-                        if (invulneravelTimer <= 0) {
-                            item.isResolvido = true; vidasExtra--;
-                            hitStopTime = 150; shakeIntensity = 20; document.getElementById('damage-overlay').classList.add('damage-active'); 
-                            setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); 
-                            if (vidasExtra <= 0) { dispararGameOverExtra(); } else {
-                                invulneravelTimer = 2000; textosFlutuantes.push(new TextoFlutuante("-1 VIDA", player.x, player.y - 50, '#FFF', '#FF0000'));
-                                for(let j=0;j<15;j++){ let a = Math.random()*Math.PI*2; let s = Math.random()*8+4; particulas.push(new Particula(item.x, item.y, '#4a5568', Math.cos(a)*s, Math.sin(a)*s, Math.random()*12+5)); }
-                            }
-                        }
-                    }
-                }
-                else if ((faseAtual === 2 && Math.sqrt(dx*dx + dy*dy) < (margemX + item.radius * 0.8) && !item.ignorarColisao && !item.isResolvido) || 
-                         (faseAtual !== 2 && Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dy) < (item.radius * 1.5 + margemY) && (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') && !item.ignorarColisao && !item.isResolvido) ||
-                         (faseAtual !== 2 && Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo' && !item.ignorarColisao && !item.isResolvido)) {
-                    
-                    if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') {
-                        if (isGatinha) {
-                            item.isResolvido = true; item.ignorarColisao = true; shakeIntensity = 10; pontuacao += 50; AudioManager.playSuccessSFX();
-                            textosFlutuantes.push(new TextoFlutuante("DESTRUÍDO!", item.x, item.y - 50, '#FFF', '#FFD700'));
-                            for(let j=0; j<15; j++) { let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#00FFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); }
-                        } else if (invulneravelTimer <= 0) {
-                            item.isResolvido = true; item.ignorarColisao = true; vidasExtra--;
-                            hitStopTime = 100; shakeIntensity = 15; document.getElementById('damage-overlay').classList.add('damage-active'); 
-                            setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); AudioManager.playErrorSFX(); 
-                            if (vidasExtra <= 0) { dispararGameOverExtra(); } else {
-                                invulneravelTimer = 2000; textosFlutuantes.push(new TextoFlutuante("-1 VIDA", player.x, player.y - 50, '#FFF', '#FF0000'));
-                                for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#FF0000', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); }
-                            }
-                        }
-                    } else {
-                        item.isResolvido = true; item.ignorarColisao = true; item.markedForDeletion = (faseAtual === 2); shakeIntensity = 1; 
-                        if (item.tipo === 'moeda') {
-                            pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700'));
-                            for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); }
-                        }
-                        else if (item.tipo === 'letra') {
-                            shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(item.info.letra || item.info); pontuacao += (faseAtual === 2 ? 200 : 500);
-                            let charLetra = item.info.letra || item.info;
-                            textosFlutuantes.push(new TextoFlutuante(charLetra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
-                            if (!letrasColetadas.includes(charLetra)) { letrasColetadas.push(charLetra); atualizarProgressoHUD(); } 
-                            for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
-                        } 
-                    }
+                    else if (item.tipo === 'letra') {
+                        shakeIntensity = 2; gerenciarCombo(true); AudioManager.playColetaLetra(item.info.letra || item.info); pontuacao += (faseAtual === 2 ? 200 : 500);
+                        let charLetra = item.info.letra || item.info;
+                        textosFlutuantes.push(new TextoFlutuante(charLetra, item.x + 10, item.y - 20, '#FFF', '#FFD700'));
+                        if (!letrasColetadas.includes(charLetra)) { letrasColetadas.push(charLetra); atualizarProgressoHUD(); } 
+                        for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); }
+                    } 
                 }
             }
         } catch (error) {}
 
-        // ================= 4. JOGADOR POR ÚLTIMO (FICA NA FRENTE) =================
-        player.draw(ctx);
-
-        // ================= 5. DESENHO DAS PARTÍCULAS E UI =================
-if (particulas.length > 150) particulas.splice(0, particulas.length - 150);
+        // ================= 4. DESENHO DAS PARTÍCULAS E UI =================
+        if (particulas.length > 150) particulas.splice(0, particulas.length - 150);
         for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
         
         let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
