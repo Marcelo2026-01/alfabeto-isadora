@@ -360,9 +360,6 @@
     let nomeJogador = localStorage.getItem('isadora_jogador_nome') || "";
     if (nomeJogador !== "") { saudacaoUI.style.display = 'block'; saudacaoUI.innerText = `BEM-VINDO, ${nomeJogador}!`; }
 
-    // VARIÁVEIS PARALLAX
-    window.bgX_layer1 = 0; window.bgX_layer3 = 0;
-
     let alturaChao = 0; let baseGameSpeed = 4.5; let gameSpeed = baseGameSpeed; let scaleMultiplier = 1; 
     let gameActive = false; let isPaused = false; let bgX = 0; let estradaOffset = 0;
     let tutorialAtivo = false; let faseAtual = 1; let isInfinite = false;
@@ -497,7 +494,7 @@
             this.tipo = tipo; this.info = info; this.markedForDeletion = false; this.spin = 0; this.ignorarColisao = false; this.isResolvido = false; this.timerOscilacao = Math.random() * 100;
             let cw = window.innerWidth; let ch = window.innerHeight;
             
-            // CORREÇÃO DEFINITIVA DA PERSPECTIVA
+            // CORREÇÃO DEFINITIVA DA PERSPECTIVA (COMPENSANDO A ALTURA DO SPRITE DA ISADORA)
             let laneY = ch - alturaChao + 75 * scaleMultiplier; 
             
             if (faseAtual === 2) {
@@ -581,26 +578,6 @@
     function handleUp(e) { isHolding = false; } window.addEventListener('mousedown', handleDown); window.addEventListener('mouseup', handleUp); window.addEventListener('touchstart', handleDown, {passive: false}); window.addEventListener('touchend', handleUp); window.addEventListener('touchcancel', handleUp); window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') { isHolding = true; if (tutorialUI.style.display !== 'none' && tutorialUI.style.opacity === '1') { tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } if(faseAtual !== 2 && gameActive && !isPaused) player.jump(); } }); window.addEventListener('keyup', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') isHolding = false; });
     
     let lastTime = 0; let particulas = [];
-    function iniciarJogoReal() {
-        if (gameActive) return; try { let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } } catch(e){}
-        if(animationId) { cancelAnimationFrame(animationId); animationId = null; } if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; }
-        AudioManager.init(); AudioManager.playMagicSFX(); AudioManager.playRisada(); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.display = 'flex'; setTimeout(() => { loader.style.visibility = 'visible'; loader.style.opacity = '1'; }, 10); } startScreen.style.opacity = '0';
-        initTimeoutId = setTimeout(() => { startScreen.style.display = 'none'; hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex'; AudioManager.playBGM('game'); letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = []; let conf = modosDeJogo[modoAtualIndex]; faseAtual = conf.fase; isInfinite = conf.inf; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); prepararFase(faseAtual); gameActive = true; isPaused = false; lastTime = performance.now(); gameSpeed = baseGameSpeed; hitStopTime = 0; shakeIntensity = 0; animationId = requestAnimationFrame(animate); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1800); 
-    }
-
-    btnJogar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); iniciarJogo(); });
-    btnPause.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if(gameActive && !isPaused) { isPaused = true; isHolding = false; if(animationId) { cancelAnimationFrame(animationId); animationId = null; } pauseScreen.style.display = 'flex'; setTimeout(() => { pauseScreen.style.opacity = '1'; }, 50); } });
-    btnContinuar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); lastTime = performance.now(); if(!animationId) { animationId = requestAnimationFrame(animate); } });
-    
-    function voltarAoMenu(screenElement) { if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; } isPaused = false; screenElement.style.opacity = '0'; setTimeout(() => { screenElement.style.display = 'none'; }, 300); if(animationId) { cancelAnimationFrame(animationId); animationId = null; } const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0; cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout'); hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; ctx.clearRect(0, 0, canvas.width, canvas.height); if (fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height); AudioManager.stopAll(); AudioManager.isMutedGlobal = false; if(AudioManager.somAtivo) AudioManager.playBGM('menu'); startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50); resetIdleTimer(); }
-    btnReiniciar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; gameActive = false; if(animationId) { cancelAnimationFrame(animationId); animationId = null; } AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
-    btnVoltarMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(pauseScreen); }); btnVitoriaMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(victoryScreen); });
-    btnJogarNovamente.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); victoryScreen.style.opacity = '0'; setTimeout(() => { victoryScreen.style.display = 'none'; gameActive = false; if(animationId) { cancelAnimationFrame(animationId); animationId = null; } AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
-
-    function redimensionarCanvas() { let dpr = window.devicePixelRatio || 1; canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px'; canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr; ctx.scale(dpr, dpr); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high"; alturaChao = window.innerHeight * 0.18; if (window.innerHeight < 500 || window.innerWidth < 768) { scaleMultiplier = window.innerHeight < 400 ? 0.45 : 0.60; baseGameSpeed = 4.5; if(player) { player.jumpPower = -15.5; player.gravity = 0.8; } } else { scaleMultiplier = 1; baseGameSpeed = 6.5; if(player) { player.jumpPower = -21; player.gravity = 1.1; } } gameSpeed = baseGameSpeed; if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) { avisoRotacao.style.display = 'flex'; } else { avisoRotacao.style.display = 'none'; } }
-    window.addEventListener('resize', redimensionarCanvas); window.addEventListener('orientationchange', () => { setTimeout(redimensionarCanvas, 100); setTimeout(redimensionarCanvas, 500); });
-    if (btnForcarGiro) { btnForcarGiro.addEventListener('click', (e) => { e.preventDefault(); btnForcarGiro.innerText = "VIRE O APARELHO..."; let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(() => { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; }); } else { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; } }); }
-
     function animate(timeStamp) {
         if (!gameActive || isPaused) return; 
         let deltaTime = timeStamp - lastTime; if (deltaTime > 100) deltaTime = 16; lastTime = timeStamp; let timeScale = deltaTime / 16.666;
@@ -609,16 +586,12 @@
         let cw = window.innerWidth; let ch = window.innerHeight; ctx.clearRect(0, 0, cw, ch); ctx.save();
         if (shakeIntensity > 0) { let sx = Math.sin(timeStamp * 0.05) * shakeIntensity; let sy = Math.cos(timeStamp * 0.04) * shakeIntensity; ctx.translate(sx, sy); shakeIntensity -= deltaTime * 0.05; if(shakeIntensity < 0) shakeIntensity = 0; }
 
-        // ================= 1. DESENHO DO CENÁRIO & MULTI-LAYER PARALLAX (FASE 2) =================
+        // ================= 1. DESENHO DO CENÁRIO =================
         if (faseAtual === 2) {
-            // SCROLL CALCULATORS PARA AS CAMADAS DE PROFUNDIDADE
-            window.bgX_layer1 = (window.bgX_layer1 || 0) - (gameSpeed * 0.2) * timeScale; // Movimento muito lento (Ilhas e Castelos ao fundo)
-            window.bgX_layer3 = (window.bgX_layer3 || 0) - (gameSpeed * 1.6) * timeScale; // Movimento muito rápido (Foreground Rápido)
-            
-            // LAYER 0 - CÉU ABSOLUTO DISTANTE (Background Loop Original Suave)
             if (ceuFundo.complete && ceuFundo.naturalWidth !== 0) { 
                 let prop = ch / ceuFundo.naturalHeight; let bgW = ceuFundo.naturalWidth * prop;
-                bgX -= (gameSpeed * 0.1) * timeScale; 
+                bgX -= (gameSpeed * 0.3) * timeScale;
+                
                 let patternWidth = bgW * 2;
                 while (bgX <= -patternWidth) bgX += patternWidth;
                 
@@ -633,37 +606,6 @@
                     }
                 }
             } else { let bgGrad = ctx.createLinearGradient(0,0,0,ch); bgGrad.addColorStop(0,'#87CEEB'); bgGrad.addColorStop(1,'#E0F6FF'); ctx.fillStyle=bgGrad; ctx.fillRect(0,0,cw,ch); }
-            
-            // LAYER 1 - ILHAS E CASTELOS FLUTUANTES ATMOSFÉRICOS (20% da velocidade da câmera)
-            ctx.save();
-            let spacingL1 = 1500 * scaleMultiplier;
-            let offsetL1 = window.bgX_layer1 % spacingL1;
-            if (offsetL1 > 0) offsetL1 -= spacingL1;
-            
-            for (let x = offsetL1; x < cw + spacingL1; x += spacingL1) {
-                ctx.translate(x, 0);
-                
-                // Ilha Principal: Silhueta de Castelo
-                ctx.fillStyle = 'rgba(120, 160, 220, 0.4)'; // Cor de atmosfera distante (profundidade)
-                ctx.beginPath(); ctx.ellipse(400 * scaleMultiplier, ch * 0.35, 180 * scaleMultiplier, 40 * scaleMultiplier, 0, 0, Math.PI*2); ctx.fill();
-                // Torres do Castelo Distante
-                ctx.fillRect(350 * scaleMultiplier, ch * 0.35 - 60 * scaleMultiplier, 40 * scaleMultiplier, 60 * scaleMultiplier);
-                ctx.fillRect(420 * scaleMultiplier, ch * 0.35 - 100 * scaleMultiplier, 50 * scaleMultiplier, 100 * scaleMultiplier);
-                // Telhados do Castelo
-                ctx.fillStyle = 'rgba(100, 140, 200, 0.6)';
-                ctx.beginPath(); ctx.moveTo(350*scaleMultiplier, ch*0.35-60*scaleMultiplier); ctx.lineTo(370*scaleMultiplier, ch*0.35-100*scaleMultiplier); ctx.lineTo(390*scaleMultiplier, ch*0.35-60*scaleMultiplier); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(420*scaleMultiplier, ch*0.35-100*scaleMultiplier); ctx.lineTo(445*scaleMultiplier, ch*0.35-150*scaleMultiplier); ctx.lineTo(470*scaleMultiplier, ch*0.35-100*scaleMultiplier); ctx.fill();
-
-                // Ilha Secundária Distante
-                ctx.fillStyle = 'rgba(140, 180, 230, 0.3)';
-                ctx.beginPath(); ctx.ellipse(1000 * scaleMultiplier, ch * 0.65, 120 * scaleMultiplier, 30 * scaleMultiplier, 0, 0, Math.PI*2); ctx.fill();
-                ctx.fillRect(980 * scaleMultiplier, ch * 0.65 - 40 * scaleMultiplier, 30 * scaleMultiplier, 40 * scaleMultiplier);
-                ctx.beginPath(); ctx.moveTo(980*scaleMultiplier, ch*0.65-40*scaleMultiplier); ctx.lineTo(995*scaleMultiplier, ch*0.65-70*scaleMultiplier); ctx.lineTo(1010*scaleMultiplier, ch*0.65-40*scaleMultiplier); ctx.fill();
-
-                ctx.translate(-x, 0);
-            }
-            ctx.restore();
-
             let nevoaGrad = ctx.createLinearGradient(0, ch - 150, 0, ch); nevoaGrad.addColorStop(0, 'rgba(255,255,255,0)'); nevoaGrad.addColorStop(1, 'rgba(255,255,255,0.8)'); ctx.fillStyle = nevoaGrad; ctx.fillRect(0, ch - 150, cw, 150);
         } else {
             let isNightMode = false; if (faseAtual === 8) { let ciclo = Math.floor(pontuacao / 500); isNightMode = ciclo % 2 !== 0; }
@@ -676,7 +618,7 @@
             let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.6)'); ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); ctx.restore();
         }
 
-        // ================= 2. LÓGICA DE JOGO, SPAWN E POSICIONAMENTO =================
+        // ================= 2. ATUALIZAÇÕES DA LÓGICA DE JOGO =================
         player.update(timeScale);
         if (faseAtual === 2) { pontuacao += (gameSpeed * 0.05) * timeScale; atualizarProgressoHUD(); if (pontuacao >= 1500 && !isInfinite) { faseAtual = 8; prepararFase(8); AudioManager.playSuccessSFX(); } let spawnRate = Math.max(800, 1800 - ((gameSpeed - baseGameSpeed) * 200)); if (itemTimer > spawnRate) { let sorteio = Math.random(); if (sorteio > 0.6) { let letraAlvo = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: ''})); } else if (sorteio > 0.3) { collectibles.push(new Collectible('nuvem')); } else { collectibles.push(new Collectible('moeda')); } itemTimer = 0; } if (gameSpeed < 10) gameSpeed += 0.0005 * timeScale; }
         else if (faseAtual === 8) { pontuacao += (gameSpeed * 0.05) * timeScale; atualizarProgressoHUD(); if (pontuacao >= window.nextCatScore && !isGatinha) { isGatinha = true; window.catTimer = 12000; window.nextCatScore += 1000; hitStopTime = 150; shakeIntensity = 25; AudioManager.playMagicSFX(); AudioManager.playSuccessSFX(); dispararFlashTransicao(); textosFlutuantes.push(new TextoFlutuante("SUPER GATINHA!", player.x - 50, player.y - 100, '#FFF', '#FF1493')); for(let j=0; j<80; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 15 + 5; let color = Math.random() > 0.5 ? '#FF1493' : '#FFD700'; particulas.push(new Particula(player.x + player.width/2, player.y + player.height/2, color, Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*20+10)); } } if (isGatinha) { window.catTimer -= deltaTime; if (window.catTimer <= 0) { isGatinha = false; AudioManager.playMagicSFX(); dispararFlashTransicao(); textosFlutuantes.push(new TextoFlutuante("FIM DA MAGIA!", player.x - 50, player.y - 100, '#FFF', '#A020F0')); } } let ultimoItem = collectibles.length > 0 ? collectibles[collectibles.length - 1] : null; let minDistancia = cw * 0.45; let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999; let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200)); 
@@ -690,7 +632,7 @@
         } if (gameSpeed < 11) { gameSpeed += 0.0008 * timeScale; } } 
         else { window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime; if (itemTimer > itemInterval) { let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra)); if (letrasFaltantes.length > 0 || isInfinite) { let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo); collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); letraUi.innerText = `[ ${letraAlvo} ]`; } } else { faseAtual = 2; prepararFase(2); AudioManager.playSuccessSFX(); } itemTimer = 0; window.obstaculoTimer = 0; } else if (window.obstaculoTimer > 1000) { let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier); if (!temItemPerto) { let sorteio = Math.random(); if (sorteio > 0.5) collectibles.push(new Collectible('mini_obstaculo')); else if (sorteio > 0.2) collectibles.push(new Collectible('moeda')); } window.obstaculoTimer = 0; } }
 
-        // CHECAGEM DE COLISÕES
+        // ================= 3. LÓGICA DE DETEÇÃO E COLISÃO =================
         for (let i = collectibles.length - 1; i >= 0; i--) {
             let item = collectibles[i];
             if(item.markedForDeletion) { if (faseAtual === 8 && item.tipo === 'obstaculo') { item.x = -9999; } else { collectibles.splice(i, 1); } continue; }
@@ -713,7 +655,7 @@
             }
         }
 
-        // ================= 3. LAYER 2 - RENDER ORDER DO GAMEPLAY (100% Velocidade Original) =================
+        // ================= 4. RENDER ORDER CORRETA =================
         for (let i = collectibles.length - 1; i >= 0; i--) {
             let item = collectibles[i];
             if (item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo') {
@@ -728,35 +670,6 @@
             if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') {
                 item.draw(ctx);
             }
-        }
-
-        // ================= 4. LAYER 3 - FOREGROUND TRANSLÚCIDO E RÁPIDO (160% Velocidade - Pássaro) =================
-        if (faseAtual === 2) {
-            ctx.save();
-            let spacingL3 = 1800 * scaleMultiplier;
-            let offsetL3 = window.bgX_layer3 % spacingL3;
-            if (offsetL3 > 0) offsetL3 -= spacingL3;
-            
-            // Nuvens Translúcidas Gigantes Macias (Dão sensação de mergulhar no céu)
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; // Muito transparentes para não cobrir gameplay
-            for (let x = offsetL3; x < cw + spacingL3; x += spacingL3) {
-                ctx.beginPath();
-                ctx.arc(x + 200 * scaleMultiplier, -50 * scaleMultiplier, 400 * scaleMultiplier, 0, Math.PI*2);
-                ctx.arc(x + 600 * scaleMultiplier, -100 * scaleMultiplier, 500 * scaleMultiplier, 0, Math.PI*2);
-                ctx.fill();
-                
-                ctx.beginPath();
-                ctx.arc(x + 1200 * scaleMultiplier, ch + 100 * scaleMultiplier, 600 * scaleMultiplier, 0, Math.PI*2);
-                ctx.fill();
-            }
-
-            // Speed Lines Horizontais (Efeito de Velocidade / Vento batendo)
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            let speedLineX = (window.bgX_layer3 * 1.5) % (cw / 2);
-            for(let i=0; i<5; i++) {
-                ctx.fillRect(cw - speedLineX + (i * 300), ch * 0.2 * i, 150 * scaleMultiplier, 2 * scaleMultiplier);
-            }
-            ctx.restore();
         }
 
         // ================= 5. PARTÍCULAS E UI OVERLAYS =================
