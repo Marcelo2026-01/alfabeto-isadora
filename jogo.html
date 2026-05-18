@@ -475,8 +475,8 @@
             this.tipo = tipo; this.info = info; this.markedForDeletion = false; this.spin = 0; this.ignorarColisao = false; this.isResolvido = false; this.timerOscilacao = Math.random() * 100;
             let cw = window.innerWidth; let ch = window.innerHeight;
             
-            // FIX DEFINITIVO DE ALINHAMENTO: +20 Exato
-            let laneY = ch - alturaChao + 20; 
+            // CORREÇÃO DEFINITIVA DA PERSPECTIVA (COMPENSANDO A ALTURA DO SPRITE DA ISADORA)
+            let laneY = ch - alturaChao + 75 * scaleMultiplier; 
             
             if (faseAtual === 2) {
                 this.x = cw + 100 * scaleMultiplier; this.y = Math.random() * (ch - 250 * scaleMultiplier) + 100 * scaleMultiplier; 
@@ -567,7 +567,7 @@
         let cw = window.innerWidth; let ch = window.innerHeight; ctx.clearRect(0, 0, cw, ch); ctx.save();
         if (shakeIntensity > 0) { let sx = Math.sin(timeStamp * 0.05) * shakeIntensity; let sy = Math.cos(timeStamp * 0.04) * shakeIntensity; ctx.translate(sx, sy); shakeIntensity -= deltaTime * 0.05; if(shakeIntensity < 0) shakeIntensity = 0; }
 
-        // ================= 1. DESENHO DO CENÁRIO (CÉU FASE 2 CORRIGIDO E INFINITO) =================
+        // ================= 1. DESENHO DO CENÁRIO =================
         if (faseAtual === 2) {
             if (ceuFundo.complete && ceuFundo.naturalWidth !== 0) { 
                 let prop = ch / ceuFundo.naturalHeight; let bgW = ceuFundo.naturalWidth * prop;
@@ -599,7 +599,7 @@
             let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.6)'); ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); ctx.restore();
         }
 
-        // ================= 2. ATUALIZAÇÕES DA LÓGICA DE JOGO E RECICLAGEM ORIGINAL =================
+        // ================= 2. ATUALIZAÇÕES DA LÓGICA =================
         player.update(timeScale);
         if (faseAtual === 2) { pontuacao += (gameSpeed * 0.05) * timeScale; atualizarProgressoHUD(); if (pontuacao >= 1500 && !isInfinite) { faseAtual = 8; prepararFase(8); AudioManager.playSuccessSFX(); } let spawnRate = Math.max(800, 1800 - ((gameSpeed - baseGameSpeed) * 200)); if (itemTimer > spawnRate) { let sorteio = Math.random(); if (sorteio > 0.6) { let letraAlvo = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: ''})); } else if (sorteio > 0.3) { collectibles.push(new Collectible('nuvem')); } else { collectibles.push(new Collectible('moeda')); } itemTimer = 0; } if (gameSpeed < 10) gameSpeed += 0.0005 * timeScale; }
         else if (faseAtual === 8) { pontuacao += (gameSpeed * 0.05) * timeScale; atualizarProgressoHUD(); if (pontuacao >= window.nextCatScore && !isGatinha) { isGatinha = true; window.catTimer = 12000; window.nextCatScore += 1000; hitStopTime = 150; shakeIntensity = 25; AudioManager.playMagicSFX(); AudioManager.playSuccessSFX(); dispararFlashTransicao(); textosFlutuantes.push(new TextoFlutuante("SUPER GATINHA!", player.x - 50, player.y - 100, '#FFF', '#FF1493')); for(let j=0; j<80; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 15 + 5; let color = Math.random() > 0.5 ? '#FF1493' : '#FFD700'; particulas.push(new Particula(player.x + player.width/2, player.y + player.height/2, color, Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*20+10)); } } if (isGatinha) { window.catTimer -= deltaTime; if (window.catTimer <= 0) { isGatinha = false; AudioManager.playMagicSFX(); dispararFlashTransicao(); textosFlutuantes.push(new TextoFlutuante("FIM DA MAGIA!", player.x - 50, player.y - 100, '#FFF', '#A020F0')); } } let ultimoItem = collectibles.length > 0 ? collectibles[collectibles.length - 1] : null; let minDistancia = cw * 0.45; let distanciaLivre = ultimoItem ? (cw + 100 * scaleMultiplier) - ultimoItem.x : 9999; let spawnRate = Math.max(700, 1800 - ((gameSpeed - baseGameSpeed) * 200)); 
@@ -608,17 +608,15 @@
             if (reciclado) { 
                 reciclado.markedForDeletion = false; reciclado.isResolvido = false; reciclado.ignorarColisao = false; reciclado.x = cw + 100 * scaleMultiplier; reciclado.variation = Math.floor(Math.random() * 3); reciclado.radius = (reciclado.variation === 1 ? 48 : 40) * scaleMultiplier; 
                 
-                // FIX DEFINITIVO NA RECICLAGEM (+20 EXATO)
-                let localGroundY = ch - alturaChao + 20; 
+                // CORREÇÃO DEFINITIVA NA RECICLAGEM (+75)
+                let localGroundY = ch - alturaChao + 75 * scaleMultiplier; 
                 reciclado.y = localGroundY - reciclado.radius; 
                 
-            } else if (collectibles.filter(c => c.tipo === 'obstaculo').length < 6) { collectibles.push(new Collectible('obstaculo')); } 
-            itemTimer = 0; 
+            } else if (collectibles.filter(c => c.tipo === 'obstaculo').length < 6) { collectibles.push(new Collectible('obstaculo')); } itemTimer = 0; 
         } if (gameSpeed < 11) { gameSpeed += 0.0008 * timeScale; } } 
         else { window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime; if (itemTimer > itemInterval) { let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra)); if (letrasFaltantes.length > 0 || isInfinite) { let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra; if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo); collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); letraUi.innerText = `[ ${letraAlvo} ]`; } } else { faseAtual = 2; prepararFase(2); AudioManager.playSuccessSFX(); } itemTimer = 0; window.obstaculoTimer = 0; } else if (window.obstaculoTimer > 1000) { let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier); if (!temItemPerto) { let sorteio = Math.random(); if (sorteio > 0.5) collectibles.push(new Collectible('mini_obstaculo')); else if (sorteio > 0.2) collectibles.push(new Collectible('moeda')); } window.obstaculoTimer = 0; } }
 
-        // ================= 3. RENDER ORDER CORRETA (SEM ALTERAR POSIÇÃO) =================
-        // Atualiza a posição de tudo e verifica colisão primeiro
+        // ================= 3. LÓGICA DE COLISÃO =================
         for (let i = collectibles.length - 1; i >= 0; i--) {
             let item = collectibles[i];
             if(item.markedForDeletion) { if (faseAtual === 8 && item.tipo === 'obstaculo') { item.x = -9999; } else { collectibles.splice(i, 1); } continue; }
@@ -641,7 +639,8 @@
             }
         }
 
-        // DESENHO: Fundo -> Meio (Isadora) -> Frente (Cristal)
+        // ================= 4. ORDEM DE DESENHO (DRAW ORDER) =================
+        // Fundo -> Meio (Isadora) -> Frente (Cristal)
         for (let i = collectibles.length - 1; i >= 0; i--) {
             let item = collectibles[i];
             if (item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo') {
@@ -658,7 +657,7 @@
             }
         }
 
-        // ================= 4. PARTÍCULAS E UI OVERLAYS =================
+        // ================= 5. PARTÍCULAS E UI OVERLAYS =================
         if (particulas.length > 150) particulas.splice(0, particulas.length - 150); for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
         let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
         for(let i=0; i<3; i++) { ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY); if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; } if (faseAtual === 2) { if (passaroSprite.complete && passaroSprite.naturalWidth > 0) { let rW = passaroSprite.naturalWidth / 3; ctx.drawImage(passaroSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } else { ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); } } else { if (playerSprite.complete && playerSprite.naturalWidth > 0) { let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } else { ctx.fillStyle = '#FF1493'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); } } ctx.restore(); }
