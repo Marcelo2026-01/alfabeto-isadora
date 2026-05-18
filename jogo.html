@@ -167,6 +167,55 @@
         .icone-celular { font-size: 80px; margin-bottom: 20px; animation: girarCelular 2.5s infinite ease-in-out; font-weight: bold; }
         @keyframes girarCelular { 0%, 100% { transform: rotate(0deg); } 40%, 60% { transform: rotate(-90deg); } }
 
+        
+        /* CONTROLES PREMIUM INFANTIL */
+        #flight-controls {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 32;
+            display: none;
+        }
+        .flight-btn {
+            position: absolute;
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.28);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.18), inset 0 0 18px rgba(255,255,255,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 34px;
+            transition: transform .12s ease, box-shadow .18s ease, background .18s ease;
+            pointer-events: auto;
+            touch-action: none;
+            user-select: none;
+        }
+        .flight-btn::before{
+            content:'';
+            position:absolute;
+            inset:-40px;
+        }
+        .flight-btn.active{
+            transform: scale(1.08);
+            background: rgba(180,220,255,0.2);
+            box-shadow: 0 0 25px rgba(255,255,255,0.22), inset 0 0 18px rgba(255,255,255,0.18);
+        }
+        #flight-up {
+            right: 24px;
+            bottom: 150px;
+            background: linear-gradient(180deg, rgba(180,220,255,0.2), rgba(255,255,255,0.08));
+        }
+        #flight-down {
+            right: 24px;
+            bottom: 34px;
+            background: linear-gradient(180deg, rgba(255,180,220,0.18), rgba(255,255,255,0.08));
+        }
+
         @media screen and (max-height: 500px) {
             #start-screen { flex-direction: row; } .ps5-sidebar { width: 55%; padding-left: 5vw; align-items: flex-start; } .ps5-hero-area { width: 45%; }
             .ps5-title { font-size: clamp(26px, 6vmin, 40px); } .ps5-subtitle { font-size: clamp(12px, 3vmin, 18px); margin-bottom: 5px; }
@@ -327,6 +376,12 @@
                     <button id="nextBtnLivro" class="btn-livro">Próxima <span class="ps5-icon">▶</span></button>
                 </div>
             </div>
+        </div>
+
+        
+        <div id="flight-controls">
+            <div id="flight-up" class="flight-btn">⬆️</div>
+            <div id="flight-down" class="flight-btn">⬇️</div>
         </div>
 
         <canvas id="gameCanvas" role="img" aria-label="Area do jogo interativo da Isadora"></canvas>
@@ -544,12 +599,15 @@
         update(timeScale) {
             this.baseX = window.innerWidth * 0.15; this.x = this.baseX; 
             if (faseAtual === 2) {
-                this.scale = this.baseScale * scaleMultiplier * 1.4; let lift = -0.7; let grav = 0.35; let maxRise = -7; let maxFall = 7;
+                this.scale = this.baseScale * scaleMultiplier * 1.4; let lift = -0.68; let grav = 0.33; let maxRise = -6.5; let maxFall = 6.5; this.bobOffset = Math.sin(performance.now()*0.0035) * 2.2;
                 if (isHolding) { if (tutorialUI.style.opacity === '1') { tutorialUI.style.opacity = '0'; setTimeout(()=>tutorialUI.style.display='none', 300); } this.vy += lift * timeScale; if (this.vy < maxRise) this.vy = maxRise; this.staggerFrames = 2; } 
                 else { this.vy += grav * timeScale; if (this.vy > maxFall) this.vy = maxFall; this.staggerFrames = 5; }
-                this.y += this.vy * timeScale; if (this.y < 0) { this.y = 0; this.vy = 0; } let hReal = this.height * this.scale; if (this.y > window.innerHeight - hReal) { this.y = window.innerHeight - hReal; this.vy = 0; }
-                let targetTilt = this.vy * 0.05; this.tilt += (targetTilt - this.tilt) * 0.15 * timeScale;
-                if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; } if (isHolding && this.gameFrame % 4 === 0) { particulas.push(new Particula(this.x + (this.width*this.scale)*0.3, this.y + hReal, 'rgba(255,255,255,0.7)', -gameSpeed, 1, Math.random()*8+4)); } this.gameFrame++; this.isJumping = true; 
+                this.y += this.vy * timeScale; if (!isHolding) this.y += this.bobOffset * 0.04 * timeScale; if (this.y < 0) { this.y = 0; this.vy = 0; } let hReal = this.height * this.scale; if (this.y > window.innerHeight - hReal) { this.y = window.innerHeight - hReal; this.vy = 0; }
+                let targetTilt = Math.min(Math.max(this.vy * 0.045, -0.32), 0.28); this.tilt += (targetTilt - this.tilt) * 0.12 * timeScale;
+                if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; } if (this.gameFrame % 6 === 0) {
+                    const sparkleColor = Math.random() > 0.5 ? 'rgba(255,255,255,0.7)' : 'rgba(120,220,255,0.55)';
+                    particulas.push(new Particula(this.x + (this.width*this.scale)*0.25, this.y + hReal * 0.65, sparkleColor, -gameSpeed * 0.7, (Math.random()*2)-1, Math.random()*5+2));
+                } this.gameFrame++; this.isJumping = true; 
             } else {
                 this.scale = this.baseScale * scaleMultiplier; let ajustePe = this.height * this.espacoVazio; let ch = window.innerHeight; let groundY = ch - alturaChao - (this.height - ajustePe) + 20;
                 this.y += this.vy * timeScale;
@@ -681,6 +739,82 @@
     }
     
     window.onload = () => { hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; redimensionarCanvas(); if (!gameActive && fundoImg1.complete) { ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height); } setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); }
+
+// ===== MELHORIAS PREMIUM FASE DO PÁSSARO =====
+const flightControls = document.getElementById('flight-controls');
+const flightUpBtn = document.getElementById('flight-up');
+const flightDownBtn = document.getElementById('flight-down');
+let premiumFlashTimer = 0;
+let comboGlowTimer = 0;
+
+function updateFlightControlsVisibility(){
+    if(!flightControls) return;
+    flightControls.style.display = (gameActive && faseAtual === 2) ? 'block' : 'none';
+}
+
+function setFlightButtonState(active){
+    if(!flightUpBtn) return;
+    flightUpBtn.classList.toggle('active', active);
+    flightDownBtn.classList.toggle('active', !active && faseAtual === 2);
+}
+
+['pointerdown','touchstart'].forEach(evt=>{
+    flightUpBtn?.addEventListener(evt, ()=>{ isHolding = true; setFlightButtonState(true); }, {passive:true});
+    flightDownBtn?.addEventListener(evt, ()=>{ isHolding = false; setFlightButtonState(false); }, {passive:true});
+});
+['pointerup','pointercancel','touchend'].forEach(evt=>{
+    flightUpBtn?.addEventListener(evt, ()=>{ isHolding = false; setFlightButtonState(false); }, {passive:true});
+});
+
+const originalGerenciarCombo = gerenciarCombo;
+gerenciarCombo = function(acertou){
+    originalGerenciarCombo(acertou);
+    if(acertou && comboAtual >= 3){
+        comboGlowTimer = 22;
+        for(let i=0;i<5;i++){
+            particulas.push(new Particula(player.x + 40, player.y + 60, 'rgba(255,215,120,0.8)', (Math.random()*3)-1.5, (Math.random()*-2)-1, Math.random()*5+3));
+        }
+    }
+}
+
+const originalShowDamage = damageOverlay.classList.add.bind(damageOverlay.classList);
+damageOverlay.classList.add = function(cls){
+    originalShowDamage(cls);
+    if(cls === 'damage-active'){
+        shakeIntensity = Math.max(shakeIntensity, 3);
+        premiumFlashTimer = 10;
+    }
+}
+
+
+function premiumBirdEffects(){
+    updateFlightControlsVisibility();
+
+    if(comboGlowTimer > 0){
+        comboGlowTimer--;
+        progressFill.style.boxShadow = '0 0 18px rgba(255,215,0,0.85)';
+    }else{
+        progressFill.style.boxShadow = '';
+    }
+
+    if(premiumFlashTimer > 0){
+        premiumFlashTimer--;
+        ctx.save();
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+    }
+}
+
+const __originalAnimate = animate;
+animate = function(timeStamp){
+    premiumBirdEffects();
+    return __originalAnimate(timeStamp);
+}
+const originalCollect = player.collect ? player.collect.bind(player) : null;
+window.addEventListener('resize', updateFlightControlsVisibility);
+updateFlightControlsVisibility();
+
 </script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -689,6 +823,79 @@
   const app = initializeApp(firebaseConfig); const db = getFirestore(app); 
   window.salvarPontuacaoGlobal = async function(nome, pontos, fase) { if (pontos <= 0) return false; try { await addDoc(collection(db, "ranking_global"), { nome: nome, pontuacao: pontos, fase: fase, data: serverTimestamp() }); return true; } catch (e) { console.error("Erro ao salvar rank:", e); return false; } };
   window.carregarRankingGlobal = async function() { const listaRankUI = document.getElementById('lista-ranking-conteudo'); try { const q = query(collection(db, "ranking_global"), orderBy("pontuacao", "desc"), limit(10)); const querySnapshot = await getDocs(q); if (querySnapshot.empty) { listaRankUI.innerHTML = '<p style="color: #A0AAB5;">Seja o primeiro a deixar sua marca!</p>'; return; } let htmlHtml = ''; let posicao = 1; querySnapshot.forEach((doc) => { let d = doc.data(); let classeTop = posicao <= 3 ? `top-${posicao}` : ''; let medalha = posicao === 1 ? '🥇' : (posicao === 2 ? '🥈' : (posicao === 3 ? '🥉' : '🎮')); htmlHtml += `<div class="item-ranking ${classeTop}"><span class="rank-pos">${medalha}</span><span class="rank-nome">${d.nome}</span><span class="rank-pts">${d.pontuacao} PTS</span></div>`; posicao++; }); listaRankUI.innerHTML = htmlHtml; } catch (e) { console.error("Erro ao carregar rank:", e); listaRankUI.innerHTML = '<p style="color: #FF1493;">Não foi possível carregar o ranking. Tente novamente mais tarde.</p>'; } };
+
+// ===== MELHORIAS PREMIUM FASE DO PÁSSARO =====
+const flightControls = document.getElementById('flight-controls');
+const flightUpBtn = document.getElementById('flight-up');
+const flightDownBtn = document.getElementById('flight-down');
+let premiumFlashTimer = 0;
+let comboGlowTimer = 0;
+
+function updateFlightControlsVisibility(){
+    if(!flightControls) return;
+    flightControls.style.display = (gameActive && faseAtual === 2) ? 'block' : 'none';
+}
+
+function setFlightButtonState(active){
+    if(!flightUpBtn) return;
+    flightUpBtn.classList.toggle('active', active);
+    flightDownBtn.classList.toggle('active', !active && faseAtual === 2);
+}
+
+['pointerdown','touchstart'].forEach(evt=>{
+    flightUpBtn?.addEventListener(evt, ()=>{ isHolding = true; setFlightButtonState(true); }, {passive:true});
+    flightDownBtn?.addEventListener(evt, ()=>{ isHolding = false; setFlightButtonState(false); }, {passive:true});
+});
+['pointerup','pointercancel','touchend'].forEach(evt=>{
+    flightUpBtn?.addEventListener(evt, ()=>{ isHolding = false; setFlightButtonState(false); }, {passive:true});
+});
+
+const originalGerenciarCombo = gerenciarCombo;
+gerenciarCombo = function(acertou){
+    originalGerenciarCombo(acertou);
+    if(acertou && comboAtual >= 3){
+        comboGlowTimer = 22;
+        for(let i=0;i<5;i++){
+            particulas.push(new Particula(player.x + 40, player.y + 60, 'rgba(255,215,120,0.8)', (Math.random()*3)-1.5, (Math.random()*-2)-1, Math.random()*5+3));
+        }
+    }
+}
+
+const originalShowDamage = damageOverlay.classList.add.bind(damageOverlay.classList);
+damageOverlay.classList.add = function(cls){
+    originalShowDamage(cls);
+    if(cls === 'damage-active'){
+        shakeIntensity = Math.max(shakeIntensity, 3);
+        premiumFlashTimer = 10;
+    }
+}
+
+const originalUpdateGame = updateGame;
+updateGame = function(deltaTime){
+    originalUpdateGame(deltaTime);
+
+    updateFlightControlsVisibility();
+
+    if(comboGlowTimer > 0){
+        comboGlowTimer--;
+        progressFill.style.boxShadow = '0 0 18px rgba(255,215,0,0.85)';
+    }else{
+        progressFill.style.boxShadow = '';
+    }
+
+    if(premiumFlashTimer > 0){
+        premiumFlashTimer--;
+        ctx.save();
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+    }
+}
+
+const originalCollect = player.collect ? player.collect.bind(player) : null;
+window.addEventListener('resize', updateFlightControlsVisibility);
+updateFlightControlsVisibility();
+
 </script>
 </body>
 </html>
