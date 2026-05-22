@@ -16,7 +16,7 @@
         /* BASE & RESET AAA */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #1a252f; overflow: hidden; font-family: 'Fredoka', sans-serif; user-select: none; touch-action: none; -webkit-touch-callout: none; -webkit-font-smoothing: antialiased; }
-        #game-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; overflow: hidden; background: #87CEEB; transition: background 2s ease; }
+        #game-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%); }
         canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 
         /* ECRÃ DE CARREGAMENTO */
@@ -422,12 +422,6 @@
     let vidasExtra = 3; let invulneravelTimer = 0;
     let isGatinha = false; window.catTimer = 0; window.nextCatScore = 1000; 
 
-    // ==== VARIÁVEIS DE ALTO NÍVEL: SISTEMA DE DIA E NOITE FIREBASE ====
-    // No futuro, estas variáveis lerão os dados em tempo real do Firebase.
-    let globalTempo = 0; // Vai de 0 (Amanhecer) a 1 (Noite)
-    let faseTempoDoDia = 'dia'; 
-    let transicaoCorCeu = '#87CEEB';
-
     const AlfabetoIsadora = [ { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, { letra: 'J', palavra: 'Jacare' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leao' }, { letra: 'M', palavra: 'Macaco' }, { letra: 'N', initial: 'Nuvem', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xicara' }, { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } ];
     let letrasParaVencerFase1 = 26; let letrasColetadas = []; let isHolding = false; let idleTime = 0;
     
@@ -495,72 +489,13 @@
         atualizarProgressoHUD(); player.isJumping = true; isHolding = false; window.obstaculoTimer = 0; itemTimer = fase === 8 ? 1000 : (fase === 2 ? 1000 : -2500); 
     }
 
-    // ==== ALTO NÍVEL: SISTEMA DO CÉU DINÂMICO (DIA E NOITE COMPATÍVEL COM FIREBASE) ====
-    function renderizarCeuDinamico(timeScale) {
-        if(faseAtual !== 2) return;
-
-        let cw = canvas.width; let ch = canvas.height;
-        
-        // Simulação do tempo (no futuro, isto lê o dado do Firebase: globalTempo)
-        // Aqui acelera a simulação do dia em função da pontuação
-        globalTempo = (pontuacao % 2000) / 2000; 
-
-        // Definir as Cores do Céu com base no Tempo
-        let corTopo, corBase;
-        if(globalTempo < 0.3) {
-            // DIA
-            corTopo = '#87CEEB'; corBase = '#E0F6FF'; faseTempoDoDia = 'dia';
-        } else if (globalTempo < 0.5) {
-            // ENTARDECER
-            corTopo = '#FF7E5F'; corBase = '#FEB47B'; faseTempoDoDia = 'tarde';
-        } else {
-            // NOITE
-            corTopo = '#0B0C10'; corBase = '#1a252f'; faseTempoDoDia = 'noite';
-        }
-
-        // Desenhar Fundo Gradiente Dinâmico
-        let gradient = ctx.createLinearGradient(0, 0, 0, ch);
-        gradient.addColorStop(0, corTopo); gradient.addColorStop(1, corBase);
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, cw, ch);
-
-        // Desenhar o Sol ou a Lua em Rotação
-        let angulo = globalTempo * Math.PI * 2; 
-        let cx = cw / 2; let cy = ch * 0.9; let raio = cw / 1.5; 
-        let solX = cx - Math.sin(angulo) * raio; let solY = cy - Math.cos(angulo) * raio; 
-        let luaX = cx + Math.sin(angulo) * raio; let luaY = cy + Math.cos(angulo) * raio;
-
-        // O SOL
-        if (solY < ch) { 
-            ctx.save(); ctx.shadowBlur = 80; ctx.shadowColor = "#FFDF00"; ctx.fillStyle = "#FFF700"; 
-            ctx.beginPath(); ctx.arc(solX, solY, 60, 0, Math.PI*2); ctx.fill(); ctx.restore(); 
-        }
-
-        // AS ESTRELAS E A NOITE
-        let escurecer = Math.max(0, Math.cos(angulo + Math.PI)); 
-        if (escurecer > 0) { 
-            ctx.fillStyle = `rgba(5, 5, 25, ${escurecer * 0.5})`; ctx.fillRect(0, 0, cw, ch); 
-            if (escurecer > 0.3) { 
-                ctx.fillStyle = `rgba(255, 255, 255, ${escurecer})`; 
-                for(let i=1; i<=30; i++) { 
-                    // Estrelas que rodam ligeiramente
-                    let sx = ((i * 153) + (pontuacao*0.1)) % cw; 
-                    let sy = (i * 87) % (ch / 1.5); 
-                    ctx.beginPath(); ctx.arc(sx, sy, (i%2)+1, 0, Math.PI*2); ctx.fill(); 
-                } 
-            } 
-        }
-
-        // A LUA MAGICA
-        if (luaY < ch) { 
-            ctx.save(); ctx.shadowBlur = 50; ctx.shadowColor = "#FFFFFF"; ctx.fillStyle = "#F0F8FF"; 
-            ctx.beginPath(); ctx.arc(luaX, luaY, 50, 0, Math.PI*2); ctx.fill(); 
-            // Crateras da lua
-            ctx.fillStyle = "rgba(180, 180, 180, 0.5)"; 
-            ctx.beginPath(); ctx.arc(luaX - 12, luaY - 15, 10, 0, Math.PI*2); ctx.fill(); 
-            ctx.beginPath(); ctx.arc(luaX + 18, luaY + 8, 14, 0, Math.PI*2); ctx.fill(); 
-            ctx.beginPath(); ctx.arc(luaX - 5, luaY + 18, 6, 0, Math.PI*2); ctx.fill(); 
-            ctx.restore(); 
+    function renderizarCeuVIP() {
+        if (faseAtual === 8 && window.isVIPPrata) {
+            let cw = canvas.width; let ch = canvas.height; let ciclo = (pontuacao % 3000) / 3000; let angulo = ciclo * Math.PI * 2; let cx = cw / 2; let cy = ch; let raio = cw / 1.5; let solX = cx - Math.sin(angulo) * raio; let solY = cy - Math.cos(angulo) * raio; let luaX = cx + Math.sin(angulo) * raio; let luaY = cy + Math.cos(angulo) * raio;
+            if (solY < ch) { ctx.save(); ctx.shadowBlur = 80; ctx.shadowColor = "#FFDF00"; ctx.fillStyle = "#FFF700"; ctx.beginPath(); ctx.arc(solX, solY, 60, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
+            let escurecer = Math.max(0, Math.cos(angulo + Math.PI)); 
+            if (escurecer > 0) { ctx.fillStyle = `rgba(5, 5, 25, ${escurecer * 0.8})`; ctx.fillRect(0, 0, cw, ch); if (escurecer > 0.3) { ctx.fillStyle = `rgba(255, 255, 255, ${escurecer})`; for(let i=1; i<=25; i++) { let sx = (i * 123) % cw; let sy = (i * 77) % (ch / 1.5); ctx.beginPath(); ctx.arc(sx, sy, (i%3)+1, 0, Math.PI*2); ctx.fill(); } } }
+            if (luaY < ch) { ctx.save(); ctx.shadowBlur = 50; ctx.shadowColor = "#FFFFFF"; ctx.fillStyle = "#F0F8FF"; ctx.beginPath(); ctx.arc(luaX, luaY, 50, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = "rgba(180, 180, 180, 0.5)"; ctx.beginPath(); ctx.arc(luaX - 12, luaY - 15, 10, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(luaX + 18, luaY + 8, 14, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(luaX - 5, luaY + 18, 6, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
         }
     }
     
@@ -681,6 +616,18 @@
                 if (!this.isJumping) { if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; } if (this.gameFrame % 3 === 0) { if (isGatinha) { particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#FF1493', -gameSpeed * 1.5, -1, Math.random() * 8 + 4)); if (Math.random() > 0.5) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#FFD700', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 6 + 2)); } else { particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4)); if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2)); } } this.gameFrame++; } else { this.frameX = 1; }
             }
         }
+        draw(ctx) {
+            let prevAlpha = ctx.globalAlpha; let rW, rH; let ajustePe = 0; let groundY = window.innerHeight - alturaChao + 20; let spriteAtual; if (faseAtual === 2) spriteAtual = passaroSprite; else spriteAtual = isGatinha ? gatinhaSprite : playerSprite;
+            if (spriteAtual.complete && spriteAtual.naturalWidth > 0) { rW = spriteAtual.naturalWidth / 3; rH = spriteAtual.naturalHeight; this.width = rW * this.scale; this.height = rH * this.scale; ajustePe = this.height * this.espacoVazio; groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; if (faseAtual !== 2 && !this.isJumping && this.y > groundY) this.y = groundY; } 
+            else { this.width = 100 * this.scale; this.height = 150 * this.scale; ajustePe = 10 * this.scale; groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; if (faseAtual !== 2 && !this.isJumping && this.y > groundY) this.y = groundY; }
+            if (invulneravelTimer > 0 && !isGatinha) { if (Math.floor(performance.now() / 100) % 2 === 0) { ctx.globalAlpha = 0.5; } }
+            if (faseAtual !== 2) { let alturaDoChao = groundY - this.y; let tamanhoSombra = Math.max(10 * scaleMultiplier, (this.width/3) - (alturaDoChao * 0.15)); let opSombra = Math.max(0.1, 0.4 - (alturaDoChao * 0.002)); ctx.fillStyle = `rgba(0,0,0,${opSombra})`; ctx.beginPath(); ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); }
+            ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height/2 - (faseAtual === 2 ? 0 : ajustePe - this.height/2)); ctx.rotate(this.tilt); 
+            if (faseAtual === 2) { ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 20 * scaleMultiplier; ctx.shadowOffsetY = 15 * scaleMultiplier; }
+            let pisadaY = (faseAtual !== 2 && !this.isJumping && this.frameX === 1) ? (6 * scaleMultiplier) : 0;
+            if (spriteAtual.complete && spriteAtual.naturalWidth > 0) { ctx.drawImage(spriteAtual, this.frameX * rW, 0, rW, rH, -this.width/2, -this.height/2 + pisadaY, this.width, this.height); } else { ctx.fillStyle = isGatinha ? '#FFA500' : '#FF69B4'; ctx.beginPath(); ctx.roundRect(-this.width/2, -this.height/2 + pisadaY, this.width, this.height * 0.9, 15); ctx.fill(); }
+            ctx.restore(); ctx.globalAlpha = prevAlpha;
+        }
         jump() { if (faseAtual !== 2 && !this.isJumping) { if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } this.vy = this.jumpPower; this.isJumping = true; for(let i=0;i<10;i++) { let corPo = isGatinha ? '#FFD700' : 'rgba(255, 228, 225, 0.8)'; particulas.push(new Particula(this.x + this.width/2, this.y + this.height - (this.height*this.espacoVazio), corPo, (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*10+5)); } } }
     }
 
@@ -697,14 +644,32 @@
         let cw = window.innerWidth; let ch = window.innerHeight; ctx.clearRect(0, 0, cw, ch); ctx.save();
         if (shakeIntensity > 0) { let sx = Math.sin(timeStamp * 0.05) * shakeIntensity; let sy = Math.cos(timeStamp * 0.04) * shakeIntensity; ctx.translate(sx, sy); shakeIntensity -= deltaTime * 0.05; if(shakeIntensity < 0) shakeIntensity = 0; }
 
-        // ================= 1. DESENHO DO CENÁRIO (ALTO NÍVEL DIA E NOITE) =================
+        // ================= 1. DESENHO DO CENÁRIO =================
         if (faseAtual === 2) {
-            renderizarCeuDinamico(timeScale); // Chamada para a nossa nova função AAA do Sol e da Lua
+            if (ceuFundo.complete && ceuFundo.naturalWidth !== 0) { 
+                let prop = ch / ceuFundo.naturalHeight; let bgW = ceuFundo.naturalWidth * prop;
+                bgX -= (gameSpeed * 0.3) * timeScale;
+                
+                let patternWidth = bgW * 2;
+                while (bgX <= -patternWidth) bgX += patternWidth;
+                
+                let tilesCount = Math.ceil(cw / bgW) + 2;
+                for (let i = 0; i < tilesCount; i++) {
+                    let currentX = bgX + (i * bgW);
+                    if (i % 2 !== 0) {
+                        ctx.save(); ctx.translate(currentX + bgW, 0); ctx.scale(-1, 1);
+                        ctx.drawImage(ceuFundo, 0, 0, bgW, ch); ctx.restore();
+                    } else {
+                        ctx.drawImage(ceuFundo, currentX, 0, bgW, ch);
+                    }
+                }
+            } else { let bgGrad = ctx.createLinearGradient(0,0,0,ch); bgGrad.addColorStop(0,'#87CEEB'); bgGrad.addColorStop(1,'#E0F6FF'); ctx.fillStyle=bgGrad; ctx.fillRect(0,0,cw,ch); }
+            let nevoaGrad = ctx.createLinearGradient(0, ch - 150, 0, ch); nevoaGrad.addColorStop(0, 'rgba(255,255,255,0)'); nevoaGrad.addColorStop(1, 'rgba(255,255,255,0.8)'); ctx.fillStyle = nevoaGrad; ctx.fillRect(0, ch - 150, cw, 150);
         } else {
             let isNightMode = false; if (faseAtual === 8) { let ciclo = Math.floor(pontuacao / 500); isNightMode = ciclo % 2 !== 0; }
             let fundoAtual = (faseAtual === 8 && fundoImgExtra.complete && fundoImgExtra.naturalWidth > 0) ? fundoImgExtra : fundoImg1;
             if (fundoAtual.complete && fundoAtual.naturalWidth !== 0) { bgX -= (gameSpeed * 0.04) * timeScale; if (bgX <= -cw * 2) bgX += cw * 2; let bgW = cw; ctx.drawImage(fundoAtual, bgX, 0, bgW, ch); ctx.save(); ctx.translate(bgX + bgW * 2, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore(); ctx.drawImage(fundoAtual, bgX + bgW * 2, 0, bgW, ch); ctx.save(); ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore(); }
-            let groundY = ch - alturaChao; if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; if (estradaOffset > 120) estradaOffset -= 120;
+            if (typeof renderizarCeuVIP === 'function') { renderizarCeuVIP(); } let groundY = ch - alturaChao; if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; if (estradaOffset > 120) estradaOffset -= 120;
             ctx.save(); let groundGrad = ctx.createLinearGradient(0, groundY, 0, ch); if (faseAtual === 8 && isNightMode) { groundGrad.addColorStop(0, '#11001c'); groundGrad.addColorStop(1, '#05000a'); } else { groundGrad.addColorStop(0, '#e68a3c'); groundGrad.addColorStop(1, '#8e4a1a'); } ctx.fillStyle = groundGrad; ctx.fillRect(0, groundY, cw, alturaChao); 
             ctx.fillStyle = faseAtual === 8 ? (isNightMode ? '#FF1493' : '#FF4500') : '#FFF5EE'; ctx.beginPath(); ctx.moveTo(0, groundY); for(let i=0; i<=cw; i+=40) { let waveHeight = faseAtual === 8 ? 0 : 5; ctx.lineTo(i, groundY + Math.sin(i*0.05 + bgX*0.1) * waveHeight); } ctx.lineTo(cw, groundY + 15); ctx.lineTo(0, groundY + 15); ctx.fill(); ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(0, groundY + 15, cw, 4); 
             if (faseAtual === 8) { window.extraGroundOffset = (window.extraGroundOffset || 0) + (gameSpeed * 1.5) * timeScale; let offset = window.extraGroundOffset % 120; ctx.strokeStyle = isNightMode ? 'rgba(0, 243, 255, 0.15)' : 'rgba(255, 255, 255, 0.3)'; ctx.lineWidth = 2; for(let x = -offset; x < cw + 150; x += 120) { ctx.beginPath(); ctx.moveTo(x, groundY + 19); ctx.lineTo(x - 80, ch); ctx.stroke(); } } else { ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; for(let x = -150 - estradaOffset; x < cw + 300; x += 120) { ctx.beginPath(); ctx.moveTo(x, groundY + 19); ctx.lineTo(x + 24, groundY + 19); ctx.lineTo(x - 50, ch); ctx.lineTo(x - 110, ch); ctx.fill(); } }
@@ -770,16 +735,12 @@
         let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
         for(let i=0; i<3; i++) { ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY); if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; } if (faseAtual === 2) { if (passaroSprite.complete && passaroSprite.naturalWidth > 0) { let rW = passaroSprite.naturalWidth / 3; ctx.drawImage(passaroSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } else { ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); } } else { if (playerSprite.complete && playerSprite.naturalWidth > 0) { let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); } else { ctx.fillStyle = '#FF1493'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); } } ctx.restore(); }
         if (textosFlutuantes.length > 10) { textosFlutuantes.splice(0, textosFlutuantes.length - 10); } for (let i = textosFlutuantes.length - 1; i >= 0; i--) { let t = textosFlutuantes[i]; t.update(timeScale); t.draw(ctx); if(t.vida <= 0) textosFlutuantes.splice(i, 1); }
-        
-        // Chamada da melhoria premium (efeitos do pássaro e botões de voo)
-        premiumBirdEffects();
-        
         ctx.restore(); if(gameActive && !isPaused) { animationId = requestAnimationFrame(animate); }
     }
     
     window.onload = () => { hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; redimensionarCanvas(); if (!gameActive && fundoImg1.complete) { ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height); } setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); }
 
-// ===== MELHORIAS PREMIUM FASE DO PÁSSARO (INTEGRADAS E CORRIGIDAS) =====
+// ===== MELHORIAS PREMIUM FASE DO PÁSSARO =====
 const flightControls = document.getElementById('flight-controls');
 const flightUpBtn = document.getElementById('flight-up');
 const flightDownBtn = document.getElementById('flight-down');
@@ -825,15 +786,17 @@ damageOverlay.classList.add = function(cls){
     }
 }
 
-// A atualização de efeitos visuais foi movida para dentro do render loop principal para evitar erros
+
 function premiumBirdEffects(){
     updateFlightControlsVisibility();
+
     if(comboGlowTimer > 0){
         comboGlowTimer--;
         progressFill.style.boxShadow = '0 0 18px rgba(255,215,0,0.85)';
     }else{
         progressFill.style.boxShadow = '';
     }
+
     if(premiumFlashTimer > 0){
         premiumFlashTimer--;
         ctx.save();
@@ -843,21 +806,96 @@ function premiumBirdEffects(){
     }
 }
 
+const __originalAnimate = animate;
+animate = function(timeStamp){
+    premiumBirdEffects();
+    return __originalAnimate(timeStamp);
+}
+const originalCollect = player.collect ? player.collect.bind(player) : null;
 window.addEventListener('resize', updateFlightControlsVisibility);
 updateFlightControlsVisibility();
 
 </script>
-
 <script type="module">
-  // FIREBASE (Sem código de animação para não gerar conflito!)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-  
   const firebaseConfig = { apiKey: "AIzaSyD_gYdKNnnhFr-bg1u0HT-O8kUsBWS9akY", authDomain: "isadora-game.firebaseapp.com", projectId: "isadora-game", storageBucket: "isadora-game.firebasestorage.app", messagingSenderId: "256153804637", appId: "1:256153804637:web:34e19d317f1e41ba1892b4" };
   const app = initializeApp(firebaseConfig); const db = getFirestore(app); 
-  
   window.salvarPontuacaoGlobal = async function(nome, pontos, fase) { if (pontos <= 0) return false; try { await addDoc(collection(db, "ranking_global"), { nome: nome, pontuacao: pontos, fase: fase, data: serverTimestamp() }); return true; } catch (e) { console.error("Erro ao salvar rank:", e); return false; } };
   window.carregarRankingGlobal = async function() { const listaRankUI = document.getElementById('lista-ranking-conteudo'); try { const q = query(collection(db, "ranking_global"), orderBy("pontuacao", "desc"), limit(10)); const querySnapshot = await getDocs(q); if (querySnapshot.empty) { listaRankUI.innerHTML = '<p style="color: #A0AAB5;">Seja o primeiro a deixar sua marca!</p>'; return; } let htmlHtml = ''; let posicao = 1; querySnapshot.forEach((doc) => { let d = doc.data(); let classeTop = posicao <= 3 ? `top-${posicao}` : ''; let medalha = posicao === 1 ? '🥇' : (posicao === 2 ? '🥈' : (posicao === 3 ? '🥉' : '🎮')); htmlHtml += `<div class="item-ranking ${classeTop}"><span class="rank-pos">${medalha}</span><span class="rank-nome">${d.nome}</span><span class="rank-pts">${d.pontuacao} PTS</span></div>`; posicao++; }); listaRankUI.innerHTML = htmlHtml; } catch (e) { console.error("Erro ao carregar rank:", e); listaRankUI.innerHTML = '<p style="color: #FF1493;">Não foi possível carregar o ranking. Tente novamente mais tarde.</p>'; } };
+
+// ===== MELHORIAS PREMIUM FASE DO PÁSSARO =====
+const flightControls = document.getElementById('flight-controls');
+const flightUpBtn = document.getElementById('flight-up');
+const flightDownBtn = document.getElementById('flight-down');
+let premiumFlashTimer = 0;
+let comboGlowTimer = 0;
+
+function updateFlightControlsVisibility(){
+    if(!flightControls) return;
+    flightControls.style.display = (gameActive && faseAtual === 2) ? 'block' : 'none';
+}
+
+function setFlightButtonState(active){
+    if(!flightUpBtn) return;
+    flightUpBtn.classList.toggle('active', active);
+    flightDownBtn.classList.toggle('active', !active && faseAtual === 2);
+}
+
+['pointerdown','touchstart'].forEach(evt=>{
+    flightUpBtn?.addEventListener(evt, ()=>{ isHolding = true; setFlightButtonState(true); }, {passive:true});
+    flightDownBtn?.addEventListener(evt, ()=>{ isHolding = false; setFlightButtonState(false); }, {passive:true});
+});
+['pointerup','pointercancel','touchend'].forEach(evt=>{
+    flightUpBtn?.addEventListener(evt, ()=>{ isHolding = false; setFlightButtonState(false); }, {passive:true});
+});
+
+const originalGerenciarCombo = gerenciarCombo;
+gerenciarCombo = function(acertou){
+    originalGerenciarCombo(acertou);
+    if(acertou && comboAtual >= 3){
+        comboGlowTimer = 22;
+        for(let i=0;i<5;i++){
+            particulas.push(new Particula(player.x + 40, player.y + 60, 'rgba(255,215,120,0.8)', (Math.random()*3)-1.5, (Math.random()*-2)-1, Math.random()*5+3));
+        }
+    }
+}
+
+const originalShowDamage = damageOverlay.classList.add.bind(damageOverlay.classList);
+damageOverlay.classList.add = function(cls){
+    originalShowDamage(cls);
+    if(cls === 'damage-active'){
+        shakeIntensity = Math.max(shakeIntensity, 3);
+        premiumFlashTimer = 10;
+    }
+}
+
+const originalUpdateGame = updateGame;
+updateGame = function(deltaTime){
+    originalUpdateGame(deltaTime);
+
+    updateFlightControlsVisibility();
+
+    if(comboGlowTimer > 0){
+        comboGlowTimer--;
+        progressFill.style.boxShadow = '0 0 18px rgba(255,215,0,0.85)';
+    }else{
+        progressFill.style.boxShadow = '';
+    }
+
+    if(premiumFlashTimer > 0){
+        premiumFlashTimer--;
+        ctx.save();
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+    }
+}
+
+const originalCollect = player.collect ? player.collect.bind(player) : null;
+window.addEventListener('resize', updateFlightControlsVisibility);
+updateFlightControlsVisibility();
+
 </script>
 </body>
 </html>
