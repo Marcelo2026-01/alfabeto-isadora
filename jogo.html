@@ -482,11 +482,68 @@
 
     function prepararFase(fase) {
         if (gameActive) dispararFlashTransicao();
-        isGatinha = false; window.catTimer = 0; window.nextCatScore = 1000;
-        if (fase === 1) { pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; metaAlfabeto.innerText = "PONTOS: 0 | LETRAS: 0/26"; metaAlfabeto.style.color = "#FFD700"; letraUi.innerText = "Vamos começar..."; mostrarCinematica("ATO I", "O ALFABETO", "#FFD700"); setTimeout(() => { if(gameActive && !isPaused && faseAtual === 1) { AudioManager.playVoice("Vamos brincar das letras!"); letraUi.innerText = "Letras!"; } }, 1800); }
-        else if (fase === 2) { pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; metaAlfabeto.innerText = "VOO MÁGICO: 0 / 1500"; metaAlfabeto.style.color = "#00FFFF"; letraUi.innerText = "Desvie das Nuvens!"; mostrarCinematica("FASE 2", "O VOO MÁGICO", "#00FFFF"); player.y = window.innerHeight / 2; player.vy = 0; tutorialUI.style.display = 'flex'; document.getElementById('txt-tutorial').innerText = "SEGURE A TELA PARA VOAR"; setTimeout(()=> tutorialUI.style.opacity = '1', 100); }
-        else if (fase === 8) { pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; metaAlfabeto.innerText = "PONTUAÇÃO: 0"; metaAlfabeto.style.color = "#FF4500"; letraUi.innerText = "Sobreviva aos Obstáculos!"; mostrarCinematica("MODO EXTRA", "CORRIDA INFINITA", "#FF4500"); }
-        atualizarProgressoHUD(); player.isJumping = true; isHolding = false; window.obstaculoTimer = 0; itemTimer = fase === 8 ? 1000 : (fase === 2 ? 1000 : -2500); 
+        
+        // 1. LIMPEZA COMPLETA DE MEMÓRIA ENTRE FASES (Evita Objetos Fantasmas e Memory Leak)
+        collectibles = [];
+        particulas = [];
+        textosFlutuantes = [];
+        
+        // 2. RESET SEGURO DE ESTADOS E FÍSICA GLOBAIS
+        isGatinha = false; 
+        window.catTimer = 0; 
+        window.nextCatScore = pontuacao + 1000; // Garante que a meta da gatinha não seja herdada incorretamente
+        gameSpeed = baseGameSpeed;              // Reseta a curva de dificuldade
+        player.tilt = 0;
+        player.vy = 0;                          // Zera a inércia/gravidade
+        
+        if (fase === 1) { 
+            pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; 
+            metaAlfabeto.innerText = "PONTOS: 0 | LETRAS: 0/26"; 
+            metaAlfabeto.style.color = "#FFD700"; 
+            letraUi.innerText = "Vamos começar..."; 
+            mostrarCinematica("ATO I", "O ALFABETO", "#FFD700"); 
+            
+            // Recalcula o Y seguro com base no tamanho real
+            let ajustePe = player.height * player.espacoVazio;
+            player.y = window.innerHeight - alturaChao - (player.height - ajustePe) + 20;
+
+            setTimeout(() => { 
+                if(gameActive && !isPaused && faseAtual === 1) { 
+                    AudioManager.playVoice("Vamos brincar das letras!"); 
+                    letraUi.innerText = "Letras!"; 
+                } 
+            }, 1800); 
+        }
+        else if (fase === 2) { 
+            pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; 
+            metaAlfabeto.innerText = "VOO MÁGICO: 0 / 1500"; 
+            metaAlfabeto.style.color = "#00FFFF"; 
+            letraUi.innerText = "Desvie das Nuvens!"; 
+            mostrarCinematica("FASE 2", "O VOO MÁGICO", "#00FFFF"); 
+            
+            player.y = window.innerHeight / 2; // Centraliza pro voo
+            
+            tutorialUI.style.display = 'flex'; 
+            document.getElementById('txt-tutorial').innerText = "SEGURE A TELA PARA VOAR"; 
+            setTimeout(()=> tutorialUI.style.opacity = '1', 100); 
+        }
+        else if (fase === 8) { 
+            pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; 
+            metaAlfabeto.innerText = "PONTUAÇÃO: 0"; 
+            metaAlfabeto.style.color = "#FF4500"; 
+            letraUi.innerText = "Sobreviva aos Obstáculos!"; 
+            mostrarCinematica("MODO EXTRA", "CORRIDA INFINITA", "#FF4500"); 
+            
+            // Força o personagem a voltar para o chão após o voo
+            let ajustePe = player.height * player.espacoVazio;
+            player.y = window.innerHeight - alturaChao - (player.height - ajustePe) + 20;
+        }
+        
+        atualizarProgressoHUD(); 
+        player.isJumping = true; 
+        isHolding = false; 
+        window.obstaculoTimer = 0; 
+        itemTimer = fase === 8 ? 1000 : (fase === 2 ? 1000 : -2500); 
     }
 
     function renderizarCeuVIP() {
@@ -823,79 +880,6 @@ updateFlightControlsVisibility();
   const app = initializeApp(firebaseConfig); const db = getFirestore(app); 
   window.salvarPontuacaoGlobal = async function(nome, pontos, fase) { if (pontos <= 0) return false; try { await addDoc(collection(db, "ranking_global"), { nome: nome, pontuacao: pontos, fase: fase, data: serverTimestamp() }); return true; } catch (e) { console.error("Erro ao salvar rank:", e); return false; } };
   window.carregarRankingGlobal = async function() { const listaRankUI = document.getElementById('lista-ranking-conteudo'); try { const q = query(collection(db, "ranking_global"), orderBy("pontuacao", "desc"), limit(10)); const querySnapshot = await getDocs(q); if (querySnapshot.empty) { listaRankUI.innerHTML = '<p style="color: #A0AAB5;">Seja o primeiro a deixar sua marca!</p>'; return; } let htmlHtml = ''; let posicao = 1; querySnapshot.forEach((doc) => { let d = doc.data(); let classeTop = posicao <= 3 ? `top-${posicao}` : ''; let medalha = posicao === 1 ? '🥇' : (posicao === 2 ? '🥈' : (posicao === 3 ? '🥉' : '🎮')); htmlHtml += `<div class="item-ranking ${classeTop}"><span class="rank-pos">${medalha}</span><span class="rank-nome">${d.nome}</span><span class="rank-pts">${d.pontuacao} PTS</span></div>`; posicao++; }); listaRankUI.innerHTML = htmlHtml; } catch (e) { console.error("Erro ao carregar rank:", e); listaRankUI.innerHTML = '<p style="color: #FF1493;">Não foi possível carregar o ranking. Tente novamente mais tarde.</p>'; } };
-
-// ===== MELHORIAS PREMIUM FASE DO PÁSSARO =====
-const flightControls = document.getElementById('flight-controls');
-const flightUpBtn = document.getElementById('flight-up');
-const flightDownBtn = document.getElementById('flight-down');
-let premiumFlashTimer = 0;
-let comboGlowTimer = 0;
-
-function updateFlightControlsVisibility(){
-    if(!flightControls) return;
-    flightControls.style.display = (gameActive && faseAtual === 2) ? 'block' : 'none';
-}
-
-function setFlightButtonState(active){
-    if(!flightUpBtn) return;
-    flightUpBtn.classList.toggle('active', active);
-    flightDownBtn.classList.toggle('active', !active && faseAtual === 2);
-}
-
-['pointerdown','touchstart'].forEach(evt=>{
-    flightUpBtn?.addEventListener(evt, ()=>{ isHolding = true; setFlightButtonState(true); }, {passive:true});
-    flightDownBtn?.addEventListener(evt, ()=>{ isHolding = false; setFlightButtonState(false); }, {passive:true});
-});
-['pointerup','pointercancel','touchend'].forEach(evt=>{
-    flightUpBtn?.addEventListener(evt, ()=>{ isHolding = false; setFlightButtonState(false); }, {passive:true});
-});
-
-const originalGerenciarCombo = gerenciarCombo;
-gerenciarCombo = function(acertou){
-    originalGerenciarCombo(acertou);
-    if(acertou && comboAtual >= 3){
-        comboGlowTimer = 22;
-        for(let i=0;i<5;i++){
-            particulas.push(new Particula(player.x + 40, player.y + 60, 'rgba(255,215,120,0.8)', (Math.random()*3)-1.5, (Math.random()*-2)-1, Math.random()*5+3));
-        }
-    }
-}
-
-const originalShowDamage = damageOverlay.classList.add.bind(damageOverlay.classList);
-damageOverlay.classList.add = function(cls){
-    originalShowDamage(cls);
-    if(cls === 'damage-active'){
-        shakeIntensity = Math.max(shakeIntensity, 3);
-        premiumFlashTimer = 10;
-    }
-}
-
-const originalUpdateGame = updateGame;
-updateGame = function(deltaTime){
-    originalUpdateGame(deltaTime);
-
-    updateFlightControlsVisibility();
-
-    if(comboGlowTimer > 0){
-        comboGlowTimer--;
-        progressFill.style.boxShadow = '0 0 18px rgba(255,215,0,0.85)';
-    }else{
-        progressFill.style.boxShadow = '';
-    }
-
-    if(premiumFlashTimer > 0){
-        premiumFlashTimer--;
-        ctx.save();
-        ctx.fillStyle = 'rgba(255,255,255,0.05)';
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.restore();
-    }
-}
-
-const originalCollect = player.collect ? player.collect.bind(player) : null;
-window.addEventListener('resize', updateFlightControlsVisibility);
-updateFlightControlsVisibility();
-
 </script>
 </body>
 </html>
