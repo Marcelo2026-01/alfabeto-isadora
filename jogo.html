@@ -67,7 +67,7 @@
         #btn-pause { right: 5vw; border-radius: 50%; width: clamp(45px, 10vw, 65px); height: clamp(45px, 10vw, 65px); display: flex; justify-content: center; align-items: center; font-size: clamp(20px, 5vw, 30px); }
         #btn-som { right: calc(5vw + clamp(60px, 12vw, 85px)); border-radius: 30px; padding: 0 clamp(15px, 3vw, 25px); height: clamp(45px, 10vw, 65px); display: flex; align-items: center; font-size: clamp(14px, 3vw, 18px); }
 
-        /* MENUS INFANTIS (SUBSTITUINDO O PS5 DARK THEME) */
+        /* MENUS INFANTIS */
         #tutorial-ui { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 40; pointer-events: none; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
         .ps5-tutorial-box { background: #FFF; border: 4px solid var(--destaque); border-radius: 30px; padding: clamp(15px, 4vw, 30px) clamp(30px, 6vw, 50px); color: var(--texto-escuro); font-weight: 900; font-size: clamp(18px, 4vw, 28px); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 8px 0 var(--destaque); animation: pulseTutorial 1.5s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95); }
         @keyframes pulseTutorial { 0% { transform: scale(1) translateY(0) rotate(-2deg); } 100% { transform: scale(1.1) translateY(-10px) rotate(2deg); } }
@@ -89,7 +89,6 @@
         .ps5-menu-options { display: flex; flex-direction: column; gap: clamp(12px, 2vmin, 20px); align-items: flex-start; }
         .play-group { margin-bottom: clamp(10px, 2vmin, 20px); display: flex; flex-direction: column; align-items: flex-start; gap: 10px; animation: bounceInLeft 1s both; animation-delay: 0.2s; }
         
-        /* Botões Estilo Marshmallow / Livro Infantil */
         .ps5-btn { background: linear-gradient(180deg, #FF9AA2 0%, #E57373 100%); border: 4px solid #FFF; border-radius: 35px; color: #FFF; font-size: clamp(18px, 4vw, 32px); font-family: 'Fredoka', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(12px, 2vw, 15px) clamp(25px, 4vw, 40px); display: flex; align-items: center; box-shadow: 0 8px 0 #E57373, 0 15px 25px rgba(0,0,0,0.25); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: bounceInLeft 1s both; transform-origin: left center; position: relative; overflow: hidden; }
         .ps5-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(45deg); transition: 0.5s; opacity: 0; }
         .ps5-btn:hover::after { opacity: 1; left: 100%; transition: 0.5s; }
@@ -449,7 +448,6 @@
         playMagicSFX() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gainL = this.audioCtx.createGain(); const gainR = this.audioCtx.createGain(); const pannerL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; const pannerR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; if(pannerL && pannerR) { pannerL.pan.value = -0.5; pannerR.pan.value = 0.5; gainL.connect(pannerL); pannerL.connect(this.masterCompressor); gainR.connect(pannerR); pannerR.connect(this.masterCompressor); } else { gainL.connect(this.masterCompressor); gainR.connect(this.masterCompressor); } [gainL, gainR].forEach(g => { g.gain.setValueAtTime(0.001, now); g.gain.exponentialRampToValueAtTime(0.15, now + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + 0.8); }); [880, 1108, 1318].forEach((f, i) => { let o1 = this.audioCtx.createOscillator(); let o2 = this.audioCtx.createOscillator(); o1.frequency.setValueAtTime(f, now + (i*0.05)); o2.frequency.setValueAtTime(f * 1.005, now + (i*0.05)); o1.connect(gainL); o2.connect(gainR); o1.start(now + (i*0.05)); o2.start(now + (i*0.05)); o1.stop(now + 0.8); o2.stop(now + 0.8); }); } catch(e) {} },
         playSuccessSFX() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.15, now + 0.1); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); const freqs = [523.25, 659.25, 783.99, 1046.50]; let timeOffset = 0; freqs.forEach(f => { let osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + timeOffset); osc.connect(gain); osc.start(now + timeOffset); osc.stop(now + 0.8); timeOffset += 0.1; }); } catch (e) {} },
         playErrorSFX() { 
-            // Premium Bubbly 'Boing' error sound
             if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try { 
                 const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); 
@@ -600,7 +598,18 @@
     btnVoltarMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(pauseScreen); }); btnVitoriaMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(victoryScreen); });
     btnJogarNovamente.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); victoryScreen.style.opacity = '0'; setTimeout(() => { victoryScreen.style.display = 'none'; gameActive = false; if(animationId) { cancelAnimationFrame(animationId); animationId = null; } AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
 
-    function redimensionarCanvas() { let dpr = window.devicePixelRatio || 1; canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px'; canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr; ctx.scale(dpr, dpr); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high"; alturaChao = window.innerHeight * 0.18; if (window.innerHeight < 500 || window.innerWidth < 768) { scaleMultiplier = window.innerHeight < 400 ? 0.45 : 0.60; baseGameSpeed = 4.5; if(player) { player.jumpPower = -15.5; player.gravity = 0.8; } } else { scaleMultiplier = 1; baseGameSpeed = 6.5; if(player) { player.jumpPower = -21; player.gravity = 1.1; } } gameSpeed = baseGameSpeed; if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) { avisoRotacao.style.display = 'flex'; } else { avisoRotacao.style.display = 'none'; } }
+    function redimensionarCanvas() { 
+        let dpr = window.devicePixelRatio || 1; 
+        canvas.style.width = window.innerWidth + 'px'; 
+        canvas.style.height = window.innerHeight + 'px'; 
+        canvas.width = window.innerWidth * dpr; 
+        canvas.height = window.innerHeight * dpr; 
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // Correção CIRÚRGICA: Resetar transformação para evitar acumulação de DPR
+        ctx.scale(dpr, dpr); 
+        ctx.imageSmoothingEnabled = true; 
+        ctx.imageSmoothingQuality = "high"; 
+        alturaChao = window.innerHeight * 0.18; 
+        if (window.innerHeight < 500 || window.innerWidth < 768) { scaleMultiplier = window.innerHeight < 400 ? 0.45 : 0.60; baseGameSpeed = 4.5; if(player) { player.jumpPower = -15.5; player.gravity = 0.8; } } else { scaleMultiplier = 1; baseGameSpeed = 6.5; if(player) { player.jumpPower = -21; player.gravity = 1.1; } } gameSpeed = baseGameSpeed; if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) { avisoRotacao.style.display = 'flex'; } else { avisoRotacao.style.display = 'none'; } }
     window.addEventListener('resize', redimensionarCanvas); window.addEventListener('orientationchange', () => { setTimeout(redimensionarCanvas, 100); setTimeout(redimensionarCanvas, 500); });
     if (btnForcarGiro) { btnForcarGiro.addEventListener('click', (e) => { e.preventDefault(); btnForcarGiro.innerText = "VIRE O APARELHO..."; let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(() => { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; }); } else { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; } }); }
 
@@ -954,7 +963,8 @@
         } else {
             bgX -= (gameSpeed * 2.5) * timeScale;
             drawProceduralBG(ctx, cw, ch, timeScale);
-            let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.4)'); ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); ctx.restore();
+            let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.4)'); ctx.fillStyle = aoGrad; 
+            ctx.fillRect(0, ch - 60, cw, 60); // Correção CIRÚRGICA: Remoção do ctx.restore() excessivo aqui que vazava o estado da pilha
         }
 
         player.update(timeScale);
@@ -1033,7 +1043,10 @@ let comboGlowTimer = 0;
 
 function updateFlightControlsVisibility(){
     if(!flightControls) return;
-    flightControls.style.display = (gameActive && faseAtual === 2) ? 'block' : 'none';
+    let targetDisplay = (gameActive && faseAtual === 2) ? 'block' : 'none';
+    if (flightControls.style.display !== targetDisplay) { // Correção CIRÚRGICA: Impedir manipulação inútil do DOM no RequestAnimationFrame
+        flightControls.style.display = targetDisplay;
+    }
 }
 
 function setFlightButtonState(active){
@@ -1103,7 +1116,25 @@ updateFlightControlsVisibility();
   const firebaseConfig = { apiKey: "AIzaSyD_gYdKNnnhFr-bg1u0HT-O8kUsBWS9akY", authDomain: "isadora-game.firebaseapp.com", projectId: "isadora-game", storageBucket: "isadora-game.firebasestorage.app", messagingSenderId: "256153804637", appId: "1:256153804637:web:34e19d317f1e41ba1892b4" };
   const app = initializeApp(firebaseConfig); const db = getFirestore(app); 
   window.salvarPontuacaoGlobal = async function(nome, pontos, fase) { if (pontos <= 0) return false; try { await addDoc(collection(db, "ranking_global"), { nome: nome, pontuacao: pontos, fase: fase, data: serverTimestamp() }); return true; } catch (e) { console.error("Erro ao salvar rank:", e); return false; } };
-  window.carregarRankingGlobal = async function() { const listaRankUI = document.getElementById('lista-ranking-conteudo'); try { const q = query(collection(db, "ranking_global"), orderBy("pontuacao", "desc"), limit(10)); const querySnapshot = await getDocs(q); if (querySnapshot.empty) { listaRankUI.innerHTML = '<p style="color: #A0AAB5;">Seja o primeiro a deixar sua marca!</p>'; return; } let htmlHtml = ''; let posicao = 1; querySnapshot.forEach((doc) => { let d = doc.data(); let classeTop = posicao <= 3 ? `top-${posicao}` : ''; let medalha = posicao === 1 ? '🥇' : (posicao === 2 ? '🥈' : (posicao === 3 ? '🥉' : '🎮')); htmlHtml += `<div class="item-ranking ${classeTop}"><span class="rank-pos">${medalha}</span><span class="rank-nome">${d.nome}</span><span class="rank-pts">${d.pontuacao} PTS</span></div>`; posicao++; }); listaRankUI.innerHTML = htmlHtml; } catch (e) { console.error("Erro ao carregar rank:", e); listaRankUI.innerHTML = '<p style="color: #FF1493;">Não foi possível carregar o ranking. Tente novamente mais tarde.</p>'; } };
+  window.carregarRankingGlobal = async function() { 
+      const listaRankUI = document.getElementById('lista-ranking-conteudo'); 
+      try { 
+          const q = query(collection(db, "ranking_global"), orderBy("pontuacao", "desc"), limit(10)); 
+          const querySnapshot = await getDocs(q); 
+          if (querySnapshot.empty) { listaRankUI.innerHTML = '<p style="color: #A0AAB5;">Seja o primeiro a deixar sua marca!</p>'; return; } 
+          let htmlHtml = ''; let posicao = 1; 
+          const escapeHTML = (str) => str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); // Correção CIRÚRGICA: XSS Prevent
+          querySnapshot.forEach((doc) => { 
+              let d = doc.data(); 
+              let nomeSeguro = escapeHTML(d.nome || 'ANÔNIMO');
+              let classeTop = posicao <= 3 ? `top-${posicao}` : ''; 
+              let medalha = posicao === 1 ? '🥇' : (posicao === 2 ? '🥈' : (posicao === 3 ? '🥉' : '🎮')); 
+              htmlHtml += `<div class="item-ranking ${classeTop}"><span class="rank-pos">${medalha}</span><span class="rank-nome">${nomeSeguro}</span><span class="rank-pts">${d.pontuacao} PTS</span></div>`; 
+              posicao++; 
+          }); 
+          listaRankUI.innerHTML = htmlHtml; 
+      } catch (e) { console.error("Erro ao carregar rank:", e); listaRankUI.innerHTML = '<p style="color: #FF1493;">Não foi possível carregar o ranking. Tente novamente mais tarde.</p>'; } 
+  };
 </script>
 </body>
 </html>
