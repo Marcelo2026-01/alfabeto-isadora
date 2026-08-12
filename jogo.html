@@ -51,7 +51,7 @@
         .cinematic-active .cinematic-subtext { opacity: 1; transform: translateY(0); }
         .cinematic-fadeout .cinematic-text, .cinematic-fadeout .cinematic-subtext { opacity: 0; transform: scale(1.2); filter: blur(10px); }
 
-        /* HUD DO JOGO BUBBLY - CORRIGIDO PARA PROPORÇÃO RESPONSIVA E COLEÇÃO DE LETRAS */
+        /* HUD DO JOGO BUBBLY */
         #ui-layer { position: absolute; top: 15px; left: 3vw; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 3px solid #FFF; border-radius: 20px; padding: clamp(8px, 1.5vmin, 15px) clamp(15px, 3vmin, 25px); box-shadow: 0 8px 20px rgba(0,0,0,0.15), 0 5px 0 var(--secundaria); color: var(--texto-escuro); font-weight: 900; pointer-events: none; z-index: 20; display: flex; flex-direction: column; max-width: 55vw; margin-top: clamp(10px, 5vmin, 30px); }
         #meta-alfabeto { font-size: clamp(10px, 2vw, 16px); color: var(--primaria); text-transform: uppercase; margin-bottom: 3px; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         
@@ -74,7 +74,6 @@
         #btn-pause { right: 3vw; border-radius: 50%; width: clamp(35px, 7vw, 50px); height: clamp(35px, 7vw, 50px); display: flex; justify-content: center; align-items: center; font-size: clamp(14px, 3vw, 22px); }
         #btn-som { right: calc(3vw + clamp(45px, 9vw, 65px)); border-radius: 25px; padding: 0 clamp(10px, 2vw, 20px); height: clamp(35px, 7vw, 50px); display: flex; align-items: center; font-size: clamp(11px, 2vw, 16px); }
 
-        /* MENUS INFANTIS - AJUSTE DE PROPORÇÃO */
         #tutorial-ui { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 40; pointer-events: none; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
         .ps5-tutorial-box { background: #FFF; border: 3px solid var(--destaque); border-radius: 25px; padding: clamp(10px, 3vw, 20px) clamp(20px, 5vw, 35px); color: var(--texto-escuro); font-weight: 900; font-size: clamp(14px, 3.5vw, 22px); text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 6px 0 var(--destaque); animation: pulseTutorial 1.5s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95); }
         @keyframes pulseTutorial { 0% { transform: scale(1) translateY(0) rotate(-2deg); } 100% { transform: scale(1.1) translateY(-8px) rotate(2deg); } }
@@ -96,7 +95,6 @@
         .ps5-menu-options { display: flex; flex-direction: column; gap: clamp(8px, 1.5vmin, 15px); align-items: flex-start; }
         .play-group { margin-bottom: clamp(8px, 1.5vmin, 15px); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; animation: bounceInLeft 1s both; animation-delay: 0.2s; }
         
-        /* Botões Estilo Marshmallow / Livro Infantil - Adaptados Premium */
         .ps5-btn { background: linear-gradient(180deg, #FF9AA2 0%, #E57373 100%); border: 3px solid #FFF; border-radius: 30px; color: #FFF; font-size: clamp(14px, 3vw, 24px); font-family: 'Fredoka', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(10px, 1.5vw, 15px) clamp(20px, 3vw, 35px); display: flex; align-items: center; box-shadow: 0 6px 0 #E57373, 0 10px 20px rgba(0,0,0,0.25); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: bounceInLeft 1s both; transform-origin: left center; position: relative; overflow: hidden; }
         .ps5-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(45deg); transition: 0.5s; opacity: 0; }
         .ps5-btn:hover::after { opacity: 1; left: 100%; transition: 0.5s; }
@@ -105,27 +103,20 @@
         .ps5-btn:nth-child(2) { animation-delay: 0.3s; background: linear-gradient(180deg, #A8E6CF 0%, #7AC5A9 100%); box-shadow: 0 6px 0 #68A68F, 0 10px 20px rgba(0,0,0,0.25); }
         .ps5-btn:nth-child(2):hover { box-shadow: 0 9px 0 #68A68F, 0 15px 25px rgba(0,0,0,0.3); }
         .ps5-btn:nth-child(2):active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #68A68F; }
+        .ps5-btn:nth-child(3) { animation-delay: 0.4s; background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%); box-shadow: 0 6px 0 #D2691E, 0 10px 20px rgba(0,0,0,0.25); color: #FFF; -webkit-text-stroke: 1px #D2691E;}
+        .ps5-btn:nth-child(3):hover { box-shadow: 0 9px 0 #D2691E, 0 15px 25px rgba(0,0,0,0.3); }
+        .ps5-btn:nth-child(3):active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #D2691E; }
         .ps5-btn .ps5-icon { margin-right: 12px; font-size: 1.1em; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
 
         .ps5-hero-area { width: 45%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
         .ps5-hero-glow { position: absolute; width: clamp(200px, 40vw, 500px); height: clamp(200px, 40vw, 500px); background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 215, 0, 0.4) 40%, transparent 70%); border-radius: 50%; animation: pulsarSol 4s alternate infinite ease-in-out; }
         
-        /* Isadora Viva - Menu Premium */
-        @keyframes breatheMascot {
-            0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
-            50% { transform: translateY(-3px) scaleX(1.01) scaleY(0.98); }
-        }
-        @keyframes idlePop {
-            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
-            15% { transform: translateY(-12px) rotate(-3deg) scale(1.03); }
-            30% { transform: translateY(0) rotate(3deg) scale(1.03); }
-            45% { transform: translateY(-6px) rotate(-1deg) scale(1.01); }
-            60% { transform: translateY(0) rotate(1deg) scale(1.01); }
-        }
+        @keyframes breatheMascot { 0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); } 50% { transform: translateY(-3px) scaleX(1.01) scaleY(0.98); } }
+        @keyframes idlePop { 0%, 100% { transform: translateY(0) rotate(0deg) scale(1); } 15% { transform: translateY(-12px) rotate(-3deg) scale(1.03); } 30% { transform: translateY(0) rotate(3deg) scale(1.03); } 45% { transform: translateY(-6px) rotate(-1deg) scale(1.01); } 60% { transform: translateY(0) rotate(1deg) scale(1.01); } }
         .ps5-hero-mascot { position: relative; z-index: 2; width: clamp(180px, 35vw, 450px); height: clamp(220px, 45vw, 550px); background-image: url('Isadora.png'); background-size: contain; background-position: center bottom; background-repeat: no-repeat; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2)); animation: breatheMascot 4s ease-in-out infinite; transform-origin: center bottom; }
         .ps5-hero-mascot.idle-active { animation: idlePop 1.5s ease-in-out; }
 
-        /* MODAIS MAIS PROPORCIONAIS E SUAVES */
+        /* MODAIS, VITÓRIA PREMIUM & MENUS */
         .modal-padrao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; padding: 20px;}
         .caixa-modal { background: #FFF; border: 5px solid var(--destaque); border-radius: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.2), inset 0 -8px 0 rgba(0,0,0,0.05); padding: clamp(15px, 4vmin, 30px); text-align: center; color: var(--texto-escuro); width: 90vw; max-width: 450px; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
         @keyframes popModal { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -158,24 +149,31 @@
         ::-webkit-scrollbar-thumb { background: #FFB7B2; border-radius: 8px; border: 2px solid #F0F0F0; }
         ::-webkit-scrollbar-thumb:hover { background: #FF9AA2; }
 
-        /* PAUSA, VITÓRIA, HISTÓRIA E SAÍDA */
         #pause-screen, #victory-screen, #exit-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 12px; opacity: 0; transition: opacity 0.3s ease; text-align: center; padding: 20px; box-sizing: border-box;}
         #exit-screen { z-index: 99999; }
+        
         .exit-box { background: #FFF; border: 5px solid var(--primaria); border-radius: 30px; padding: clamp(15px, 4vw, 35px); box-shadow: 0 12px 30px rgba(0,0,0,0.2), inset 0 -6px 0 rgba(0,0,0,0.05); max-width: 80%; display: flex; flex-direction: column; align-items: center; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
+        /* CAIXA DE VITÓRIA PREMIUM (ALFABETO) */
+        .victory-box { background: #FFF; border: 5px solid var(--destaque); border-radius: 30px; padding: clamp(20px, 4vw, 40px); box-shadow: 0 15px 40px rgba(0,0,0,0.2), inset 0 -8px 0 rgba(0,0,0,0.05); max-width: 90vw; width: 600px; display: flex; flex-direction: column; align-items: center; animation: popModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; margin-top: 40px; }
+        .victory-mascot { width: clamp(100px, 20vw, 140px); height: clamp(120px, 24vw, 170px); background-image: url('Isadora.png'); background-size: contain; background-position: center bottom; background-repeat: no-repeat; margin-top: clamp(-70px, -12vw, -100px); margin-bottom: 10px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); animation: bounceMascot 3s infinite ease-in-out; }
+        .victory-stars { font-size: clamp(30px, 6vw, 45px); letter-spacing: 5px; margin-bottom: 8px; text-shadow: 0 4px 0 #D2691E; animation: pulseTutorial 2s infinite alternate; }
+        .victory-badge { background: linear-gradient(90deg, #FFD700, #FFA500); color: #FFF; padding: 6px 20px; border-radius: 20px; font-size: clamp(12px, 3vw, 18px); font-weight: 900; text-transform: uppercase; box-shadow: 0 4px 0 #D2691E, 0 8px 15px rgba(0,0,0,0.2); margin-bottom: 15px; border: 2px solid #FFF; }
+        .victory-stats { display: flex; gap: 10px; background: #F9F9F9; padding: 12px; border-radius: 20px; border: 3px solid #E0E0E0; margin-bottom: 15px; width: 100%; justify-content: center; flex-wrap: wrap; box-shadow: inset 0 3px 5px rgba(0,0,0,0.05); }
+        .stat-item { font-size: clamp(12px, 3vw, 16px); font-weight: 800; color: var(--texto-escuro); display: flex; align-items: center; gap: 5px; background: #FFF; padding: 6px 12px; border-radius: 12px; box-shadow: 0 3px 0 #E0E0E0; }
+        .victory-alphabet { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 15px; color: var(--destaque); font-size: clamp(16px, 3.5vw, 24px); font-weight: 900; text-shadow: 0 2px 0 #D2691E; max-width: 90%; }
+        @keyframes popAlpha { 0% { opacity: 0; transform: scale(0.1); } 100% { opacity: 1; transform: scale(1); } }
+
         .btn-pause-ui { background: #FFF; color: var(--texto-escuro); border: 3px solid #E0E0E0; border-radius: 20px; padding: clamp(8px, 1.5vmin, 12px) clamp(15px, 4vmin, 30px); font-size: clamp(14px, 3vmin, 20px); font-weight: 900; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; width: clamp(200px, 50vw, 300px); margin: 6px 0; box-shadow: 0 5px 0 #E0E0E0; }
         .btn-pause-ui:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 7px 0 #D0D0D0; } .btn-pause-ui:active { transform: scale(0.95) translateY(4px); box-shadow: 0 0 0 #D0D0D0; }
         .btn-pause-ui.sair { background: #FFB7B2; color: #FFF; border-color: #FFF; box-shadow: 0 5px 0 #E57373; } .btn-pause-ui.sair:hover { box-shadow: 0 7px 0 #E57373; filter: brightness(1.05); } .btn-pause-ui.sair:active { box-shadow: 0 0 0 #E57373; }
-        
         .btn-pause-ui.destaque-ps5 { background: linear-gradient(180deg, #FFD700, #FFA500); color: #FFF; border: 3px solid #FFF; box-shadow: 0 6px 0 #D2691E, 0 12px 20px rgba(0,0,0,0.2); margin-bottom: 12px; }
         .btn-pause-ui.destaque-ps5:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 9px 0 #D2691E, 0 15px 25px rgba(0,0,0,0.25); filter: brightness(1.05); } .btn-pause-ui.destaque-ps5:active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #D2691E; }
 
         .trophy-icon { font-size: clamp(50px, 10vw, 90px); margin-bottom: 8px; animation: bounceTrophy 2s ease-in-out infinite alternate; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); }
-        @keyframes bounceTrophy { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-15px) scale(1.05) rotate(5deg); } }
-        
         .victory-title { color: var(--primaria); font-size: clamp(28px, 6vw, 60px); font-weight: 900; margin-bottom: 4px; text-transform: uppercase; -webkit-text-stroke: 1.5px #FFF; text-shadow: 0 4px 0 #FFF, 0 8px 12px rgba(0,0,0,0.1); }
         .victory-subtitle { color: var(--destaque); font-size: clamp(14px, 3.5vw, 24px); margin-bottom: 20px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.1); background: #FFF; padding: 4px 15px; border-radius: 15px; border: 2px solid var(--destaque); }
-        .credits { color: #888; font-size: clamp(12px, 2.5vw, 15px); margin-bottom: 25px; font-weight: 700; }
+        .credits { color: #888; font-size: clamp(12px, 2.5vw, 15px); margin-bottom: 25px; font-weight: 700; text-align: center; }
 
         /* LIVRO DE HISTÓRIA PREMIUM */
         #modal-historia { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; padding: 20px;}
@@ -214,7 +212,19 @@
             #meta-alfabeto { font-size: 10px; margin-bottom: 2px; } #letra-ui { font-size: 18px; } .progress-bar-container { height: 6px; margin-top: 4px; }
             .btn-corner { top: 8px; } #btn-pause { width: 35px; height: 35px; font-size: 16px; right: 3vw; border-width: 2px; box-shadow: 0 3px 0 var(--secundaria); } #btn-som { height: 35px; font-size: 10px; padding: 0 12px; right: calc(3vw + 45px); border-width: 2px; box-shadow: 0 3px 0 var(--secundaria); }
             .btn-pause-ui { font-size: 14px; padding: 8px 15px; margin: 3px 0; width: 180px; } .titulo-jogo { font-size: 28px !important; margin-bottom: 8px; }
-            #victory-screen { gap: 6px; } .trophy-icon { font-size: clamp(40px, 9vw, 65px); margin-bottom: 0; } .victory-title { font-size: clamp(24px, 6vw, 40px); margin-bottom: 0; } .victory-subtitle { font-size: clamp(12px, 3vw, 15px); margin-bottom: 8px; } .credits { font-size: clamp(10px, 2vw, 12px); margin-bottom: 12px; }
+            
+            #victory-screen { gap: 6px; } 
+            .victory-box { padding: 15px; margin-top: 25px; border-width: 3px; }
+            .victory-mascot { margin-top: clamp(-50px, -10vw, -80px); }
+            .victory-stars { font-size: clamp(24px, 5vw, 30px); margin-bottom: 4px; }
+            .victory-title { font-size: clamp(20px, 5vw, 35px); margin-bottom: 0; } 
+            .victory-subtitle { font-size: clamp(10px, 2.5vw, 14px); margin-bottom: 8px; } 
+            .victory-badge { padding: 4px 15px; font-size: 10px; margin-bottom: 10px; }
+            .victory-stats { padding: 8px; margin-bottom: 10px; gap: 6px; }
+            .stat-item { padding: 4px 8px; font-size: 10px; }
+            .victory-alphabet { font-size: clamp(12px, 3vw, 16px); gap: 4px; margin-bottom: 10px; }
+            .credits { font-size: clamp(10px, 2vw, 12px); margin-bottom: 10px; }
+            
             #livro-container { padding: 15px; flex-shrink: 1; overflow-y: auto; max-height: 85vh;} .foto-casa-livro { height: clamp(80px, 20vmin, 130px); margin-bottom: 8px; } #modal-historia { padding: 8px; } #btn-fechar-historia { top: 8px; right: 8px; width: 35px; height: 35px; }
             .caixa-modal { padding: 15px; border-width: 3px; } .input-nome { padding: 10px; font-size: 16px; margin: 10px 0; border-width: 2px; }
         }
@@ -315,13 +325,31 @@
             <button id="btn-voltar-menu" class="btn-pause-ui sair">MENU PRINCIPAL</button>
         </div>
 
+        <!-- TELA DE VITÓRIA PREMIUM -->
         <div id="victory-screen">
-            <div class="trophy-icon">🏆</div>
-            <h1 class="victory-title" id="titulo-vitoria">BOM TRABALHO!</h1>
-            <h2 class="victory-subtitle" id="subtitulo-vitoria">A ENVIAR PONTOS PARA A NUVEM...</h2>
-            <div class="credits" id="creditos-vitoria">Aguarde...</div>
-            <button id="btn-jogar-novamente" class="btn-pause-ui destaque-ps5">TENTAR NOVAMENTE</button>
-            <button id="btn-vitoria-menu" class="btn-pause-ui">VOLTAR AO MENU</button>
+            <div class="victory-box">
+                <div class="victory-mascot"></div>
+                <h1 class="victory-title" id="titulo-vitoria">VOCÊ CONSEGUIU!</h1>
+                <h2 class="victory-subtitle" id="subtitulo-vitoria">Você descobriu todas as letras!</h2>
+                
+                <div class="victory-stars">⭐⭐⭐</div>
+                <div class="victory-badge" id="badge-vitoria">🏆 MESTRE DO ALFABETO</div>
+                
+                <div class="victory-stats">
+                    <div class="stat-item"><span>🔤 Letras:</span> <span id="stat-letras">26/26</span></div>
+                    <div class="stat-item"><span>⭐ Pontos:</span> <span id="stat-pontos">0</span></div>
+                    <div class="stat-item"><span>❤️ Vidas:</span> <span id="stat-vidas">3</span></div>
+                </div>
+                
+                <div class="victory-alphabet" id="victory-alphabet"></div>
+                
+                <div class="credits" id="creditos-vitoria">Aguarde...</div>
+                
+                <div class="victory-buttons" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%;">
+                    <button id="btn-jogar-novamente" class="btn-pause-ui destaque-ps5">JOGAR NOVAMENTE</button>
+                    <button id="btn-vitoria-menu" class="btn-pause-ui">VOLTAR AO MENU</button>
+                </div>
+            </div>
         </div>
 
         <div id="exit-screen">
@@ -570,32 +598,60 @@
     }
     
     async function encerrarJogo(vitoria = false) {
-        if(animationId) { cancelAnimationFrame(animationId); animationId = null; } 
         gameActive = false; isHolding = false; hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; 
         AudioManager.stopAll(); 
+        
         let pontosFinais = Math.floor(pontuacao); 
         victoryScreen.style.display = 'flex'; setTimeout(() => { victoryScreen.style.opacity = '1'; }, 10);
         
-        document.getElementById('titulo-vitoria').innerText = vitoria ? "ALFABETO COMPLETO!" : "FIM DE JOGO!"; 
-        document.getElementById('titulo-vitoria').style.color = vitoria ? "#FFD700" : "#FF9AA2"; 
-        document.getElementById('subtitulo-vitoria').innerText = "A ENVIAR PONTOS PARA A NUVEM..."; 
-        document.querySelector('.trophy-icon').innerText = "☁️";
-        
-        let gravouOnline = false; if(window.salvarPontuacaoGlobal && nomeJogador !== "") { gravouOnline = await window.salvarPontuacaoGlobal(nomeJogador, pontosFinais, 1); }
-        if (gravouOnline) { 
-            AudioManager.playSuccessSFX(); 
-            document.getElementById('titulo-vitoria').innerText = vitoria ? "VOCÊ VENCEU!" : "PONTOS SALVOS!"; 
+        const isAlfabetoCompleto = letrasColetadas.length >= 26;
+
+        if (isAlfabetoCompleto || vitoria) {
+            document.getElementById('titulo-vitoria').innerText = "VOCÊ CONSEGUIU!"; 
             document.getElementById('titulo-vitoria').style.color = "#FFD700"; 
-            document.getElementById('subtitulo-vitoria').innerText = `${nomeJogador} FEZ ${pontosFinais} PTS!`; 
-            document.querySelector('.trophy-icon').innerText = "🏆"; 
-            document.getElementById('creditos-vitoria').innerHTML = "Seu recorde está no Ranking Global!"; 
-            if(vitoria) {
-                for(let i=0; i<30; i++) { particulas.push(new Particula(canvas.width/2, canvas.height/2, '#FFD700', (Math.random()*20)-10, (Math.random()*20)-10, 15)); }
+            document.getElementById('subtitulo-vitoria').innerText = "Você descobriu todas as letras!"; 
+            
+            document.getElementById('badge-vitoria').style.display = 'inline-block';
+            document.getElementById('stat-pontos').innerText = pontosFinais;
+            document.getElementById('stat-vidas').innerText = vidasExtra;
+            document.getElementById('stat-letras').innerText = `${letrasColetadas.length}/26`;
+            
+            let alphaHtml = '';
+            AlfabetoIsadora.forEach((a, i) => {
+                alphaHtml += `<span style="animation: popAlpha 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${i*0.05}s; opacity: 0; transform: scale(0.1); display: inline-block;">${a.letra}</span>`;
+            });
+            document.getElementById('victory-alphabet').innerHTML = alphaHtml;
+
+            for(let j=0; j<80; j++) { 
+                let angle = Math.random() * Math.PI;
+                let speed = Math.random() * 15 + 5; 
+                particulas.push(new Particula(window.innerWidth/2, -50, ['#FFD700', '#FF9AA2', '#B5EAD7', '#87CEEB'][Math.floor(Math.random()*4)], Math.cos(angle)*speed, Math.abs(Math.sin(angle))*speed + 5, Math.random()*15+5)); 
             }
+        } else {
+            document.getElementById('titulo-vitoria').innerText = "FIM DE JOGO!"; 
+            document.getElementById('titulo-vitoria').style.color = "#FF9AA2"; 
+            document.getElementById('subtitulo-vitoria').innerText = "Continue treinando!"; 
+            
+            document.getElementById('badge-vitoria').style.display = 'none';
+            document.getElementById('stat-pontos').innerText = pontosFinais;
+            document.getElementById('stat-vidas').innerText = vidasExtra;
+            document.getElementById('stat-letras').innerText = `${letrasColetadas.length}/26`;
+            document.getElementById('victory-alphabet').innerHTML = ''; 
+        }
+
+        if (!animationId) { animationId = requestAnimationFrame(animate); }
+
+        let gravouOnline = false; 
+        if(window.salvarPontuacaoGlobal && nomeJogador !== "") { 
+            document.getElementById('creditos-vitoria').innerHTML = "A enviar pontos para a nuvem...";
+            gravouOnline = await window.salvarPontuacaoGlobal(nomeJogador, pontosFinais, 1); 
+        }
+        
+        if (gravouOnline) { 
+            if(isAlfabetoCompleto) AudioManager.playSuccessSFX(); 
+            document.getElementById('creditos-vitoria').innerHTML = "Seu recorde está no Ranking Global!"; 
         } else { 
-            AudioManager.playErrorVoice(); 
-            document.querySelector('.trophy-icon').innerText = vitoria ? "⭐" : "🌵"; 
-            document.getElementById('subtitulo-vitoria').innerText = `PONTOS: ${pontosFinais}`; 
+            if(isAlfabetoCompleto) AudioManager.playSuccessSFX(); else AudioManager.playErrorVoice(); 
             document.getElementById('creditos-vitoria').innerHTML = "Jogue novamente para bater seu recorde!"; 
         }
     }
@@ -1010,6 +1066,12 @@
             
             ctx.clearRect(0, 0, cw, ch);
             drawProceduralBG(ctx, cw, ch, timeScale, true);
+            
+            for (let i = particulas.length - 1; i >= 0; i--) { 
+                let p = particulas[i]; p.update(timeScale); p.draw(ctx); 
+                if (p.vida <= 0) particulas.splice(i, 1); 
+            }
+
             animationId = requestAnimationFrame(animate);
             return;
         }
@@ -1053,7 +1115,7 @@
             setTimeout(() => {
                 encerrarJogo(true);
                 window.isCelebration = false;
-            }, 4000);
+            }, 3500);
         }
 
         if (itemTimer > itemInterval && !window.isCelebration) { 
