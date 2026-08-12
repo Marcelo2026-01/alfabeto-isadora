@@ -51,7 +51,7 @@
         .cinematic-active .cinematic-subtext { opacity: 1; transform: translateY(0); }
         .cinematic-fadeout .cinematic-text, .cinematic-fadeout .cinematic-subtext { opacity: 0; transform: scale(1.2); filter: blur(10px); }
 
-        /* HUD DO JOGO BUBBLY */
+        /* HUD DO JOGO BUBBLY - CORRIGIDO PARA PROPORÇÃO RESPONSIVA E COLEÇÃO DE LETRAS */
         #ui-layer { position: absolute; top: 15px; left: 3vw; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 3px solid #FFF; border-radius: 20px; padding: clamp(8px, 1.5vmin, 15px) clamp(15px, 3vmin, 25px); box-shadow: 0 8px 20px rgba(0,0,0,0.15), 0 5px 0 var(--secundaria); color: var(--texto-escuro); font-weight: 900; pointer-events: none; z-index: 20; display: flex; flex-direction: column; max-width: 55vw; margin-top: clamp(10px, 5vmin, 30px); }
         #meta-alfabeto { font-size: clamp(10px, 2vw, 16px); color: var(--primaria); text-transform: uppercase; margin-bottom: 3px; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         
@@ -428,7 +428,7 @@
     let tutorialAtivo = false; let faseAtual = 1; let isInfinite = false;
     let animationId = null; let initTimeoutId = null; let hitStopTime = 0; let shakeIntensity = 0; let pontuacao = 0; 
     let vidasExtra = 3; let invulneravelTimer = 0;
-    window.isCelebration = false;
+    window.isCelebration = false; window.audioTimeouts = [];
 
     const AlfabetoIsadora = [ { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, { letra: 'J', palavra: 'Jacaré' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leão' }, { letra: 'M', palavra: 'Macaco' }, { letra: 'N', initial: 'Nuvem', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xícara' }, { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } ];
     let letrasParaVencerFase1 = 26; let letrasColetadas = []; let isHolding = false; let idleTime = 0;
@@ -447,12 +447,15 @@
             if (comboAtual >= 3) { progressFill.classList.add('combo-ativo'); letraUi.classList.add('texto-combo-ativo'); }
             
             if (comboAtual === 3) { 
-                AudioManager.playVoice("Ótimo!"); 
-                textosFlutuantes.push(new TextoFlutuante("ÓTIMO!", window.innerWidth/2, window.innerHeight/2, '#FFF', '#FFD700', true));
+                AudioManager.playComboSFX(1);
+                AudioManager.playVoice("Muito bem!"); 
+                textosFlutuantes.push(new TextoFlutuante("MUITO BEM!", window.innerWidth/2, window.innerHeight/2, '#FFF', '#FFD700', true));
             } else if (comboAtual === 5) { 
+                AudioManager.playComboSFX(2);
                 AudioManager.playVoice("Você está arrasando!"); 
                 textosFlutuantes.push(new TextoFlutuante("VOCÊ ESTÁ ARRASANDO!", window.innerWidth/2, window.innerHeight/2, '#FFF', '#FF8C00', true));
             } else if (comboAtual === 10) { 
+                AudioManager.playComboSFX(3);
                 AudioManager.playVoice("Que mestre das letras!"); 
                 textosFlutuantes.push(new TextoFlutuante("QUE MESTRE DAS LETRAS!", window.innerWidth/2, window.innerHeight/2, '#FFF', '#FF1493', true));
             }
@@ -478,7 +481,16 @@
         bgmMenu: new Audio('musica_menu.mp3'), bgmJogo: new Audio('musica_jogo.mp3'), sfxRisada: new Audio('risada.mp3'), 
         musicaAtual: null, ultimaVoz: "", isMutedGlobal: false, vozHumana: new Audio(),
         init() { try { if (!this.audioCtx) { this.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); this.masterCompressor = this.audioCtx.createDynamicsCompressor(); this.masterCompressor.threshold.setValueAtTime(-15, this.audioCtx.currentTime); this.masterCompressor.knee.setValueAtTime(10, this.audioCtx.currentTime); this.masterCompressor.ratio.setValueAtTime(12, this.audioCtx.currentTime); this.masterCompressor.attack.setValueAtTime(0.003, this.audioCtx.currentTime); this.masterCompressor.release.setValueAtTime(0.25, this.audioCtx.currentTime); this.masterCompressor.connect(this.audioCtx.destination); } if (this.audioCtx.state === 'suspended' && this.somAtivo && !this.isMutedGlobal) { this.audioCtx.resume(); } this.bgmMenu.loop = true; this.bgmJogo.loop = true; } catch(e) {} },
-        stopAll() { this.isMutedGlobal = true; if (this.bgmMenu) { this.bgmMenu.pause(); this.bgmMenu.currentTime = 0; } if (this.bgmJogo) { this.bgmJogo.pause(); this.bgmJogo.currentTime = 0; } if (this.sfxRisada) { this.sfxRisada.pause(); this.sfxRisada.currentTime = 0; } if (this.vozHumana) { this.vozHumana.pause(); this.vozHumana.currentTime = 0; } if ('speechSynthesis' in window) window.speechSynthesis.cancel(); if (this.audioCtx && this.audioCtx.state === 'running') { this.audioCtx.suspend(); } },
+        stopAll() { 
+            this.isMutedGlobal = true; 
+            if (this.bgmMenu) { this.bgmMenu.pause(); this.bgmMenu.currentTime = 0; } 
+            if (this.bgmJogo) { this.bgmJogo.pause(); this.bgmJogo.currentTime = 0; } 
+            if (this.sfxRisada) { this.sfxRisada.pause(); this.sfxRisada.currentTime = 0; } 
+            if (this.vozHumana) { this.vozHumana.pause(); this.vozHumana.currentTime = 0; } 
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel(); 
+            if (this.audioCtx && this.audioCtx.state === 'running') { this.audioCtx.suspend(); } 
+            if(window.audioTimeouts) { window.audioTimeouts.forEach(t => clearTimeout(t)); window.audioTimeouts = []; }
+        },
         toggle() { this.somAtivo = !this.somAtivo; localStorage.setItem('isadora_som', this.somAtivo); if (!this.somAtivo) { this.stopAll(); } else { this.isMutedGlobal = false; this.init(); if (this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume(); if (gameActive) { this.playBGM('game'); } else { this.playBGM('menu'); } } this.updateUI(); return this.somAtivo; },
         updateUI() { if(btnSom) btnSom.innerText = this.somAtivo ? '♪ SOM' : 'x MUDO'; if(btnSomMenu) btnSomMenu.innerHTML = this.somAtivo ? '♪' : '🔇'; },
         fadeVolume(audioObj, targetVol, duration) { if(!audioObj || this.isMutedGlobal || !this.somAtivo) { if(audioObj) { audioObj.pause(); audioObj.volume = 0; } return; } if(audioObj.fadeReqId) cancelAnimationFrame(audioObj.fadeReqId); let startVol = audioObj.volume; let startTime = performance.now(); const step = (t) => { if (this.isMutedGlobal || !this.somAtivo) { audioObj.volume = 0; audioObj.pause(); return; } let elapsed = t - startTime; let progress = Math.min(elapsed / duration, 1); let ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; audioObj.volume = Math.max(0, Math.min(1, startVol + (targetVol - startVol) * ease)); if (progress < 1) { audioObj.fadeReqId = requestAnimationFrame(step); } else { audioObj.volume = targetVol; if(targetVol === 0) { audioObj.pause(); audioObj.currentTime = 0; } } }; audioObj.fadeReqId = requestAnimationFrame(step); },
@@ -487,21 +499,57 @@
         playCinematicSweep() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.15, now + 0.5); gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5); const osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(200, now); osc.frequency.exponentialRampToValueAtTime(800, now + 2.5); osc.connect(gain); osc.start(now); osc.stop(now + 2.5); } catch(e){} },
         playMagicSFX() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gainL = this.audioCtx.createGain(); const gainR = this.audioCtx.createGain(); const pannerL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; const pannerR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; if(pannerL && pannerR) { pannerL.pan.value = -0.5; pannerR.pan.value = 0.5; gainL.connect(pannerL); pannerL.connect(this.masterCompressor); gainR.connect(pannerR); pannerR.connect(this.masterCompressor); } else { gainL.connect(this.masterCompressor); gainR.connect(this.masterCompressor); } [gainL, gainR].forEach(g => { g.gain.setValueAtTime(0.001, now); g.gain.exponentialRampToValueAtTime(0.15, now + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + 0.8); }); [880, 1108, 1318].forEach((f, i) => { let o1 = this.audioCtx.createOscillator(); let o2 = this.audioCtx.createOscillator(); o1.frequency.setValueAtTime(f, now + (i*0.05)); o2.frequency.setValueAtTime(f * 1.005, now + (i*0.05)); o1.connect(gainL); o2.connect(gainR); o1.start(now + (i*0.05)); o2.start(now + (i*0.05)); o1.stop(now + 0.8); o2.stop(now + 0.8); }); } catch(e) {} },
         playSuccessSFX() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.15, now + 0.1); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); const freqs = [523.25, 659.25, 783.99, 1046.50]; let timeOffset = 0; freqs.forEach(f => { let osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + timeOffset); osc.connect(gain); osc.start(now + timeOffset); osc.stop(now + 0.8); timeOffset += 0.1; }); } catch (e) {} },
+        playComboSFX(level) {
+            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return;
+            try {
+                const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor);
+                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                let freqs = []; let duration = 0.5;
+                if (level === 1) { freqs = [440, 554, 659]; duration = 0.6; } 
+                else if (level === 2) { freqs = [523, 659, 783, 1046]; duration = 0.8; } 
+                else { freqs = [523, 659, 783, 1046, 1318, 1567]; duration = 1.2; } 
+                gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+                freqs.forEach((f, i) => { let osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + (i * 0.1)); osc.connect(gain); osc.start(now + (i * 0.1)); osc.stop(now + duration); });
+            } catch (e) {}
+        },
         playErrorSFX() { 
             if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
             try { 
                 const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); 
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.2, now + 0.05); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4); 
-                const osc = this.audioCtx.createOscillator(); osc.type = 'sine'; 
-                osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1); osc.frequency.exponentialRampToValueAtTime(100, now + 0.4);
-                osc.connect(gain); osc.start(now); osc.stop(now + 0.4); 
+                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now + 0.05); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3); 
+                const osc = this.audioCtx.createOscillator(); osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(250, now); osc.frequency.exponentialRampToValueAtTime(150, now + 0.3); 
+                osc.connect(gain); osc.start(now); osc.stop(now + 0.3); 
             } catch(e) {} 
         },
         playRisada() { if (this.somAtivo && !this.isMutedGlobal && this.sfxRisada) { this.sfxRisada.currentTime = 0; let playPromise = this.sfxRisada.play(); if (playPromise !== undefined) { playPromise.catch(e => console.log("Blocked")); } } },
-        playVoice(texto) { if (!this.somAtivo || this.isMutedGlobal) return; try { this.ultimaVoz = texto; let src = ""; if (texto === "Incrível! Você está pegando fogo!") src = "audios/combo_fogo.mp3"; else if (texto === "Ops!") src = "audios/erro_ops.mp3"; else if (texto === "Quase lá!") src = "audios/erro_quase.mp3"; else if (texto === "Tente de novo!") src = "audios/erro_tente.mp3"; else if (texto.length === 1 && texto.match(/[A-Z]/i)) { src = `audios/som_letra_${texto.toUpperCase()}.mp3`; } if (src !== "") { if(!this.vozHumana) this.vozHumana = new Audio(); this.vozHumana.src = src; this.vozHumana.currentTime = 0; this.vozHumana.play().catch(e => { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR'; window.speechSynthesis.speak(utter); } }); } else { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR'; window.speechSynthesis.speak(utter); } } } catch(e) {} },
-        playErrorVoice() { if (!this.somAtivo || this.isMutedGlobal) return; try { const frases = ["Ops!", "Quase lá!", "Tente de novo!"]; let fraseEscolhida = frases[Math.floor(Math.random()*frases.length)]; this.playVoice(fraseEscolhida); } catch(e) {} },
+        playVoice(texto) { 
+            if (!this.somAtivo || this.isMutedGlobal) return; 
+            try { 
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                this.ultimaVoz = texto; let src = ""; 
+                if (texto === "Incrível! Você está pegando fogo!") src = "audios/combo_fogo.mp3"; 
+                else if (texto === "Ops!") src = "audios/erro_ops.mp3"; 
+                else if (texto === "Quase lá!") src = "audios/erro_quase.mp3"; 
+                else if (texto === "Tente de novo!") src = "audios/erro_tente.mp3"; 
+                else if (texto.length === 1 && texto.match(/[A-Z]/i)) { src = `audios/som_letra_${texto.toUpperCase()}.mp3`; } 
+                
+                if (src !== "") { 
+                    if(!this.vozHumana) this.vozHumana = new Audio(); 
+                    this.vozHumana.src = src; this.vozHumana.currentTime = 0; 
+                    this.vozHumana.play().catch(e => { if ('speechSynthesis' in window) { let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR'; window.speechSynthesis.speak(utter); } }); 
+                } else { 
+                    if ('speechSynthesis' in window) { let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR'; window.speechSynthesis.speak(utter); } 
+                } 
+            } catch(e) {} 
+        },
         repeatVoice() { if (this.ultimaVoz !== "" && !this.isMutedGlobal && this.somAtivo) { this.playVoice(this.ultimaVoz); } },
-        playColetaLetra(letra, palavra) { if (this.isMutedGlobal || !this.somAtivo) return; this.playMagicSFX(); setTimeout(() => this.playVoice(`${letra} de ${palavra}!`), 150); }
+        playColetaLetra(letra, palavra) { 
+            if (this.isMutedGlobal || !this.somAtivo) return; 
+            this.playMagicSFX(); 
+            let t = setTimeout(() => this.playVoice(`${letra} de ${palavra}!`), 150); 
+            window.audioTimeouts.push(t);
+        }
     };
     AudioManager.updateUI();
     document.querySelectorAll('.ps5-btn, .ps5-btn-small, .ps5-icon-btn, .btn-livro, .btn-corner').forEach(btn => { btn.addEventListener('mouseenter', () => AudioManager.playHoverTick()); });
@@ -592,7 +640,9 @@
         mostrarCinematica("ATO I", "O ALFABETO", "#FFD700"); 
         let ajustePe = player.height * player.espacoVazio;
         player.y = window.innerHeight - alturaChao - (player.height - ajustePe) + 20;
-        setTimeout(() => { if(gameActive && !isPaused) { AudioManager.playVoice("Vamos brincar das letras!"); letraUi.innerText = "Letras!"; } }, 1800); 
+        
+        let t1 = setTimeout(() => { if(gameActive && !isPaused) { AudioManager.playVoice("Vamos brincar das letras!"); letraUi.innerText = "Letras!"; } }, 1800); 
+        window.audioTimeouts.push(t1);
 
         atualizarProgressoHUD(); player.isJumping = true; isHolding = false; window.obstaculoTimer = 0; itemTimer = -2500; 
     }
@@ -681,8 +731,8 @@
     }
 
     btnJogar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); iniciarJogo(); });
-    btnPause.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(gameActive && !isPaused) { isPaused = true; isHolding = false; pauseScreen.style.display = 'flex'; setTimeout(() => { pauseScreen.style.opacity = '1'; }, 10); } });
-    btnContinuar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); if(!animationId) { animationId = requestAnimationFrame(animate); } });
+    btnPause.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(gameActive && !isPaused) { isPaused = true; isHolding = false; pauseScreen.style.display = 'flex'; setTimeout(() => { pauseScreen.style.opacity = '1'; }, 10); AudioManager.stopAll(); } });
+    btnContinuar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); if(!animationId) { animationId = requestAnimationFrame(animate); } AudioManager.playBGM('game'); });
     
     function voltarAoMenu(screenElement) { if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; } isPaused = false; screenElement.style.opacity = '0'; setTimeout(() => { screenElement.style.display = 'none'; }, 300); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0; cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout'); hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; if(AudioManager.somAtivo) AudioManager.playBGM('menu'); startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50); resetIdleTimer(); if (!animationId) animationId = requestAnimationFrame(animate); }
     btnReiniciar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; gameActive = false; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
@@ -924,10 +974,17 @@
             this.baseScale = 0.28; this.width = 100; this.height = 200; this.baseX = window.innerWidth * 0.15; this.x = this.baseX; this.y = 0; 
             this.vy = 0; this.gravity = 1.2; this.jumpPower = -22; this.isJumping = false; this.frameX = 0; this.staggerFrames = 3; this.gameFrame = 0; 
             this.espacoVazio = 0.25; this.tilt = 0; this.stumbleTimer = 0;
+            this.emoState = 'normal'; this.emoTimer = 0;
         }
         update(timeScale) {
             this.baseX = window.innerWidth * 0.15; this.x = this.baseX; 
             if (this.stumbleTimer > 0) this.stumbleTimer -= timeScale * 16.6;
+            
+            if (this.emoTimer > 0) {
+                this.emoTimer -= timeScale * 16.6;
+            } else {
+                this.emoState = 'normal';
+            }
             
             this.scale = this.baseScale * scaleMultiplier; let ajustePe = this.height * this.espacoVazio; let ch = window.innerHeight; let groundY = ch - alturaChao - (this.height - ajustePe) + 20;
             this.y += this.vy * timeScale;
@@ -952,7 +1009,21 @@
             
             let alturaDoChao = groundY - this.y; let tamanhoSombra = Math.max(15 * scaleMultiplier, (this.width/2) - (alturaDoChao * 0.15)); let opSombra = Math.max(0.1, 0.4 - (alturaDoChao * 0.002)); ctx.fillStyle = `rgba(0,0,0,${opSombra})`; ctx.beginPath(); ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); 
             
-            ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height/2 - (ajustePe - this.height/2)); ctx.rotate(this.tilt); 
+            ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height/2 - (ajustePe - this.height/2)); 
+            
+            // Micro-Reação Premium: Inclinacão e Brilho
+            let displayTilt = this.tilt;
+            if (this.emoState === 'happy') {
+                ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 15 * scaleMultiplier;
+                let bounce = Math.sin(performance.now() * 0.02) * 0.05;
+                ctx.scale(1 + bounce, 1 + bounce);
+            } else if (this.emoState === 'sad') {
+                displayTilt -= 0.15;
+                ctx.filter = 'saturate(50%) brightness(0.8)';
+            }
+            
+            ctx.rotate(displayTilt); 
+            
             let pisadaY = (!this.isJumping && this.frameX === 1) ? (6 * scaleMultiplier) : 0;
             
             if (playerSprite.complete && playerSprite.naturalWidth > 0) { 
@@ -1101,21 +1172,28 @@
         
         if (!window.isCelebration && letrasColetadas.length >= 26) {
             window.isCelebration = true;
-            AudioManager.playSuccessSFX();
-            AudioManager.playVoice("Você conseguiu! Você descobriu todas as letras!");
-            textosFlutuantes.push(new TextoFlutuante("VOCÊ CONSEGUIU!", cw/2, ch/2 - 60, '#FFF', '#FFD700', true));
-            textosFlutuantes.push(new TextoFlutuante("Você descobriu todas as letras!", cw/2, ch/2 + 60, '#FFF', '#68A68F', false));
             
-            for(let j=0; j<50; j++) { 
-                let angle = Math.random() * Math.PI * 2; 
-                let speed = Math.random() * 12 + 5; 
-                particulas.push(new Particula(cw/2, ch/2, Math.random() > 0.5 ? '#FFD700' : '#FF9AA2', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); 
-            }
+            let t1 = setTimeout(() => {
+                AudioManager.playComboSFX(3);
+                AudioManager.playVoice("Você conseguiu! Descobriu todas as letras!");
+                textosFlutuantes.push(new TextoFlutuante("VOCÊ CONSEGUIU!", cw/2, ch/2 - 60, '#FFF', '#FFD700', true));
+                textosFlutuantes.push(new TextoFlutuante("Você descobriu todas as letras!", cw/2, ch/2 + 60, '#FFF', '#68A68F', false));
+                player.emoState = 'happy';
+                player.emoTimer = 4000;
+                
+                for(let j=0; j<50; j++) { 
+                    let angle = Math.random() * Math.PI * 2; 
+                    let speed = Math.random() * 12 + 5; 
+                    particulas.push(new Particula(cw/2, ch/2, Math.random() > 0.5 ? '#FFD700' : '#FF9AA2', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); 
+                }
+            }, 1500);
 
-            setTimeout(() => {
+            let t2 = setTimeout(() => {
                 encerrarJogo(true);
                 window.isCelebration = false;
-            }, 3500);
+            }, 4500);
+            
+            window.audioTimeouts.push(t1, t2);
         }
 
         if (itemTimer > itemInterval && !window.isCelebration) { 
@@ -1152,7 +1230,12 @@
                 if (invulneravelTimer <= 0) { 
                     item.isResolvido = true; item.ignorarColisao = true; vidasExtra--; hitStopTime = 50; shakeIntensity = 8; player.stumbleTimer = 50;
                     document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); 
-                    AudioManager.playErrorSFX(); 
+                    
+                    AudioManager.playErrorSFX();
+                    AudioManager.playErrorVoice();
+                    player.emoState = 'sad';
+                    player.emoTimer = 800;
+
                     if (vidasExtra <= 0) { encerrarJogo(false); } 
                     else { 
                         invulneravelTimer = 2000; 
@@ -1174,6 +1257,8 @@
                     
                     letraFeedbacks.push(new LetraFeedback(charLetra, item.info.palavra, cw/2, ch/2));
                     AudioManager.playColetaLetra(charLetra, item.info.palavra);
+                    player.emoState = 'happy';
+                    player.emoTimer = 1000;
 
                     pontuacao += 500; 
                     if (!letrasColetadas.includes(charLetra)) { letrasColetadas.push(charLetra); atualizarProgressoHUD(); } 
