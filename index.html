@@ -69,6 +69,7 @@
 
         /* BOTÕES DE PAUSA E SOM - MENORES E PROPORCIONAIS */
         .btn-corner { position: absolute; top: 15px; background: #FFF; border: 2px solid var(--primaria); color: var(--primaria); box-shadow: 0 4px 0 var(--secundaria), 0 6px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 35; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: 'Fredoka', sans-serif; font-weight: 900; }
+        .btn-corner:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 0 var(--secundaria), 0 8px 12px rgba(0,0,0,0.15); filter: brightness(1.02); }
         .btn-corner:active { transform: scale(0.9) translateY(4px); box-shadow: 0 2px 0 var(--secundaria), 0 2px 5px rgba(0,0,0,0.1); }
         #btn-pause { right: 3vw; border-radius: 50%; width: clamp(35px, 7vw, 50px); height: clamp(35px, 7vw, 50px); display: flex; justify-content: center; align-items: center; font-size: clamp(14px, 3vw, 22px); }
         #btn-som { right: calc(3vw + clamp(45px, 9vw, 65px)); border-radius: 25px; padding: 0 clamp(10px, 2vw, 20px); height: clamp(35px, 7vw, 50px); display: flex; align-items: center; font-size: clamp(11px, 2vw, 16px); }
@@ -78,12 +79,12 @@
         .ps5-tutorial-box { background: #FFF; border: 3px solid var(--destaque); border-radius: 25px; padding: clamp(10px, 3vw, 20px) clamp(20px, 5vw, 35px); color: var(--texto-escuro); font-weight: 900; font-size: clamp(14px, 3.5vw, 22px); text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 6px 0 var(--destaque); animation: pulseTutorial 1.5s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95); }
         @keyframes pulseTutorial { 0% { transform: scale(1) translateY(0) rotate(-2deg); } 100% { transform: scale(1.1) translateY(-8px) rotate(2deg); } }
 
-        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: row; align-items: center; z-index: 100; background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%), linear-gradient(135deg, rgba(135,206,235,0.85) 0%, rgba(224,246,255,0.95) 100%); backdrop-filter: blur(10px); transition: opacity 0.5s ease-out; }
+        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: row; align-items: center; z-index: 100; background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%); transition: opacity 0.5s ease-out, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
         .ps5-top-bar { position: absolute; top: clamp(15px, 4vw, 30px); right: clamp(15px, 4vw, 30px); display: flex; gap: 10px; z-index: 110; animation: bounceInDown 1s both; }
         .ps5-icon-btn { background: #FFF; border: 2px solid var(--primaria); border-radius: 50%; width: clamp(40px, 7vw, 55px); height: clamp(40px, 7vw, 55px); color: var(--primaria); font-size: clamp(16px, 4vw, 22px); font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 0 var(--secundaria), 0 8px 12px rgba(0,0,0,0.1); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .ps5-icon-btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 0 var(--secundaria), 0 12px 16px rgba(0,0,0,0.2); filter: brightness(1.05); }
-        .ps5-icon-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--secundaria); }
+        .ps5-icon-btn:active { transform: scale(0.9) translateY(4px); box-shadow: 0 0 0 var(--secundaria); }
 
         .ps5-sidebar { width: 55%; padding-left: 6vw; display: flex; flex-direction: column; justify-content: center; z-index: 10; }
         .ps5-title-area { margin-bottom: clamp(10px, 3vmin, 20px); animation: bounceInLeft 1s both; }
@@ -95,45 +96,54 @@
         .ps5-menu-options { display: flex; flex-direction: column; gap: clamp(8px, 1.5vmin, 15px); align-items: flex-start; }
         .play-group { margin-bottom: clamp(8px, 1.5vmin, 15px); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; animation: bounceInLeft 1s both; animation-delay: 0.2s; }
         
-        /* Botões Estilo Marshmallow / Livro Infantil - Adaptados */
+        /* Botões Estilo Marshmallow / Livro Infantil - Adaptados Premium */
         .ps5-btn { background: linear-gradient(180deg, #FF9AA2 0%, #E57373 100%); border: 3px solid #FFF; border-radius: 30px; color: #FFF; font-size: clamp(14px, 3vw, 24px); font-family: 'Fredoka', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(10px, 1.5vw, 15px) clamp(20px, 3vw, 35px); display: flex; align-items: center; box-shadow: 0 6px 0 #E57373, 0 10px 20px rgba(0,0,0,0.25); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: bounceInLeft 1s both; transform-origin: left center; position: relative; overflow: hidden; }
         .ps5-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(45deg); transition: 0.5s; opacity: 0; }
         .ps5-btn:hover::after { opacity: 1; left: 100%; transition: 0.5s; }
         .ps5-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 9px 0 #E57373, 0 15px 25px rgba(0,0,0,0.3); filter: brightness(1.05); color: #FFF;}
-        .ps5-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #E57373; }
+        .ps5-btn:active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #E57373; }
         .ps5-btn:nth-child(2) { animation-delay: 0.3s; background: linear-gradient(180deg, #A8E6CF 0%, #7AC5A9 100%); box-shadow: 0 6px 0 #68A68F, 0 10px 20px rgba(0,0,0,0.25); }
         .ps5-btn:nth-child(2):hover { box-shadow: 0 9px 0 #68A68F, 0 15px 25px rgba(0,0,0,0.3); }
-        .ps5-btn:nth-child(2):active { box-shadow: 0 0 0 #68A68F; }
+        .ps5-btn:nth-child(2):active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #68A68F; }
         .ps5-btn:nth-child(3) { animation-delay: 0.4s; background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%); box-shadow: 0 6px 0 #D2691E, 0 10px 20px rgba(0,0,0,0.25); color: #FFF; -webkit-text-stroke: 1px #D2691E;}
         .ps5-btn:nth-child(3):hover { box-shadow: 0 9px 0 #D2691E, 0 15px 25px rgba(0,0,0,0.3); }
-        .ps5-btn:nth-child(3):active { box-shadow: 0 0 0 #D2691E; }
+        .ps5-btn:nth-child(3):active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #D2691E; }
         .ps5-btn .ps5-icon { margin-right: 12px; font-size: 1.1em; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
         
-        .ps5-btn-small { background: #FFF; border: 2px solid #68A68F; border-radius: 15px; color: #68A68F; font-size: clamp(10px, 2vw, 14px); font-family: 'Fredoka', sans-serif; font-weight: 800; text-transform: uppercase; cursor: pointer; padding: 6px 15px; transition: all 0.2s; margin-left: 10px; box-shadow: 0 3px 0 #68A68F; }
-        .ps5-btn-small:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #68A68F; background: #E2F0CB; color: #4A856F;}
-        .ps5-btn-small:active { transform: translateY(3px); box-shadow: 0 0 0 #68A68F; }
+        .ps5-btn-small { background: #FFF; border: 2px solid #68A68F; border-radius: 15px; color: #68A68F; font-size: clamp(10px, 2vw, 14px); font-family: 'Fredoka', sans-serif; font-weight: 800; text-transform: uppercase; cursor: pointer; padding: 6px 15px; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-left: 10px; box-shadow: 0 3px 0 #68A68F; }
+        .ps5-btn-small:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 5px 0 #68A68F; background: #E2F0CB; color: #4A856F;}
+        .ps5-btn-small:active { transform: scale(0.95) translateY(3px); box-shadow: 0 0 0 #68A68F; }
 
         .ps5-hero-area { width: 45%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
         .ps5-hero-glow { position: absolute; width: clamp(200px, 40vw, 500px); height: clamp(200px, 40vw, 500px); background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 215, 0, 0.4) 40%, transparent 70%); border-radius: 50%; animation: pulsarSol 4s alternate infinite ease-in-out; }
-        .ps5-hero-mascot { position: relative; z-index: 2; width: clamp(180px, 35vw, 450px); height: clamp(220px, 45vw, 550px); background-image: url('Isadora.png'); background-size: contain; background-position: center bottom; background-repeat: no-repeat; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2)); animation: bounceMascot 3s ease-in-out infinite; }
         
-        @keyframes bounceInLeft { 0% { opacity: 0; transform: translateX(-100px) scale(0.9); } 80% { transform: translateX(10px) scale(1.02); } 100% { opacity: 1; transform: translateX(0) scale(1); } }
-        @keyframes bounceInDown { 0% { opacity: 0; transform: translateY(-50px); } 80% { transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-        @keyframes bounceMascot { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-10px) rotate(1deg); } }
-        @keyframes pulsarSol { 0% { transform: scale(0.9) rotate(0deg); opacity: 0.6; } 100% { transform: scale(1.2) rotate(15deg); opacity: 1; } }
+        /* Isadora Viva - Menu Premium */
+        @keyframes breatheMascot {
+            0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
+            50% { transform: translateY(-3px) scaleX(1.01) scaleY(0.98); }
+        }
+        @keyframes idlePop {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+            15% { transform: translateY(-12px) rotate(-3deg) scale(1.03); }
+            30% { transform: translateY(0) rotate(3deg) scale(1.03); }
+            45% { transform: translateY(-6px) rotate(-1deg) scale(1.01); }
+            60% { transform: translateY(0) rotate(1deg) scale(1.01); }
+        }
+        .ps5-hero-mascot { position: relative; z-index: 2; width: clamp(180px, 35vw, 450px); height: clamp(220px, 45vw, 550px); background-image: url('Isadora.png'); background-size: contain; background-position: center bottom; background-repeat: no-repeat; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2)); animation: breatheMascot 4s ease-in-out infinite; transform-origin: center bottom; }
+        .ps5-hero-mascot.idle-active { animation: idlePop 1.5s ease-in-out; }
 
-        /* MODAIS MAIS PROPORCIONAIS */
-        .modal-padrao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
-        .caixa-modal { background: #FFF; border: 5px solid var(--destaque); border-radius: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.2), inset 0 -8px 0 rgba(0,0,0,0.05); padding: clamp(15px, 4vmin, 30px); text-align: center; color: var(--texto-escuro); width: 90vw; max-width: 450px; animation: popModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
-        @keyframes popModal { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        /* MODAIS MAIS PROPORCIONAIS E SUAVES */
+        .modal-padrao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; padding: 20px;}
+        .caixa-modal { background: #FFF; border: 5px solid var(--destaque); border-radius: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.2), inset 0 -8px 0 rgba(0,0,0,0.05); padding: clamp(15px, 4vmin, 30px); text-align: center; color: var(--texto-escuro); width: 90vw; max-width: 450px; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        @keyframes popModal { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
         .input-nome { width: 100%; background: #F9F9F9; border: 3px solid var(--primaria); color: var(--texto-escuro); font-family: 'Fredoka', sans-serif; font-size: clamp(16px, 3vw, 24px); font-weight: 900; padding: 12px; border-radius: 15px; text-align: center; outline: none; transition: all 0.3s; margin: 15px 0; text-transform: uppercase; box-shadow: inset 0 3px 5px rgba(0,0,0,0.05); }
         .input-nome:focus { border-color: var(--destaque); background: #FFF; transform: scale(1.02); box-shadow: 0 0 15px rgba(255, 215, 0, 0.4), inset 0 3px 5px rgba(0,0,0,0.05); }
         .input-nome::placeholder { color: #CCC; }
 
         .lista-ranking { margin-top: 15px; max-height: 50vh; overflow-y: auto; text-align: left; padding-right: 10px; }
-        .item-ranking { display: flex; justify-content: space-between; align-items: center; background: #F9F9F9; margin-bottom: 8px; padding: 12px; border-radius: 12px; border: 2px solid #E0E0E0; border-left-width: 6px; border-left-color: var(--primaria); transition: transform 0.2s; box-shadow: 0 3px 0 #E0E0E0; }
-        .item-ranking:hover { transform: translateX(4px) translateY(-2px); box-shadow: 0 5px 0 #E0E0E0; background: #FFF;}
+        .item-ranking { display: flex; justify-content: space-between; align-items: center; background: #F9F9F9; margin-bottom: 8px; padding: 12px; border-radius: 12px; border: 2px solid #E0E0E0; border-left-width: 6px; border-left-color: var(--primaria); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 3px 0 #E0E0E0; }
+        .item-ranking:hover { transform: translateX(4px) scale(1.02) translateY(-2px); box-shadow: 0 5px 0 #E0E0E0; background: #FFF;}
         .item-ranking.top-1 { border-left-color: #FFD700; background: #FFFBE6; border-color: #FFD700; }
         .item-ranking.top-2 { border-left-color: #C0C0C0; background: #F5F5F5; border-color: #C0C0C0; }
         .item-ranking.top-3 { border-left-color: #CD7F32; background: #FFF0E6; border-color: #CD7F32; }
@@ -142,13 +152,13 @@
         .rank-pts { font-size: clamp(16px, 4vw, 20px); font-weight: 900; color: #FF9AA2; }
         .loader-ranking { color: var(--primaria); font-weight: bold; font-size: clamp(14px, 3vw, 18px); animation: piscar 1s infinite; text-align: center; }
 
-        .btn-acao-modal { background: linear-gradient(180deg, #A8E6CF, #68A68F); color: #FFF; border: 2px solid #FFF; border-radius: 20px; padding: 12px 25px; font-size: clamp(14px, 3vw, 20px); font-weight: 900; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s; text-transform: uppercase; width: 100%; box-shadow: 0 5px 0 #4A856F, 0 8px 15px rgba(0,0,0,0.15); }
+        .btn-acao-modal { background: linear-gradient(180deg, #A8E6CF, #68A68F); color: #FFF; border: 2px solid #FFF; border-radius: 20px; padding: 12px 25px; font-size: clamp(14px, 3vw, 20px); font-weight: 900; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; width: 100%; box-shadow: 0 5px 0 #4A856F, 0 8px 15px rgba(0,0,0,0.15); }
         .btn-acao-modal:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 7px 0 #4A856F, 0 12px 20px rgba(0,0,0,0.2); filter: brightness(1.1); }
-        .btn-acao-modal:active { transform: translateY(4px); box-shadow: 0 0 0 #4A856F; }
+        .btn-acao-modal:active { transform: scale(0.95) translateY(4px); box-shadow: 0 0 0 #4A856F; }
         
-        .btn-fechar-absoluto { position: absolute; top: -12px; right: -12px; background: #FF9AA2; border: 3px solid #FFF; color: #FFF; width: 35px; height: 35px; border-radius: 50%; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #E57373; transition: all 0.2s; display: flex; justify-content: center; align-items: center; }
+        .btn-fechar-absoluto { position: absolute; top: -12px; right: -12px; background: #FF9AA2; border: 3px solid #FFF; color: #FFF; width: 35px; height: 35px; border-radius: 50%; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #E57373; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; }
         .btn-fechar-absoluto:hover { transform: scale(1.1); background: #FF4D4D; box-shadow: 0 5px 0 #CC0000; }
-        .btn-fechar-absoluto:active { transform: translateY(3px); box-shadow: 0 0 0 #E57373; }
+        .btn-fechar-absoluto:active { transform: scale(0.9) translateY(3px); box-shadow: 0 0 0 #E57373; }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #F0F0F0; border-radius: 8px; }
@@ -156,16 +166,16 @@
         ::-webkit-scrollbar-thumb:hover { background: #FF9AA2; }
 
         /* PAUSA, VITÓRIA, HISTÓRIA E SAÍDA */
-        #pause-screen, #victory-screen, #exit-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 12px; opacity: 0; transition: opacity 0.5s ease; text-align: center; padding: 20px; box-sizing: border-box;}
+        #pause-screen, #victory-screen, #exit-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 12px; opacity: 0; transition: opacity 0.3s ease; text-align: center; padding: 20px; box-sizing: border-box;}
         #exit-screen { z-index: 99999; }
-        .exit-box { background: #FFF; border: 5px solid var(--primaria); border-radius: 30px; padding: clamp(15px, 4vw, 35px); box-shadow: 0 12px 30px rgba(0,0,0,0.2), inset 0 -6px 0 rgba(0,0,0,0.05); max-width: 80%; display: flex; flex-direction: column; align-items: center; }
+        .exit-box { background: #FFF; border: 5px solid var(--primaria); border-radius: 30px; padding: clamp(15px, 4vw, 35px); box-shadow: 0 12px 30px rgba(0,0,0,0.2), inset 0 -6px 0 rgba(0,0,0,0.05); max-width: 80%; display: flex; flex-direction: column; align-items: center; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
         .btn-pause-ui { background: #FFF; color: var(--texto-escuro); border: 3px solid #E0E0E0; border-radius: 20px; padding: clamp(8px, 1.5vmin, 12px) clamp(15px, 4vmin, 30px); font-size: clamp(14px, 3vmin, 20px); font-weight: 900; cursor: pointer; font-family: 'Fredoka', sans-serif; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; width: clamp(200px, 50vw, 300px); margin: 6px 0; box-shadow: 0 5px 0 #E0E0E0; }
-        .btn-pause-ui:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 7px 0 #D0D0D0; } .btn-pause-ui:active { transform: translateY(4px); box-shadow: 0 0 0 #D0D0D0; }
+        .btn-pause-ui:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 7px 0 #D0D0D0; } .btn-pause-ui:active { transform: scale(0.95) translateY(4px); box-shadow: 0 0 0 #D0D0D0; }
         .btn-pause-ui.sair { background: #FFB7B2; color: #FFF; border-color: #FFF; box-shadow: 0 5px 0 #E57373; } .btn-pause-ui.sair:hover { box-shadow: 0 7px 0 #E57373; filter: brightness(1.05); } .btn-pause-ui.sair:active { box-shadow: 0 0 0 #E57373; }
         
         .btn-pause-ui.destaque-ps5 { background: linear-gradient(180deg, #FFD700, #FFA500); color: #FFF; border: 3px solid #FFF; box-shadow: 0 6px 0 #D2691E, 0 12px 20px rgba(0,0,0,0.2); margin-bottom: 12px; }
-        .btn-pause-ui.destaque-ps5:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 9px 0 #D2691E, 0 15px 25px rgba(0,0,0,0.25); filter: brightness(1.05); } .btn-pause-ui.destaque-ps5:active { transform: translateY(5px); box-shadow: 0 0 0 #D2691E; }
+        .btn-pause-ui.destaque-ps5:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 9px 0 #D2691E, 0 15px 25px rgba(0,0,0,0.25); filter: brightness(1.05); } .btn-pause-ui.destaque-ps5:active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #D2691E; }
 
         .trophy-icon { font-size: clamp(50px, 10vw, 90px); margin-bottom: 8px; animation: bounceTrophy 2s ease-in-out infinite alternate; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); }
         @keyframes bounceTrophy { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-15px) scale(1.05) rotate(5deg); } }
@@ -175,15 +185,15 @@
         .credits { color: #888; font-size: clamp(12px, 2.5vw, 15px); margin-bottom: 25px; font-weight: 700; }
 
         /* LIVRO DE HISTÓRIA PREMIUM */
-        #modal-historia { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.4s ease; padding: 20px;}
-        #btn-fechar-historia { position: absolute; top: 15px; right: 15px; background: #FFF; color: var(--primaria); border: 3px solid var(--primaria); border-radius: 50%; width: 45px; height: 45px; font-size: 22px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10001; transition: all 0.3s; box-shadow: 0 4px 0 #E57373; }
-        #btn-fechar-historia:hover { background: var(--primaria); color: #FFF; transform: scale(1.1) rotate(90deg); box-shadow: 0 6px 0 #E57373; } #btn-fechar-historia:active { transform: translateY(3px); box-shadow: 0 0 0 #E57373; }
+        #modal-historia { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; padding: 20px;}
+        #btn-fechar-historia { position: absolute; top: 15px; right: 15px; background: #FFF; color: var(--primaria); border: 3px solid var(--primaria); border-radius: 50%; width: 45px; height: 45px; font-size: 22px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10001; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 0 #E57373; }
+        #btn-fechar-historia:hover { background: var(--primaria); color: #FFF; transform: scale(1.1) rotate(90deg); box-shadow: 0 6px 0 #E57373; } #btn-fechar-historia:active { transform: scale(0.9) translateY(3px); box-shadow: 0 0 0 #E57373; }
         
-        #livro-container { width: 90vw; max-width: 550px; background: #FFF9E6; border-radius: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.15), inset -15px 0 20px rgba(0,0,0,0.03); padding: clamp(15px, 3vmin, 30px); text-align: center; color: var(--texto-escuro); max-height: 90vh; overflow-y: auto; border: 6px solid #E8D5B5; display: flex; flex-direction: column; position: relative; }
+        #livro-container { width: 90vw; max-width: 550px; background: #FFF9E6; border-radius: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.15), inset -15px 0 20px rgba(0,0,0,0.03); padding: clamp(15px, 3vmin, 30px); text-align: center; color: var(--texto-escuro); max-height: 90vh; overflow-y: auto; border: 6px solid #E8D5B5; display: flex; flex-direction: column; position: relative; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         #livro-container::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 3px; background: rgba(0,0,0,0.05); } 
-        #livro-container .pagina { display: none; animation: popPage 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-grow: 1; padding-left: 12px; } 
+        #livro-container .pagina { display: none; animation: popPage 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-grow: 1; padding-left: 12px; } 
         #livro-container .pagina.ativa { display: flex; flex-direction: column; justify-content: center; }
-        @keyframes popPage { 0% { opacity: 0; transform: scale(0.9) rotateY(-10deg); } 100% { opacity: 1; transform: scale(1) rotateY(0); } }
+        @keyframes popPage { 0% { opacity: 0; transform: scale(0.95) rotateY(-5deg); } 100% { opacity: 1; transform: scale(1) rotateY(0); } }
         
         .foto-isadora-livro { width: clamp(80px, 20vmin, 130px); height: clamp(100px, 25vmin, 160px); margin: 0 auto 15px; background-image: url('Isadora.png'); background-size: contain; background-position: center bottom; background-repeat: no-repeat; filter: drop-shadow(0 12px 12px rgba(0,0,0,0.15)); animation: flutuarLore 4s infinite; }
         .foto-casa-livro { width: 80%; height: clamp(110px, 28vmin, 190px); margin: 0 auto 15px; border-radius: 15px; background-image: url('casa_sorrir.png'); background-size: cover; background-position: center; border: 3px solid #FFF; box-shadow: 0 8px 15px rgba(0,0,0,0.1); transform: rotate(-2deg); }
@@ -191,9 +201,9 @@
         #livro-container p { font-size: clamp(14px, 3.5vmin, 18px); margin-bottom: 12px; line-height: 1.5; font-weight: 600; color: #555; }
         
         .controles-livro { display: flex; justify-content: space-between; margin-top: auto; align-items: center; border-top: 2px dashed #E8D5B5; padding-top: 15px; }
-        .btn-livro { background: #FFF; color: var(--primaria); border: 2px solid var(--primaria); padding: 8px 15px; border-radius: 12px; font-weight: 800; cursor: pointer; font-family: 'Fredoka', sans-serif; font-size: clamp(12px, 3vmin, 15px); text-transform: uppercase; transition: all 0.2s; box-shadow: 0 3px 0 var(--secundaria); } 
-        .btn-livro:hover:not(:disabled) { transform: translateY(-2px); background: var(--primaria); color: #FFF; box-shadow: 0 5px 0 #E57373; } 
-        .btn-livro:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 #E57373; }
+        .btn-livro { background: #FFF; color: var(--primaria); border: 2px solid var(--primaria); padding: 8px 15px; border-radius: 12px; font-weight: 800; cursor: pointer; font-family: 'Fredoka', sans-serif; font-size: clamp(12px, 3vmin, 15px); text-transform: uppercase; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 3px 0 var(--secundaria); } 
+        .btn-livro:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); background: var(--primaria); color: #FFF; box-shadow: 0 5px 0 #E57373; } 
+        .btn-livro:active:not(:disabled) { transform: scale(0.95) translateY(3px); box-shadow: 0 0 0 #E57373; }
         .btn-livro:disabled { border-color: #DDD; color: #BBB; background: #F9F9F9; box-shadow: none; cursor: default; }
 
         #aviso-rotacao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #FF9AA2, #FFB7B2); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: #FFF; }
@@ -419,7 +429,6 @@
     const AlfabetoIsadora = [ { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, { letra: 'J', palavra: 'Jacaré' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leão' }, { letra: 'M', palavra: 'Macaco' }, { letra: 'N', initial: 'Nuvem', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xícara' }, { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } ];
     let letrasParaVencerFase1 = 26; let letrasColetadas = []; let isHolding = false; let idleTime = 0;
     
-    // Iniciar a grid visual do alfabeto
     gridAlfabeto.innerHTML = AlfabetoIsadora.map(a => `<span class="letra-hud" id="hud-letra-${a.letra}">${a.letra}</span>`).join('');
 
     function resetIdleTimer() { idleTime = 0; const mascot = document.querySelector('.ps5-hero-mascot'); if(mascot) mascot.classList.remove('idle-active'); }
@@ -434,7 +443,6 @@
             comboAtual++; 
             if (comboAtual >= 3) { progressFill.classList.add('combo-ativo'); letraUi.classList.add('texto-combo-ativo'); }
             
-            // Combo Pedagógico Premium
             if (comboAtual === 3) { 
                 AudioManager.playVoice("Ótimo!"); 
                 textosFlutuantes.push(new TextoFlutuante("ÓTIMO!", window.innerWidth/2, window.innerHeight/2, '#FFF', '#FFD700', true));
@@ -450,18 +458,18 @@
         } 
     }
     
-    if(btnModulo) { btnModulo.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); modoAtualIndex++; if (modoAtualIndex >= modosDeJogo.length) modoAtualIndex = 0; let conf = modosDeJogo[modoAtualIndex]; btnModulo.innerHTML = `◀ ${conf.nome} ▶`; AudioManager.playHoverTick(); }); }
+    if(btnModulo) { btnModulo.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); modoAtualIndex++; if (modoAtualIndex >= modosDeJogo.length) modoAtualIndex = 0; let conf = modosDeJogo[modoAtualIndex]; btnModulo.innerHTML = `◀ ${conf.nome} ▶`; }); }
     
     function atualizarLivroUI() { for(let i = 1; i <= totalPaginas; i++) { document.getElementById(`livro-p${i}`).classList.remove('ativa'); } document.getElementById(`livro-p${paginaAtual}`).classList.add('ativa'); prevBtnLivro.disabled = (paginaAtual === 1); nextBtnLivro.disabled = (paginaAtual === totalPaginas); paginacaoLivro.innerText = `${paginaAtual} / ${totalPaginas}`; }
-    btnHistoria.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); paginaAtual = 1; atualizarLivroUI(); modalHistoria.style.display = 'flex'; setTimeout(() => { modalHistoria.style.opacity = '1'; }, 50); });
-    btnFecharHistoria.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); modalHistoria.style.opacity = '0'; setTimeout(() => { modalHistoria.style.display = 'none'; }, 300); });
-    prevBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if(paginaAtual > 1) { paginaAtual--; atualizarLivroUI(); } }); 
-    nextBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if(paginaAtual < totalPaginas) { paginaAtual++; atualizarLivroUI(); } });
-    btnRanking.addEventListener('click', async (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); modalRanking.style.display = 'flex'; setTimeout(() => { modalRanking.style.opacity = '1'; }, 50); listaRankingConteudo.innerHTML = '<div class="loader-ranking">A LIGAR AOS SERVIDORES...</div>'; if (window.carregarRankingGlobal) { await window.carregarRankingGlobal(); } else { listaRankingConteudo.innerHTML = '<p style="color: #FF1493;">Conexão com a nuvem falhou.</p>'; } });
-    btnFecharRanking.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); modalRanking.style.opacity = '0'; setTimeout(() => { modalRanking.style.display = 'none'; }, 300); });
-    if(btnSairMenu) { btnSairMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); try { window.close(); } catch(err) {} if(exitScreen) { exitScreen.style.display = 'flex'; setTimeout(() => { exitScreen.style.opacity = '1'; }, 50); } }); }
+    btnHistoria.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); paginaAtual = 1; atualizarLivroUI(); modalHistoria.style.display = 'flex'; setTimeout(() => { modalHistoria.style.opacity = '1'; }, 10); });
+    btnFecharHistoria.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); modalHistoria.style.opacity = '0'; setTimeout(() => { modalHistoria.style.display = 'none'; }, 300); });
+    prevBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(paginaAtual > 1) { paginaAtual--; atualizarLivroUI(); } }); 
+    nextBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(paginaAtual < totalPaginas) { paginaAtual++; atualizarLivroUI(); } });
+    btnRanking.addEventListener('click', async (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); modalRanking.style.display = 'flex'; setTimeout(() => { modalRanking.style.opacity = '1'; }, 10); listaRankingConteudo.innerHTML = '<div class="loader-ranking">A LIGAR AOS SERVIDORES...</div>'; if (window.carregarRankingGlobal) { await window.carregarRankingGlobal(); } else { listaRankingConteudo.innerHTML = '<p style="color: #FF1493;">Conexão com a nuvem falhou.</p>'; } });
+    btnFecharRanking.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); modalRanking.style.opacity = '0'; setTimeout(() => { modalRanking.style.display = 'none'; }, 300); });
+    if(btnSairMenu) { btnSairMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); try { window.close(); } catch(err) {} if(exitScreen) { exitScreen.style.display = 'flex'; setTimeout(() => { exitScreen.style.opacity = '1'; }, 10); } }); }
     if(btnCancelarSair) { btnCancelarSair.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(exitScreen) { exitScreen.style.opacity = '0'; setTimeout(() => { exitScreen.style.display = 'none'; }, 300); } }); }
-    btnSalvarNome.addEventListener('click', () => { let nomeDigitado = inputNomeJogador.value.trim().toUpperCase(); if (nomeDigitado.length > 1) { nomeJogador = nomeDigitado; localStorage.setItem('isadora_jogador_nome', nomeJogador); saudacaoUI.style.display = 'inline-block'; saudacaoUI.innerText = `Olá, ${nomeJogador}!`; modalNome.style.opacity = '0'; setTimeout(() => { modalNome.style.display = 'none'; iniciarJogoReal(); }, 300); } else { inputNomeJogador.style.borderColor = "red"; setTimeout(()=> inputNomeJogador.style.borderColor = "var(--primaria)", 1000); } });
+    btnSalvarNome.addEventListener('click', () => { AudioManager.playHoverTick(); let nomeDigitado = inputNomeJogador.value.trim().toUpperCase(); if (nomeDigitado.length > 1) { nomeJogador = nomeDigitado; localStorage.setItem('isadora_jogador_nome', nomeJogador); saudacaoUI.style.display = 'inline-block'; saudacaoUI.innerText = `Olá, ${nomeJogador}!`; modalNome.style.opacity = '0'; setTimeout(() => { modalNome.style.display = 'none'; iniciarJogoReal(); }, 300); } else { inputNomeJogador.style.borderColor = "red"; setTimeout(()=> inputNomeJogador.style.borderColor = "var(--primaria)", 1000); } });
 
     if ('speechSynthesis' in window) { window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; }
     const AudioManager = {
@@ -496,8 +504,8 @@
     };
     AudioManager.updateUI();
     document.querySelectorAll('.ps5-btn, .ps5-btn-small, .ps5-icon-btn, .btn-livro, .btn-corner').forEach(btn => { btn.addEventListener('mouseenter', () => AudioManager.playHoverTick()); });
-    btnSom.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); }); 
-    btnSomMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); });
+    btnSom.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); AudioManager.playHoverTick(); }); 
+    btnSomMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); AudioManager.playHoverTick(); });
     document.body.addEventListener('click', function initMenuMusic() { if(!AudioManager.isMutedGlobal) AudioManager.playBGM('menu'); document.body.removeEventListener('click', initMenuMusic); }, { once: true });
     window.addEventListener('blur', () => { isHolding = false; }); window.addEventListener('visibilitychange', () => { if(document.hidden) isHolding = false; });
 
@@ -627,7 +635,7 @@
     }
     
     async function dispararGameOverExtra() {
-        if(animationId) { cancelAnimationFrame(animationId); animationId = null; } gameActive = false; isHolding = false; hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; AudioManager.stopAll(); let pontosFinais = Math.floor(pontuacao); victoryScreen.style.display = 'flex'; setTimeout(() => { victoryScreen.style.opacity = '1'; }, 100);
+        gameActive = false; isHolding = false; hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; AudioManager.stopAll(); let pontosFinais = Math.floor(pontuacao); victoryScreen.style.display = 'flex'; setTimeout(() => { victoryScreen.style.opacity = '1'; }, 10);
         if (faseAtual === 8 || faseAtual === 2) {
             document.getElementById('titulo-vitoria').innerText = "FIM DE JOGO!"; document.getElementById('titulo-vitoria').style.color = "#FF9AA2"; document.getElementById('subtitulo-vitoria').innerText = "A ENVIAR PONTOS PARA A NUVEM..."; document.querySelector('.trophy-icon').innerText = "☁️";
             let gravouOnline = false; if(window.salvarPontuacaoGlobal && nomeJogador !== "") { gravouOnline = await window.salvarPontuacaoGlobal(nomeJogador, pontosFinais, faseAtual); }
@@ -636,22 +644,37 @@
         } else { AudioManager.playErrorVoice(); document.getElementById('titulo-vitoria').innerText = "FIM DE JOGO!"; document.getElementById('titulo-vitoria').style.color = "#FF9AA2"; document.getElementById('subtitulo-vitoria').innerText = "VOCÊ FEZ " + pontosFinais + " PONTOS!"; document.querySelector('.trophy-icon').innerText = "🌵"; document.getElementById('creditos-vitoria').innerHTML = "Continue treinando!"; }
     }
 
-    function iniciarJogo() { if (nomeJogador === "") { modalNome.style.display = 'flex'; setTimeout(() => modalNome.style.opacity = '1', 50); inputNomeJogador.focus(); } else { iniciarJogoReal(); } }
+    function iniciarJogo() { AudioManager.playHoverTick(); if (nomeJogador === "") { modalNome.style.display = 'flex'; setTimeout(() => modalNome.style.opacity = '1', 10); inputNomeJogador.focus(); } else { iniciarJogoReal(); } }
     function iniciarJogoReal() {
         if (gameActive) return; try { let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } } catch(e){}
-        if(animationId) { cancelAnimationFrame(animationId); animationId = null; } if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; }
-        AudioManager.init(); AudioManager.playMagicSFX(); AudioManager.playRisada(); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.display = 'flex'; setTimeout(() => { loader.style.visibility = 'visible'; loader.style.opacity = '1'; }, 10); } startScreen.style.opacity = '0';
-        initTimeoutId = setTimeout(() => { startScreen.style.display = 'none'; hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex'; AudioManager.playBGM('game'); letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = []; letraFeedbacks = []; let conf = modosDeJogo[modoAtualIndex]; faseAtual = conf.fase; isInfinite = conf.inf; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); prepararFase(faseAtual); gameActive = true; isPaused = false; lastTime = performance.now(); gameSpeed = baseGameSpeed; hitStopTime = 0; shakeIntensity = 0; animationId = requestAnimationFrame(animate); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1800); 
+        if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; }
+        AudioManager.init(); AudioManager.playMagicSFX(); AudioManager.playRisada(); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.display = 'flex'; setTimeout(() => { loader.style.visibility = 'visible'; loader.style.opacity = '1'; }, 10); } 
+        startScreen.style.transform = 'scale(1.1)';
+        startScreen.style.opacity = '0';
+        
+        initTimeoutId = setTimeout(() => { 
+            startScreen.style.display = 'none'; 
+            startScreen.style.transform = 'scale(1)';
+            hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex'; 
+            AudioManager.playBGM('game'); letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = []; letraFeedbacks = []; let conf = modosDeJogo[modoAtualIndex]; faseAtual = conf.fase; isInfinite = conf.inf; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); prepararFase(faseAtual); 
+            
+            gameActive = true; 
+            isPaused = false; 
+            lastTime = performance.now(); 
+            gameSpeed = baseGameSpeed; hitStopTime = 0; shakeIntensity = 0; 
+            if (!animationId) { animationId = requestAnimationFrame(animate); }
+            if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } 
+        }, 1800); 
     }
 
     btnJogar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); iniciarJogo(); });
-    btnPause.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if(gameActive && !isPaused) { isPaused = true; isHolding = false; if(animationId) { cancelAnimationFrame(animationId); animationId = null; } pauseScreen.style.display = 'flex'; setTimeout(() => { pauseScreen.style.opacity = '1'; }, 50); } });
-    btnContinuar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); lastTime = performance.now(); if(!animationId) { animationId = requestAnimationFrame(animate); } });
+    btnPause.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(gameActive && !isPaused) { isPaused = true; isHolding = false; pauseScreen.style.display = 'flex'; setTimeout(() => { pauseScreen.style.opacity = '1'; }, 10); } });
+    btnContinuar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); if(!animationId) { animationId = requestAnimationFrame(animate); } });
     
-    function voltarAoMenu(screenElement) { if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; } isPaused = false; screenElement.style.opacity = '0'; setTimeout(() => { screenElement.style.display = 'none'; }, 300); if(animationId) { cancelAnimationFrame(animationId); animationId = null; } const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0; cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout'); hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; ctx.clearRect(0, 0, canvas.width, canvas.height); drawProceduralBG(ctx, canvas.width, canvas.height, 1, true); AudioManager.stopAll(); AudioManager.isMutedGlobal = false; if(AudioManager.somAtivo) AudioManager.playBGM('menu'); startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50); resetIdleTimer(); }
-    btnReiniciar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; gameActive = false; if(animationId) { cancelAnimationFrame(animationId); animationId = null; } AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
-    btnVoltarMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(pauseScreen); }); btnVitoriaMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); voltarAoMenu(victoryScreen); });
-    btnJogarNovamente.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); victoryScreen.style.opacity = '0'; setTimeout(() => { victoryScreen.style.display = 'none'; gameActive = false; if(animationId) { cancelAnimationFrame(animationId); animationId = null; } AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
+    function voltarAoMenu(screenElement) { if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; } isPaused = false; screenElement.style.opacity = '0'; setTimeout(() => { screenElement.style.display = 'none'; }, 300); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0; cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout'); hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; if(AudioManager.somAtivo) AudioManager.playBGM('menu'); startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50); resetIdleTimer(); if (!animationId) animationId = requestAnimationFrame(animate); }
+    btnReiniciar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; gameActive = false; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
+    btnVoltarMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); voltarAoMenu(pauseScreen); }); btnVitoriaMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); voltarAoMenu(victoryScreen); });
+    btnJogarNovamente.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); victoryScreen.style.opacity = '0'; setTimeout(() => { victoryScreen.style.display = 'none'; gameActive = false; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
 
     function redimensionarCanvas() { 
         let dpr = window.devicePixelRatio || 1; 
@@ -1068,11 +1091,36 @@
 
     let lastTime = 0; 
     function animate(timeStamp) {
-        if (!gameActive || isPaused) return; 
-        let deltaTime = timeStamp - lastTime; if (deltaTime > 100) deltaTime = 16; lastTime = timeStamp; let timeScale = deltaTime / 16.666;
+        if (!lastTime) lastTime = timeStamp;
+        
+        let cw = window.innerWidth; let ch = window.innerHeight;
+        
+        if (!gameActive) {
+            let deltaTime = timeStamp - lastTime;
+            if (deltaTime > 100) deltaTime = 16;
+            lastTime = timeStamp;
+            let timeScale = deltaTime / 16.666;
+            
+            ctx.clearRect(0, 0, cw, ch);
+            drawProceduralBG(ctx, cw, ch, timeScale, true);
+            animationId = requestAnimationFrame(animate);
+            return;
+        }
+
+        if (isPaused) {
+            lastTime = timeStamp;
+            animationId = requestAnimationFrame(animate);
+            return;
+        }
+
+        let deltaTime = timeStamp - lastTime; 
+        if (deltaTime > 100) deltaTime = 16; 
+        lastTime = timeStamp; 
+        let timeScale = deltaTime / 16.666;
+        
         if (hitStopTime > 0) { hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; }
         itemTimer += deltaTime; if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
-        let cw = window.innerWidth; let ch = window.innerHeight; ctx.clearRect(0, 0, cw, ch); ctx.save();
+        ctx.clearRect(0, 0, cw, ch); ctx.save();
         if (shakeIntensity > 0) { let sx = Math.sin(timeStamp * 0.05) * shakeIntensity; let sy = Math.cos(timeStamp * 0.04) * shakeIntensity; ctx.translate(sx, sy); shakeIntensity -= deltaTime * 0.05; if(shakeIntensity < 0) shakeIntensity = 0; }
 
         if (faseAtual === 2) {
@@ -1098,7 +1146,6 @@
         else { 
             window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime; 
             
-            // Celebração Premium de 26 Letras
             if (faseAtual === 1 && !window.isCelebration && letrasColetadas.length >= 26) {
                 window.isCelebration = true;
                 AudioManager.playSuccessSFX();
@@ -1169,7 +1216,6 @@
                         shakeIntensity = 2; gerenciarCombo(true); 
                         let charLetra = item.info.letra || item.info; 
                         
-                        // Feedback Premium Pedagógico
                         if (faseAtual === 1) {
                             letraFeedbacks.push(new LetraFeedback(charLetra, item.info.palavra, cw/2, ch/2));
                             AudioManager.playColetaLetra(charLetra, item.info.palavra);
@@ -1201,10 +1247,10 @@
         
         for (let i = letraFeedbacks.length - 1; i >= 0; i--) { let f = letraFeedbacks[i]; f.update(timeScale); f.draw(ctx); if(f.vida <= 0) letraFeedbacks.splice(i, 1); }
         
-        ctx.restore(); if(gameActive && !isPaused) { animationId = requestAnimationFrame(animate); }
+        ctx.restore(); animationId = requestAnimationFrame(animate); 
     }
     
-    window.onload = () => { hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; redimensionarCanvas(); if (!gameActive) { drawProceduralBG(ctx, canvas.width, canvas.height, 1, true); } setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); }
+    window.onload = () => { hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; redimensionarCanvas(); setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); if (!animationId) animationId = requestAnimationFrame(animate); }
 
 // ===== MELHORIAS PREMIUM FASE DO PÁSSARO =====
 const flightControls = document.getElementById('flight-controls');
