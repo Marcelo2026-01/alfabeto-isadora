@@ -69,7 +69,7 @@
         @keyframes shimmerProgress { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
         @keyframes comboFirePulse { 0% { filter: brightness(1); transform: scaleY(1); } 100% { filter: brightness(1.2); transform: scaleY(1.1); box-shadow: 0 0 10px rgba(255,215,0,0.6); } }
 
-        /* BOTÕES DE PAUSA E SOM - POLIMENTO DE ESPAÇAMENTO E BORDAS */
+        /* BOTÕES DE PAUSA E SOM */
         .btn-corner { position: absolute; top: 15px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px); border: 2px solid var(--primaria); color: var(--primaria); box-shadow: 0 3px 0 rgba(255, 183, 178, 0.6), 0 5px 10px rgba(0,0,0,0.08); cursor: pointer; z-index: 35; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: 'Fredoka', sans-serif; font-weight: 900; }
         .btn-corner:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 4px 0 rgba(255, 183, 178, 0.8), 0 8px 12px rgba(0,0,0,0.1); background: #FFF; }
         .btn-corner:active { transform: scale(0.95) translateY(2px); box-shadow: 0 0 0 transparent, 0 2px 4px rgba(0,0,0,0.05); }
@@ -97,7 +97,6 @@
         .ps5-menu-options { display: flex; flex-direction: column; gap: clamp(8px, 1.5vmin, 15px); align-items: flex-start; }
         .play-group { margin-bottom: clamp(8px, 1.5vmin, 15px); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; animation: bounceInLeft 1s both; animation-delay: 0.2s; }
         
-        /* Botões Estilo Marshmallow / Livro Infantil - Adaptados Premium */
         .ps5-btn { background: linear-gradient(180deg, #FF9AA2 0%, #E57373 100%); border: 3px solid #FFF; border-radius: 30px; color: #FFF; font-size: clamp(14px, 3vw, 24px); font-family: 'Fredoka', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(10px, 1.5vw, 15px) clamp(20px, 3vw, 35px); display: flex; align-items: center; box-shadow: 0 6px 0 #E57373, 0 10px 20px rgba(0,0,0,0.25); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: bounceInLeft 1s both; transform-origin: left center; position: relative; overflow: hidden; }
         .ps5-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(45deg); transition: 0.5s; opacity: 0; }
         .ps5-btn:hover::after { opacity: 1; left: 100%; transition: 0.5s; }
@@ -155,7 +154,7 @@
         #pause-screen, #victory-screen, #exit-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 90; gap: 12px; opacity: 0; transition: opacity 0.3s ease; text-align: center; padding: 20px; box-sizing: border-box;}
         #exit-screen { z-index: 99999; }
         
-        .exit-box { background: #FFF; border: 5px solid var(--primaria); border-radius: 30px; padding: clamp(15px, 4vw, 35px); box-shadow: 0 12px 30px rgba(0,0,0,0.2), inset 0 -6px 0 rgba(0,0,0,0.05); max-width: 80%; display: flex; flex-direction: column; align-items: center; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .exit-box { background: #FFF; border: 5px solid var(--primaria); border-radius: 30px; padding: clamp(15px, 4vw, 35px); box-shadow: 0 15px 40px rgba(0,0,0,0.2), inset 0 -6px 0 rgba(0,0,0,0.05); max-width: 80%; display: flex; flex-direction: column; align-items: center; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
         /* CAIXA DE VITÓRIA PREMIUM (ALFABETO) */
         .victory-box { background: #FFF; border: 5px solid var(--destaque); border-radius: 30px; padding: clamp(20px, 4vw, 40px); box-shadow: 0 20px 50px rgba(0,0,0,0.15), inset 0 -8px 0 rgba(0,0,0,0.05); max-width: 90vw; width: 600px; display: flex; flex-direction: column; align-items: center; animation: popModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; margin-top: 40px; }
@@ -398,6 +397,28 @@
     </div>
 
 <script>
+    // POLYFILL UNIFICADO PARA CANVAS ROUNDRECT
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, radii) {
+            let r = 0;
+            if (typeof radii === 'number') r = radii;
+            else if (Array.isArray(radii) && radii.length > 0) r = radii[0];
+            r = Math.max(0, Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2));
+            this.beginPath();
+            this.moveTo(x + r, y);
+            this.lineTo(x + w - r, y);
+            this.quadraticCurveTo(x + w, y, x + w, y + r);
+            this.lineTo(x + w, y + h - r);
+            this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            this.lineTo(x + r, y + h);
+            this.quadraticCurveTo(x, y + h, x, y + h - r);
+            this.lineTo(x, y + r);
+            this.quadraticCurveTo(x, y, x + r, y);
+            this.closePath();
+            return this;
+        };
+    }
+
     const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d');
     const startScreen = document.getElementById('start-screen'); const victoryScreen = document.getElementById('victory-screen');
     const btnJogar = document.getElementById('btn-jogar'); const btnSomMenu = document.getElementById('btn-som-menu');
@@ -428,7 +449,7 @@
 
     let alturaChao = 0; let baseGameSpeed = 4.5; let gameSpeed = baseGameSpeed; let scaleMultiplier = 1; 
     let gameActive = false; let isPaused = false; let bgX = 0; let estradaOffset = 0;
-    let tutorialAtivo = false; let isInfinite = false;
+    let tutorialAtivo = false; let faseAtual = 1; let isInfinite = false;
     let animationId = null; let initTimeoutId = null; let hitStopTime = 0; let shakeIntensity = 0; let pontuacao = 0; 
     let vidasExtra = 3; let invulneravelTimer = 0;
     window.isCelebration = false; window.audioTimeouts = [];
@@ -582,22 +603,14 @@
             this.bubbleCtx = this.bubbleCanvas.getContext('2d');
             this.drawCachedBubble(this.bubbleCtx, 60, 60, 50);
         },
-        safeRoundRect(ctx, x, y, w, h, r) {
-            ctx.beginPath();
-            ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-            ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-            ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-            ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
-            ctx.closePath();
-        },
         drawCachedBlock(ctx, cx, cy, s) {
             let hs = s/2;
             ctx.shadowColor = 'rgba(0,0,0,0.2)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
-            ctx.fillStyle = '#FF9AA2'; this.safeRoundRect(ctx, cx-hs, cy-hs, s, s, 12); ctx.fill();
+            ctx.fillStyle = '#FF9AA2'; ctx.roundRect(cx-hs, cy-hs, s, s, 12); ctx.fill();
             ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-            ctx.fillStyle = '#E57373'; this.safeRoundRect(ctx, cx-hs, cy-hs + s - 10, s, 10, 12); ctx.fill(); 
-            ctx.fillStyle = 'rgba(255,255,255,0.3)'; this.safeRoundRect(ctx, cx-hs, cy-hs, s, 8, 12); ctx.fill(); 
-            ctx.strokeStyle = '#E57373'; ctx.lineWidth = 4; this.safeRoundRect(ctx, cx-hs + 6, cy-hs + 6, s - 12, s - 12, 8); ctx.stroke();
+            ctx.fillStyle = '#E57373'; ctx.roundRect(cx-hs, cy-hs + s - 10, s, 10, 12); ctx.fill(); 
+            ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.roundRect(cx-hs, cy-hs, s, 8, 12); ctx.fill(); 
+            ctx.strokeStyle = '#E57373'; ctx.lineWidth = 4; ctx.roundRect(cx-hs + 6, cy-hs + 6, s - 12, s - 12, 8); ctx.stroke();
             ctx.fillStyle = '#FFF'; ctx.font = `900 ${s*0.6}px 'Fredoka'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('A', cx, cy + 2);
         },
         drawCachedCloud(ctx, cx, cy, r) {
@@ -730,7 +743,7 @@
             startScreen.style.transform = 'scale(1)';
             hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex'; 
             AudioManager.playBGM('game'); letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = []; letraFeedbacks = []; 
-            isInfinite = false; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.obstaculoTimer = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); prepararFase(); 
+            faseAtual = 1; isInfinite = false; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); prepararFase(); 
             
             gameActive = true; 
             isPaused = false; 
@@ -839,7 +852,7 @@
             let w = 260 * scaleMultiplier;
             let h = 180 * scaleMultiplier;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-            AssetCache.safeRoundRect(ctx, -w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
+            ctx.roundRect(-w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
             ctx.fill();
             ctx.strokeStyle = '#FFD700';
             ctx.lineWidth = 4 * scaleMultiplier;
@@ -957,10 +970,10 @@
                 let s = this.radius * 1.8; let hs = s/2; 
                 ctx.translate(0, -hs - jumpOffset + (this.variation * 5 * scl)); 
                 
-                ctx.fillStyle = this.blockColors[0]; ctx.beginPath(); ctx.roundRect(-hs, -hs, s, s, 12*scl); ctx.fill();
-                ctx.fillStyle = this.blockColors[1]; ctx.beginPath(); ctx.roundRect(-hs, -hs + s - 10*scl, s, 10*scl, 12*scl); ctx.fill(); 
-                ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.beginPath(); ctx.roundRect(-hs, -hs, s, 8*scl, 12*scl); ctx.fill(); 
-                ctx.strokeStyle = this.blockColors[1]; ctx.lineWidth = 4*scl; ctx.beginPath(); ctx.roundRect(-hs + 6*scl, -hs + 6*scl, s - 12*scl, s - 12*scl, 8*scl); ctx.stroke();
+                ctx.fillStyle = this.blockColors[0]; ctx.roundRect(-hs, -hs, s, s, 12*scl); ctx.fill();
+                ctx.fillStyle = this.blockColors[1]; ctx.roundRect(-hs, -hs + s - 10*scl, s, 10*scl, 12*scl); ctx.fill(); 
+                ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.roundRect(-hs, -hs, s, 8*scl, 12*scl); ctx.fill(); 
+                ctx.strokeStyle = this.blockColors[1]; ctx.lineWidth = 4*scl; ctx.roundRect(-hs + 6*scl, -hs + 6*scl, s - 12*scl, s - 12*scl, 8*scl); ctx.stroke();
                 ctx.fillStyle = '#FFF'; ctx.font = `900 ${s*0.6}px 'Fredoka'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 let letrasBrinquedo = ['A', 'B', 'C']; ctx.fillText(letrasBrinquedo[this.variation % 3], 0, 2*scl);
                 ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(-hs - 5*scl, -hs + 10*scl, 3*scl, 0, Math.PI*2); ctx.fill();
@@ -1142,16 +1155,21 @@
 
     let lastTime = 0; 
     function animate(timeStamp) {
-        if (!lastTime) lastTime = timeStamp;
+        if (!timeStamp || isNaN(timeStamp)) timeStamp = performance.now();
+        if (!lastTime || isNaN(lastTime)) lastTime = timeStamp;
+
+        let deltaTime = timeStamp - lastTime;
+        if (isNaN(deltaTime) || deltaTime > 100 || deltaTime < 0) deltaTime = 16.666;
+        lastTime = timeStamp;
+        let timeScale = deltaTime / 16.666;
+        if (isNaN(timeScale) || timeScale <= 0) timeScale = 1;
+
+        if (isNaN(bgX)) bgX = 0;
+        if (isNaN(gameSpeed)) gameSpeed = baseGameSpeed;
         
         let cw = window.innerWidth; let ch = window.innerHeight;
         
         if (!gameActive) {
-            let deltaTime = timeStamp - lastTime;
-            if (deltaTime > 100) deltaTime = 16;
-            lastTime = timeStamp;
-            let timeScale = deltaTime / 16.666;
-            
             ctx.clearRect(0, 0, cw, ch);
             drawProceduralBG(ctx, cw, ch, timeScale, true);
             
@@ -1165,15 +1183,9 @@
         }
 
         if (isPaused) {
-            lastTime = timeStamp;
             animationId = requestAnimationFrame(animate);
             return;
         }
-
-        let deltaTime = timeStamp - lastTime; 
-        if (deltaTime > 100) deltaTime = 16; 
-        lastTime = timeStamp; 
-        let timeScale = deltaTime / 16.666;
         
         if (hitStopTime > 0) { hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; }
         itemTimer += deltaTime; if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
