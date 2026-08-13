@@ -120,7 +120,7 @@
 
         /* MODAIS, VITÓRIA PREMIUM & MENUS */
         .modal-padrao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; padding: 20px;}
-        .caixa-modal { background: #FFF; border: 5px solid var(--destaque); border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.15), inset 0 -8px 0 rgba(0,0,0,0.05); padding: clamp(15px, 4vmin, 30px); text-align: center; color: var(--texto-escuro); width: 90vw; max-width: 450px; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .caixa-modal { background: #FFF; border: 5px solid var(--destaque); border-radius: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.2), inset 0 -8px 0 rgba(0,0,0,0.05); padding: clamp(15px, 4vmin, 30px); text-align: center; color: var(--texto-escuro); width: 90vw; max-width: 450px; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
         @keyframes popModal { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
         .input-nome { width: 100%; background: #F9F9F9; border: 3px solid var(--primaria); color: var(--texto-escuro); font-family: 'Fredoka', sans-serif; font-size: clamp(16px, 3vw, 24px); font-weight: 900; padding: 12px; border-radius: 15px; text-align: center; outline: none; transition: all 0.3s; margin: 15px 0; text-transform: uppercase; box-shadow: inset 0 3px 5px rgba(0,0,0,0.05); }
@@ -397,6 +397,37 @@
     </div>
 
 <script>
+    // POLYFILLS E FUNÇÕES SEGURAS DE DESENHO
+    function fillRoundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.fill();
+    }
+    
+    function strokeRoundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
     const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d');
     const startScreen = document.getElementById('start-screen'); const victoryScreen = document.getElementById('victory-screen');
     const btnJogar = document.getElementById('btn-jogar'); const btnSomMenu = document.getElementById('btn-som-menu');
@@ -427,13 +458,14 @@
 
     let alturaChao = 0; let baseGameSpeed = 4.5; let gameSpeed = baseGameSpeed; let scaleMultiplier = 1; 
     let gameActive = false; let isPaused = false; let bgX = 0; let estradaOffset = 0;
-    let tutorialAtivo = false; let faseAtual = 1; let isInfinite = false;
+    let tutorialAtivo = false; let isInfinite = false;
     let animationId = null; let initTimeoutId = null; let hitStopTime = 0; let shakeIntensity = 0; let pontuacao = 0; 
     let vidasExtra = 3; let invulneravelTimer = 0;
     window.isCelebration = false; window.audioTimeouts = [];
 
     const AlfabetoIsadora = [ { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, { letra: 'J', palavra: 'Jacaré' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leão' }, { letra: 'M', palavra: 'Macaco' }, { letra: 'N', initial: 'Nuvem', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xícara' }, { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } ];
     let letrasParaVencerFase1 = 26; let letrasColetadas = []; let isHolding = false; let idleTime = 0;
+    let particulas = [];
     
     gridAlfabeto.innerHTML = AlfabetoIsadora.map(a => `<span class="letra-hud" id="hud-letra-${a.letra}">${a.letra}</span>`).join('');
 
@@ -584,11 +616,11 @@
         drawCachedBlock(ctx, cx, cy, s) {
             let hs = s/2;
             ctx.shadowColor = 'rgba(0,0,0,0.2)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
-            ctx.fillStyle = '#FF9AA2'; ctx.beginPath(); ctx.roundRect(cx-hs, cy-hs, s, s, 12); ctx.fill();
+            ctx.fillStyle = '#FF9AA2'; fillRoundRect(ctx, cx-hs, cy-hs, s, s, 12); 
             ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-            ctx.fillStyle = '#E57373'; ctx.beginPath(); ctx.roundRect(cx-hs, cy-hs + s - 10, s, 10, 12); ctx.fill(); 
-            ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.beginPath(); ctx.roundRect(cx-hs, cy-hs, s, 8, 12); ctx.fill(); 
-            ctx.strokeStyle = '#E57373'; ctx.lineWidth = 4; ctx.beginPath(); ctx.roundRect(cx-hs + 6, cy-hs + 6, s - 12, s - 12, 8); ctx.stroke();
+            ctx.fillStyle = '#E57373'; fillRoundRect(ctx, cx-hs, cy-hs + s - 10, s, 10, 12); 
+            ctx.fillStyle = 'rgba(255,255,255,0.3)'; fillRoundRect(ctx, cx-hs, cy-hs, s, 8, 12); 
+            ctx.strokeStyle = '#E57373'; ctx.lineWidth = 4; strokeRoundRect(ctx, cx-hs + 6, cy-hs + 6, s - 12, s - 12, 8); 
             ctx.fillStyle = '#FFF'; ctx.font = `900 ${s*0.6}px 'Fredoka'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('A', cx, cy + 2);
         },
         drawCachedCloud(ctx, cx, cy, r) {
@@ -830,12 +862,10 @@
             let w = 260 * scaleMultiplier;
             let h = 180 * scaleMultiplier;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-            ctx.beginPath();
-            ctx.roundRect(-w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
-            ctx.fill();
+            fillRoundRect(ctx, -w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
             ctx.strokeStyle = '#FFD700';
             ctx.lineWidth = 4 * scaleMultiplier;
-            ctx.stroke();
+            strokeRoundRect(ctx, -w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
 
             ctx.font = `900 ${80 * scaleMultiplier}px 'Fredoka'`;
             ctx.textAlign = 'center';
@@ -891,8 +921,8 @@
             if (this.type === 'butterfly') {
                 ctx.fillStyle = this.color;
                 let flap = Math.abs(Math.sin(this.frame)) * this.size;
-                ctx.beginPath(); ctx.ellipse(-this.size/2, 0, flap, this.size, 0, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.ellipse(this.size/2, 0, flap, this.size, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(-this.size/2, 0, Math.abs(flap), this.size, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(this.size/2, 0, Math.abs(flap), this.size, 0, 0, Math.PI*2); ctx.fill();
             } else {
                 ctx.fillStyle = '#82C9AD'; ctx.globalAlpha = 0.8;
                 ctx.beginPath(); ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI*2); ctx.fill();
@@ -949,10 +979,10 @@
                 let s = this.radius * 1.8; let hs = s/2; 
                 ctx.translate(0, -hs - jumpOffset + (this.variation * 5 * scl)); 
                 
-                ctx.fillStyle = this.blockColors[0]; ctx.beginPath(); ctx.roundRect(-hs, -hs, s, s, 12*scl); ctx.fill();
-                ctx.fillStyle = this.blockColors[1]; ctx.beginPath(); ctx.roundRect(-hs, -hs + s - 10*scl, s, 10*scl, 12*scl); ctx.fill(); 
-                ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.beginPath(); ctx.roundRect(-hs, -hs, s, 8*scl, 12*scl); ctx.fill(); 
-                ctx.strokeStyle = this.blockColors[1]; ctx.lineWidth = 4*scl; ctx.beginPath(); ctx.roundRect(-hs + 6*scl, -hs + 6*scl, s - 12*scl, s - 12*scl, 8*scl); ctx.stroke();
+                ctx.fillStyle = this.blockColors[0]; fillRoundRect(ctx, -hs, -hs, s, s, 12*scl); 
+                ctx.fillStyle = this.blockColors[1]; fillRoundRect(ctx, -hs, -hs + s - 10*scl, s, 10*scl, 12*scl); 
+                ctx.fillStyle = 'rgba(255,255,255,0.3)'; fillRoundRect(ctx, -hs, -hs, s, 8*scl, 12*scl); 
+                ctx.strokeStyle = this.blockColors[1]; ctx.lineWidth = 4*scl; strokeRoundRect(ctx, -hs + 6*scl, -hs + 6*scl, s - 12*scl, s - 12*scl, 8*scl);
                 ctx.fillStyle = '#FFF'; ctx.font = `900 ${s*0.6}px 'Fredoka'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 let letrasBrinquedo = ['A', 'B', 'C']; ctx.fillText(letrasBrinquedo[this.variation % 3], 0, 2*scl);
                 ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(-hs - 5*scl, -hs + 10*scl, 3*scl, 0, Math.PI*2); ctx.fill();
@@ -1134,16 +1164,21 @@
 
     let lastTime = 0; 
     function animate(timeStamp) {
-        if (!lastTime) lastTime = timeStamp;
+        if (!timeStamp || isNaN(timeStamp)) timeStamp = performance.now();
+        if (!lastTime || isNaN(lastTime)) lastTime = timeStamp;
+
+        let deltaTime = timeStamp - lastTime;
+        if (isNaN(deltaTime) || deltaTime > 100 || deltaTime < 0) deltaTime = 16.666;
+        lastTime = timeStamp;
+        let timeScale = deltaTime / 16.666;
+        if (isNaN(timeScale) || timeScale <= 0) timeScale = 1;
+
+        if (isNaN(bgX)) bgX = 0;
+        if (isNaN(gameSpeed)) gameSpeed = baseGameSpeed;
         
         let cw = window.innerWidth; let ch = window.innerHeight;
         
         if (!gameActive) {
-            let deltaTime = timeStamp - lastTime;
-            if (deltaTime > 100) deltaTime = 16;
-            lastTime = timeStamp;
-            let timeScale = deltaTime / 16.666;
-            
             ctx.clearRect(0, 0, cw, ch);
             drawProceduralBG(ctx, cw, ch, timeScale, true);
             
@@ -1157,15 +1192,9 @@
         }
 
         if (isPaused) {
-            lastTime = timeStamp;
             animationId = requestAnimationFrame(animate);
             return;
         }
-
-        let deltaTime = timeStamp - lastTime; 
-        if (deltaTime > 100) deltaTime = 16; 
-        lastTime = timeStamp; 
-        let timeScale = deltaTime / 16.666;
         
         if (hitStopTime > 0) { hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; }
         itemTimer += deltaTime; if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
