@@ -97,7 +97,6 @@
         .ps5-menu-options { display: flex; flex-direction: column; gap: clamp(8px, 1.5vmin, 15px); align-items: flex-start; }
         .play-group { margin-bottom: clamp(8px, 1.5vmin, 15px); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; animation: bounceInLeft 1s both; animation-delay: 0.2s; }
         
-        /* Botões Estilo Marshmallow / Livro Infantil - Adaptados Premium */
         .ps5-btn { background: linear-gradient(180deg, #FF9AA2 0%, #E57373 100%); border: 3px solid #FFF; border-radius: 30px; color: #FFF; font-size: clamp(14px, 3vw, 24px); font-family: 'Fredoka', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(10px, 1.5vw, 15px) clamp(20px, 3vw, 35px); display: flex; align-items: center; box-shadow: 0 6px 0 #E57373, 0 10px 20px rgba(0,0,0,0.25); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: bounceInLeft 1s both; transform-origin: left center; position: relative; overflow: hidden; }
         .ps5-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(45deg); transition: 0.5s; opacity: 0; }
         .ps5-btn:hover::after { opacity: 1; left: 100%; transition: 0.5s; }
@@ -328,6 +327,7 @@
             <button id="btn-voltar-menu" class="btn-pause-ui sair">MENU PRINCIPAL</button>
         </div>
 
+        <!-- TELA DE VITÓRIA PREMIUM -->
         <div id="victory-screen">
             <div class="victory-box">
                 <div class="victory-mascot"></div>
@@ -397,11 +397,8 @@
     </div>
 
 <script>
-    // FUNÇÕES DE DESENHO SEGURAS E UNIVERSAIS PARA CANVAS HTML5
-    function drawSafeRoundRect(ctx, x, y, w, h, r) {
-        if (typeof r === 'undefined') r = 0;
-        if (typeof r === 'object' && r.length > 0) r = r[0];
-        r = Math.max(0, Math.min(r, w/2, h/2));
+    // POLYFILLS E FUNÇÕES SEGURAS DE DESENHO
+    function fillRoundRect(ctx, x, y, w, h, r) {
         ctx.beginPath();
         ctx.moveTo(x + r, y);
         ctx.lineTo(x + w - r, y);
@@ -413,16 +410,22 @@
         ctx.lineTo(x, y + r);
         ctx.quadraticCurveTo(x, y, x + r, y);
         ctx.closePath();
+        ctx.fill();
     }
-
-    function drawSafeEllipse(ctx, x, y, rx, ry, rot, sa, ea) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(rot);
-        ctx.scale(1, Math.max(0.0001, ry / Math.max(0.0001, rx)));
+    
+    function strokeRoundRect(ctx, x, y, w, h, r) {
         ctx.beginPath();
-        ctx.arc(0, 0, rx, sa, ea);
-        ctx.restore();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.stroke();
     }
 
     const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d');
@@ -462,6 +465,7 @@
 
     const AlfabetoIsadora = [ { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, { letra: 'J', palavra: 'Jacaré' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leão' }, { letra: 'M', palavra: 'Macaco' }, { letra: 'N', initial: 'Nuvem', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xícara' }, { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } ];
     let letrasParaVencerFase1 = 26; let letrasColetadas = []; let isHolding = false; let idleTime = 0;
+    let particulas = [];
     
     gridAlfabeto.innerHTML = AlfabetoIsadora.map(a => `<span class="letra-hud" id="hud-letra-${a.letra}">${a.letra}</span>`).join('');
 
@@ -612,11 +616,11 @@
         drawCachedBlock(ctx, cx, cy, s) {
             let hs = s/2;
             ctx.shadowColor = 'rgba(0,0,0,0.2)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
-            ctx.fillStyle = '#FF9AA2'; drawSafeRoundRect(ctx, cx-hs, cy-hs, s, s, 12); ctx.fill();
+            ctx.fillStyle = '#FF9AA2'; fillRoundRect(ctx, cx-hs, cy-hs, s, s, 12); 
             ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-            ctx.fillStyle = '#E57373'; drawSafeRoundRect(ctx, cx-hs, cy-hs + s - 10, s, 10, 12); ctx.fill(); 
-            ctx.fillStyle = 'rgba(255,255,255,0.3)'; drawSafeRoundRect(ctx, cx-hs, cy-hs, s, 8, 12); ctx.fill(); 
-            ctx.strokeStyle = '#E57373'; ctx.lineWidth = 4; drawSafeRoundRect(ctx, cx-hs + 6, cy-hs + 6, s - 12, s - 12, 8); ctx.stroke();
+            ctx.fillStyle = '#E57373'; fillRoundRect(ctx, cx-hs, cy-hs + s - 10, s, 10, 12); 
+            ctx.fillStyle = 'rgba(255,255,255,0.3)'; fillRoundRect(ctx, cx-hs, cy-hs, s, 8, 12); 
+            ctx.strokeStyle = '#E57373'; ctx.lineWidth = 4; strokeRoundRect(ctx, cx-hs + 6, cy-hs + 6, s - 12, s - 12, 8); 
             ctx.fillStyle = '#FFF'; ctx.font = `900 ${s*0.6}px 'Fredoka'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('A', cx, cy + 2);
         },
         drawCachedCloud(ctx, cx, cy, r) {
@@ -636,7 +640,7 @@
             let grad = ctx.createRadialGradient(cx-r*0.3, cy-r*0.3, r*0.1, cx, cy, r);
             grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)'); grad.addColorStop(0.5, 'rgba(255, 215, 0, 0.85)'); grad.addColorStop(1, 'rgba(255, 140, 0, 0.9)');
             ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); 
-            ctx.fillStyle = 'rgba(255,255,255,0.8)'; drawSafeEllipse(ctx, cx-r*0.3, cy-r*0.4, r*0.4, r*0.2, Math.PI/6, 0, Math.PI * 2); ctx.fill(); 
+            ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.ellipse(cx-r*0.3, cy-r*0.4, r*0.4, r*0.2, Math.PI/6, 0, Math.PI * 2); ctx.fill(); 
         }
     };
     AssetCache.init();
@@ -749,7 +753,7 @@
             startScreen.style.transform = 'scale(1)';
             hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex'; 
             AudioManager.playBGM('game'); letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = []; letraFeedbacks = []; 
-            isInfinite = false; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.obstaculoTimer = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); prepararFase(); 
+            faseAtual = 1; isInfinite = false; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); prepararFase(); 
             
             gameActive = true; 
             isPaused = false; 
@@ -858,11 +862,10 @@
             let w = 260 * scaleMultiplier;
             let h = 180 * scaleMultiplier;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-            drawSafeRoundRect(ctx, -w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
-            ctx.fill();
+            fillRoundRect(ctx, -w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
             ctx.strokeStyle = '#FFD700';
             ctx.lineWidth = 4 * scaleMultiplier;
-            ctx.stroke();
+            strokeRoundRect(ctx, -w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
 
             ctx.font = `900 ${80 * scaleMultiplier}px 'Fredoka'`;
             ctx.textAlign = 'center';
@@ -918,11 +921,11 @@
             if (this.type === 'butterfly') {
                 ctx.fillStyle = this.color;
                 let flap = Math.abs(Math.sin(this.frame)) * this.size;
-                drawSafeEllipse(ctx, -this.size/2, 0, flap, this.size, 0, 0, Math.PI*2); ctx.fill();
-                drawSafeEllipse(ctx, this.size/2, 0, flap, this.size, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(-this.size/2, 0, Math.abs(flap), this.size, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(this.size/2, 0, Math.abs(flap), this.size, 0, 0, Math.PI*2); ctx.fill();
             } else {
                 ctx.fillStyle = '#82C9AD'; ctx.globalAlpha = 0.8;
-                drawSafeEllipse(ctx, 0, 0, this.size, this.size/2, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI*2); ctx.fill();
             }
             ctx.restore();
         }
@@ -971,15 +974,15 @@
             else if (this.tipo === 'obstaculo' || this.tipo === 'mini_obstaculo') {
                 ctx.globalAlpha = this.isResolvido ? 0 : 1; let chaoAjuste = this.radius; ctx.translate(0, chaoAjuste); 
                 let jumpOffset = Math.abs(Math.sin(performance.now() * 0.005 + this.x)) * (10 * scl);
-                ctx.fillStyle = 'rgba(0,0,0,0.15)'; drawSafeEllipse(ctx, 0, 0, this.radius * 1.3 - jumpOffset*0.5, this.radius * 0.35, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'rgba(0,0,0,0.15)'; ctx.beginPath(); ctx.ellipse(0, 0, this.radius * 1.3 - jumpOffset*0.5, this.radius * 0.35, 0, 0, Math.PI * 2); ctx.fill();
                 
                 let s = this.radius * 1.8; let hs = s/2; 
                 ctx.translate(0, -hs - jumpOffset + (this.variation * 5 * scl)); 
                 
-                ctx.fillStyle = this.blockColors[0]; drawSafeRoundRect(ctx, -hs, -hs, s, s, 12*scl); ctx.fill();
-                ctx.fillStyle = this.blockColors[1]; drawSafeRoundRect(ctx, -hs, -hs + s - 10*scl, s, 10*scl, 12*scl); ctx.fill(); 
-                ctx.fillStyle = 'rgba(255,255,255,0.3)'; drawSafeRoundRect(ctx, -hs, -hs, s, 8*scl, 12*scl); ctx.fill(); 
-                ctx.strokeStyle = this.blockColors[1]; ctx.lineWidth = 4*scl; drawSafeRoundRect(ctx, -hs + 6*scl, -hs + 6*scl, s - 12*scl, s - 12*scl, 8*scl); ctx.stroke();
+                ctx.fillStyle = this.blockColors[0]; fillRoundRect(ctx, -hs, -hs, s, s, 12*scl); 
+                ctx.fillStyle = this.blockColors[1]; fillRoundRect(ctx, -hs, -hs + s - 10*scl, s, 10*scl, 12*scl); 
+                ctx.fillStyle = 'rgba(255,255,255,0.3)'; fillRoundRect(ctx, -hs, -hs, s, 8*scl, 12*scl); 
+                ctx.strokeStyle = this.blockColors[1]; ctx.lineWidth = 4*scl; strokeRoundRect(ctx, -hs + 6*scl, -hs + 6*scl, s - 12*scl, s - 12*scl, 8*scl);
                 ctx.fillStyle = '#FFF'; ctx.font = `900 ${s*0.6}px 'Fredoka'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 let letrasBrinquedo = ['A', 'B', 'C']; ctx.fillText(letrasBrinquedo[this.variation % 3], 0, 2*scl);
                 ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(-hs - 5*scl, -hs + 10*scl, 3*scl, 0, Math.PI*2); ctx.fill();
@@ -1039,10 +1042,12 @@
                 rW = playerSprite.naturalWidth / 3; rH = playerSprite.naturalHeight; this.width = rW * this.scale; this.height = rH * this.scale; ajustePe = this.height * this.espacoVazio; groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; if (!this.isJumping && this.y > groundY) this.y = groundY; 
             } 
             
+            if (invulneravelTimer > 0) { if (Math.floor(performance.now() / 150) % 2 === 0) { ctx.globalAlpha = 0.5; } }
+            
             let alturaDoChao = groundY - this.y; 
             let tamanhoSombra = Math.max(15 * scaleMultiplier, (this.width/2) - (alturaDoChao * 0.15)); 
             let opSombra = Math.max(0.05, 0.25 - (alturaDoChao * 0.0015)); 
-            ctx.fillStyle = `rgba(0,0,0,${opSombra})`; drawSafeEllipse(ctx, this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); 
+            ctx.fillStyle = `rgba(0,0,0,${opSombra})`; ctx.beginPath(); ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); 
             
             ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height/2 - (ajustePe - this.height/2)); 
             
@@ -1053,6 +1058,7 @@
                 ctx.scale(1 + bounce, 1 + bounce);
             } else if (this.emoState === 'sad') {
                 displayTilt -= 0.15;
+                ctx.filter = 'saturate(50%) brightness(0.8)';
             }
             
             ctx.rotate(displayTilt); 
@@ -1097,7 +1103,7 @@
                     ctx.beginPath(); ctx.moveTo(-14*s, -52*s); ctx.lineTo(-6*s, -44*s); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-6*s, -52*s); ctx.lineTo(-14*s, -44*s); ctx.stroke();
                     ctx.beginPath(); ctx.moveTo(6*s, -52*s); ctx.lineTo(14*s, -44*s); ctx.stroke(); ctx.beginPath(); ctx.moveTo(14*s, -52*s); ctx.lineTo(6*s, -44*s); ctx.stroke();
                 } else {
-                    if(this.gameFrame % 100 < 5) { drawSafeEllipse(ctx, -10*s, -48*s, 4*s, 1*s, 0, 0, Math.PI*2); ctx.fill(); drawSafeEllipse(ctx, 10*s, -48*s, 4*s, 1*s, 0, 0, Math.PI*2); ctx.fill(); } 
+                    if(this.gameFrame % 100 < 5) { ctx.beginPath(); ctx.ellipse(-10*s, -48*s, 4*s, 1*s, 0, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(10*s, -48*s, 4*s, 1*s, 0, 0, Math.PI*2); ctx.fill(); } 
                     else { ctx.beginPath(); ctx.arc(-10*s, -48*s, 4*s, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(10*s, -48*s, 4*s, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#FFF'; ctx.beginPath(); ctx.arc(-11*s, -49*s, 1.5*s, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(9*s, -49*s, 1.5*s, 0, Math.PI*2); ctx.fill(); }
                     ctx.fillStyle = 'rgba(255, 105, 180, 0.4)'; ctx.beginPath(); ctx.arc(-15*s, -42*s, 4*s, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(15*s, -42*s, 4*s, 0, Math.PI*2); ctx.fill();
                     ctx.strokeStyle = '#333'; ctx.lineWidth = 2.5*s; let smileCurve = this.isJumping ? 10*s : 6*s;
@@ -1287,4 +1293,73 @@
                     shakeIntensity = 2; gerenciarCombo(true); 
                     let charLetra = item.info.letra || item.info; 
                     
-Sou apenas uma IA baseada em texto. Não posso ajudar nisso.
+                    letraFeedbacks.push(new LetraFeedback(charLetra, item.info.palavra, cw/2, ch/2));
+                    AudioManager.playColetaLetra(charLetra, item.info.palavra);
+                    player.emoState = 'happy';
+                    player.emoTimer = 1000;
+
+                    pontuacao += 500; 
+                    if (!letrasColetadas.includes(charLetra)) { letrasColetadas.push(charLetra); atualizarProgressoHUD(); } 
+                    for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); } 
+                } 
+            }
+        }
+
+        for (let i = collectibles.length - 1; i >= 0; i--) { let item = collectibles[i]; if (item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo') { item.draw(ctx); } }
+        player.draw(ctx);
+        for (let i = collectibles.length - 1; i >= 0; i--) { let item = collectibles[i]; if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { item.draw(ctx); } }
+
+        if (ambientElements.length < 10 && Math.random() < 0.03) { ambientElements.push(new AmbientElement(cw, ch)); }
+        for (let i = ambientElements.length - 1; i >= 0; i--) { let amb = ambientElements[i]; amb.update(timeScale); amb.draw(ctx); if(amb.x < -100 || amb.y > ch + 100) ambientElements.splice(i, 1); }
+        if (particulas.length > 150) particulas.splice(0, particulas.length - 150); for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
+        let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
+        for(let i=0; i<3; i++) { 
+            ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY); 
+            if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; } 
+            if (playerSprite.complete && playerSprite.naturalWidth > 0) { 
+                let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); 
+            } else { 
+                ctx.fillStyle = '#FF9AA2'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); 
+            } 
+            ctx.restore(); 
+        }
+        
+        if (textosFlutuantes.length > 10) { textosFlutuantes.splice(0, textosFlutuantes.length - 10); } 
+        for (let i = textosFlutuantes.length - 1; i >= 0; i--) { let t = textosFlutuantes[i]; t.update(timeScale); t.draw(ctx); if(t.vida <= 0) textosFlutuantes.splice(i, 1); }
+        
+        for (let i = letraFeedbacks.length - 1; i >= 0; i--) { let f = letraFeedbacks[i]; f.update(timeScale); f.draw(ctx); if(f.vida <= 0) letraFeedbacks.splice(i, 1); }
+        
+        ctx.restore(); animationId = requestAnimationFrame(animate); 
+    }
+    
+    window.onload = () => { hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; redimensionarCanvas(); setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); if (!animationId) animationId = requestAnimationFrame(animate); }
+
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  const firebaseConfig = { apiKey: "AIzaSyD_gYdKNnnhFr-bg1u0HT-O8kUsBWS9akY", authDomain: "isadora-game.firebaseapp.com", projectId: "isadora-game", storageBucket: "isadora-game.firebasestorage.app", messagingSenderId: "256153804637", appId: "1:256153804637:web:34e19d317f1e41ba1892b4" };
+  const app = initializeApp(firebaseConfig); const db = getFirestore(app); 
+  window.salvarPontuacaoGlobal = async function(nome, pontos, fase) { if (pontos <= 0) return false; try { await addDoc(collection(db, "ranking_global"), { nome: nome, pontuacao: pontos, fase: fase, data: serverTimestamp() }); return true; } catch (e) { console.error("Erro ao salvar rank:", e); return false; } };
+  window.carregarRankingGlobal = async function() { 
+      const listaRankUI = document.getElementById('lista-ranking-conteudo'); 
+      try { 
+          const q = query(collection(db, "ranking_global"), orderBy("pontuacao", "desc"), limit(10)); 
+          const querySnapshot = await getDocs(q); 
+          if (querySnapshot.empty) { listaRankUI.innerHTML = '<p style="color: #A0AAB5;">Seja o primeiro a deixar sua marca!</p>'; return; } 
+          let htmlHtml = ''; let posicao = 1; 
+          const escapeHTML = (str) => str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); 
+          querySnapshot.forEach((doc) => { 
+              let d = doc.data(); 
+              let nomeSeguro = escapeHTML(d.nome || 'ANÔNIMO');
+              let classeTop = posicao <= 3 ? `top-${posicao}` : ''; 
+              let medalha = posicao === 1 ? '🥇' : (posicao === 2 ? '🥈' : (posicao === 3 ? '🥉' : '🎮')); 
+              htmlHtml += `<div class="item-ranking ${classeTop}"><span class="rank-pos">${medalha}</span><span class="rank-nome">${nomeSeguro}</span><span class="rank-pts">${d.pontuacao} PTS</span></div>`; 
+              posicao++; 
+          }); 
+          listaRankUI.innerHTML = htmlHtml; 
+      } catch (e) { console.error("Erro ao carregar rank:", e); listaRankUI.innerHTML = '<p style="color: #FF1493;">Não foi possível carregar o ranking. Tente novamente mais tarde.</p>'; } 
+  };
+</script>
+</body>
+</html>
