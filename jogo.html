@@ -462,6 +462,13 @@
     let letrasParaVencerFase1 = 26; let letrasColetadas = []; let isHolding = false; let idleTime = 0;
     let particulas = [];
     
+    /* GESTOR DE LOOP CENTRALIZADO PARA EVITAR LOOPS ÓRFÃOS */
+    function startGameLoop() {
+        if (animationId) { cancelAnimationFrame(animationId); }
+        lastTime = performance.now();
+        animationId = requestAnimationFrame(animate);
+    }
+
     gridAlfabeto.innerHTML = AlfabetoIsadora.map(a => `<span class="letra-hud" id="hud-letra-${a.letra}">${a.letra}</span>`).join('');
 
     function resetIdleTimer() { idleTime = 0; const mascot = document.querySelector('.ps5-hero-mascot'); if(mascot) mascot.classList.remove('idle-active'); }
@@ -573,6 +580,11 @@
             } catch(e) {} 
         },
         repeatVoice() { if (this.ultimaVoz !== "" && !this.isMutedGlobal && this.somAtivo) { this.playVoice(this.ultimaVoz); } },
+        playErrorVoice() { 
+            const erroFrases = ["Ops!", "Quase lá!", "Tente de novo!"]; 
+            const msgErro = erroFrases[Math.floor(Math.random() * erroFrases.length)]; 
+            this.playVoice(msgErro); 
+        },
         playColetaLetra(letra, palavra) { 
             if (this.isMutedGlobal || !this.somAtivo) return; 
             this.playMagicSFX(); 
@@ -587,7 +599,32 @@
     document.body.addEventListener('click', function initMenuMusic() { if(!AudioManager.isMutedGlobal) AudioManager.playBGM('menu'); document.body.removeEventListener('click', initMenuMusic); }, { once: true });
     window.addEventListener('blur', () => { isHolding = false; }); window.addEventListener('visibilitychange', () => { if(document.hidden) isHolding = false; });
 
-    /* OFFSCREEN CACHING PARA ALTA PERFORMANCE (AAA) */
+    /* OFFSCREEN CACHING PARA ALTA PERFORMANCE (AAA) E GESTOR DE ASSETS */
+    const fundoImg1 = new Image();
+    const ceuFundo = new Image();
+    const playerSprite = new Image();
+
+    const GameAssets = {
+        ready: false,
+        load: function(callback) {
+            if (this.ready) { callback(); return; }
+            let loaded = 0; let total = 3;
+            const checkDone = () => {
+                loaded++;
+                if(loaded >= total) {
+                    this.ready = true;
+                    callback();
+                }
+            };
+            fundoImg1.onload = checkDone; fundoImg1.onerror = checkDone;
+            ceuFundo.onload = checkDone; ceuFundo.onerror = checkDone;
+            playerSprite.onload = checkDone; playerSprite.onerror = checkDone;
+            fundoImg1.src = 'cenario.png';
+            ceuFundo.src = 'cenario_ceu.png';
+            playerSprite.src = 'seu_personagem.png';
+        }
+    };
+
     const AssetCache = {
         blockCanvas: null, blockCtx: null,
         cloudCanvas: null, cloudCtx: null,
@@ -657,13 +694,19 @@
     function mostrarCinematica(titulo, subtitulo, corBase) { cinematicTitle.innerText = titulo; cinematicSubtitle.innerText = subtitulo; cinematicSubtitle.style.color = corBase; cinematicOverlay.classList.remove('cinematic-fadeout'); cinematicOverlay.classList.add('cinematic-active'); AudioManager.playCinematicSweep(); setTimeout(() => { cinematicOverlay.classList.remove('cinematic-active'); cinematicOverlay.classList.add('cinematic-fadeout'); }, 2200); }
     function dispararFlashTransicao() { flashOverlay.classList.add('flash-active'); setTimeout(() => flashOverlay.classList.remove('flash-active'), 50); }
 
+    function resetGameState() {
+        letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = []; letraFeedbacks = []; ambientElements = [];
+        faseAtual = 1; isInfinite = false; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0;
+        window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0; itemTimer = -2500;
+        progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo');
+        bgX = 0; hitStopTime = 0; shakeIntensity = 0; gameSpeed = baseGameSpeed;
+        player.tilt = 0; player.vy = 0; player.stumbleTimer = 0; player.emoState = 'normal';
+    }
+
     function prepararFase() {
         if (gameActive) dispararFlashTransicao();
-        collectibles = []; particulas = []; textosFlutuantes = []; ambientElements = []; letraFeedbacks = [];
         window.isCelebration = false;
-        gameSpeed = baseGameSpeed; player.tilt = 0; player.vy = 0; player.stumbleTimer = 0;                          
         
-        pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; 
         metaAlfabeto.innerText = "COLETE O ALFABETO"; metaAlfabeto.style.color = "var(--primaria)"; 
         letraUi.innerText = "Vamos começar..."; 
         mostrarCinematica("ATO I", "O ALFABETO", "#FFD700"); 
@@ -673,7 +716,7 @@
         let t1 = setTimeout(() => { if(gameActive && !isPaused) { AudioManager.playVoice("Vamos brincar das letras!"); letraUi.innerText = "Letras!"; } }, 1800); 
         window.audioTimeouts.push(t1);
 
-        atualizarProgressoHUD(); player.isJumping = true; isHolding = false; window.obstaculoTimer = 0; itemTimer = -2500; 
+        atualizarProgressoHUD(); player.isJumping = true; isHolding = false;
     }
     
     async function encerrarJogo(vitoria = false) {
@@ -718,7 +761,7 @@
             document.getElementById('victory-alphabet').innerHTML = ''; 
         }
 
-        if (!animationId) { animationId = requestAnimationFrame(animate); }
+        startGameLoop();
 
         let gravouOnline = false; 
         if(window.salvarPontuacaoGlobal && nomeJogador !== "") { 
@@ -737,33 +780,38 @@
 
     function iniciarJogo() { AudioManager.playHoverTick(); if (nomeJogador === "") { modalNome.style.display = 'flex'; setTimeout(() => modalNome.style.opacity = '1', 10); inputNomeJogador.focus(); } else { iniciarJogoReal(); } }
     function iniciarJogoReal() {
-        if (gameActive) return; try { let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } } catch(e){}
+        if (gameActive) return; 
+        try { let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } } catch(e){}
         if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; }
-        AudioManager.init(); AudioManager.playMagicSFX(); AudioManager.playRisada(); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.display = 'flex'; setTimeout(() => { loader.style.visibility = 'visible'; loader.style.opacity = '1'; }, 10); } 
+        AudioManager.init(); AudioManager.playMagicSFX(); AudioManager.playRisada(); 
+
+        const loader = document.getElementById('loading-screen'); 
+        if (loader) { loader.style.display = 'flex'; loader.style.visibility = 'visible'; loader.style.opacity = '1'; } 
         startScreen.style.transform = 'scale(1.1)';
         startScreen.style.opacity = '0';
         
-        initTimeoutId = setTimeout(() => { 
-            startScreen.style.display = 'none'; 
-            startScreen.style.transform = 'scale(1)';
-            hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex'; 
-            AudioManager.playBGM('game'); letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = []; letraFeedbacks = []; 
-            faseAtual = 1; isInfinite = false; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0; window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); prepararFase(); 
-            
-            gameActive = true; 
-            isPaused = false; 
-            lastTime = performance.now(); 
-            gameSpeed = baseGameSpeed; hitStopTime = 0; shakeIntensity = 0; 
-            if (!animationId) { animationId = requestAnimationFrame(animate); }
-            if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } 
-        }, 1800); 
+        GameAssets.load(() => {
+            initTimeoutId = setTimeout(() => { 
+                startScreen.style.display = 'none'; 
+                startScreen.style.transform = 'scale(1)';
+                hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex'; 
+                AudioManager.playBGM('game'); 
+                resetGameState();
+                prepararFase(); 
+                
+                gameActive = true; 
+                isPaused = false; 
+                startGameLoop();
+                if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } 
+            }, 1800); 
+        });
     }
 
     btnJogar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); iniciarJogo(); });
     btnPause.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(gameActive && !isPaused) { isPaused = true; isHolding = false; pauseScreen.style.display = 'flex'; setTimeout(() => { pauseScreen.style.opacity = '1'; }, 10); AudioManager.stopAll(); } });
-    btnContinuar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); if(!animationId) { animationId = requestAnimationFrame(animate); } AudioManager.playBGM('game'); });
+    btnContinuar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); startGameLoop(); AudioManager.playBGM('game'); });
     
-    function voltarAoMenu(screenElement) { if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; } isPaused = false; screenElement.style.opacity = '0'; setTimeout(() => { screenElement.style.display = 'none'; }, 300); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0; cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout'); hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; if(AudioManager.somAtivo) AudioManager.playBGM('menu'); startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50); resetIdleTimer(); if (!animationId) animationId = requestAnimationFrame(animate); }
+    function voltarAoMenu(screenElement) { if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; } isPaused = false; screenElement.style.opacity = '0'; setTimeout(() => { screenElement.style.display = 'none'; }, 300); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0; cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout'); hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; if(AudioManager.somAtivo) AudioManager.playBGM('menu'); startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50); resetIdleTimer(); startGameLoop(); }
     btnReiniciar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; gameActive = false; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
     btnVoltarMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); voltarAoMenu(pauseScreen); }); btnVitoriaMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); voltarAoMenu(victoryScreen); });
     btnJogarNovamente.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); victoryScreen.style.opacity = '0'; setTimeout(() => { victoryScreen.style.display = 'none'; gameActive = false; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
@@ -782,8 +830,6 @@
         if (window.innerHeight < 500 || window.innerWidth < 768) { scaleMultiplier = window.innerHeight < 400 ? 0.45 : 0.60; baseGameSpeed = 4.5; if(player) { player.jumpPower = -15.5; player.gravity = 0.8; } } else { scaleMultiplier = 1; baseGameSpeed = 6.5; if(player) { player.jumpPower = -21; player.gravity = 1.1; } } gameSpeed = baseGameSpeed; if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) { avisoRotacao.style.display = 'flex'; } else { avisoRotacao.style.display = 'none'; } }
     window.addEventListener('resize', redimensionarCanvas); window.addEventListener('orientationchange', () => { setTimeout(redimensionarCanvas, 100); setTimeout(redimensionarCanvas, 500); });
     if (btnForcarGiro) { btnForcarGiro.addEventListener('click', (e) => { e.preventDefault(); btnForcarGiro.innerText = "VIRE O APARELHO..."; let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(() => { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; }); } else { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; } }); }
-
-    const fundoImg1 = new Image(); fundoImg1.src = 'cenario.png'; const ceuFundo = new Image(); ceuFundo.src = 'cenario_ceu.png'; const playerSprite = new Image(); playerSprite.src = 'seu_personagem.png'; 
 
     /* SISTEMAS PREMIUM DE EFEITOS E PARTÍCULAS */
     class Particula {
@@ -1121,175 +1167,200 @@
 
     let lastTime = 0; 
     function animate(timeStamp) {
-        if (!timeStamp || isNaN(timeStamp)) timeStamp = performance.now();
-        if (!lastTime || isNaN(lastTime)) lastTime = timeStamp;
+        try {
+            if (!timeStamp || isNaN(timeStamp)) timeStamp = performance.now();
+            if (!lastTime || isNaN(lastTime)) lastTime = timeStamp;
 
-        let deltaTime = timeStamp - lastTime;
-        if (isNaN(deltaTime) || deltaTime > 100 || deltaTime < 0) deltaTime = 16.666;
-        lastTime = timeStamp;
-        let timeScale = deltaTime / 16.666;
-        if (isNaN(timeScale) || timeScale <= 0) timeScale = 1;
+            let deltaTime = timeStamp - lastTime;
+            if (isNaN(deltaTime) || deltaTime > 100 || deltaTime < 0) deltaTime = 16.666;
+            lastTime = timeStamp;
+            let timeScale = deltaTime / 16.666;
+            if (isNaN(timeScale) || timeScale <= 0) timeScale = 1;
 
-        if (isNaN(bgX)) bgX = 0;
-        if (isNaN(gameSpeed)) gameSpeed = baseGameSpeed;
-        
-        let cw = window.innerWidth; let ch = window.innerHeight;
-        
-        if (!gameActive) {
-            ctx.clearRect(0, 0, cw, ch);
-            drawProceduralBG(ctx, cw, ch, timeScale, true);
+            if (isNaN(bgX)) bgX = 0;
+            if (isNaN(gameSpeed)) gameSpeed = baseGameSpeed;
             
-            for (let i = particulas.length - 1; i >= 0; i--) { 
-                let p = particulas[i]; p.update(timeScale); p.draw(ctx); 
-                if (p.vida <= 0) particulas.splice(i, 1); 
+            let cw = window.innerWidth; let ch = window.innerHeight;
+            if (cw <= 0 || ch <= 0) return; // Evita erros de renderização
+            
+            if (!gameActive) {
+                ctx.clearRect(0, 0, cw, ch);
+                drawProceduralBG(ctx, cw, ch, timeScale, true);
+                
+                for (let i = particulas.length - 1; i >= 0; i--) { 
+                    let p = particulas[i]; p.update(timeScale); p.draw(ctx); 
+                    if (p.vida <= 0) particulas.splice(i, 1); 
+                }
+                return;
             }
 
-            animationId = requestAnimationFrame(animate);
-            return;
-        }
+            /* Correção do Loop no Pause: timeScale zero congela atualizações sem apagar a tela! */
+            if (isPaused) {
+                timeScale = 0;
+                deltaTime = 0;
+            } else if (hitStopTime > 0) {
+                hitStopTime -= deltaTime;
+                timeScale = 0;
+            }
 
-        if (isPaused) {
-            animationId = requestAnimationFrame(animate);
-            return;
-        }
-        
-        if (hitStopTime > 0) { hitStopTime -= deltaTime; animationId = requestAnimationFrame(animate); return; }
-        itemTimer += deltaTime; if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
-        ctx.clearRect(0, 0, cw, ch); ctx.save();
-        if (shakeIntensity > 0) { let sx = Math.sin(timeStamp * 0.05) * shakeIntensity; let sy = Math.cos(timeStamp * 0.04) * shakeIntensity; ctx.translate(sx, sy); shakeIntensity -= deltaTime * 0.05; if(shakeIntensity < 0) shakeIntensity = 0; }
+            itemTimer += deltaTime; 
+            if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
+            window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime; 
 
-        bgX -= (gameSpeed * 0.8) * timeScale;
-        drawProceduralBG(ctx, cw, ch, timeScale);
-        let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.4)'); ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); 
-
-        player.update(timeScale);
-        window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime; 
-        
-        if (!window.isCelebration && letrasColetadas.length >= 26) {
-            window.isCelebration = true;
+            ctx.clearRect(0, 0, cw, ch); 
+            ctx.save();
             
-            let t1 = setTimeout(() => {
-                AudioManager.playComboSFX(3);
-                AudioManager.playVoice("Você conseguiu! Descobriu todas as letras!");
-                textosFlutuantes.push(new TextoFlutuante("VOCÊ CONSEGUIU!", cw/2, ch/2 - 60, '#FFF', '#FFD700', true));
-                textosFlutuantes.push(new TextoFlutuante("Você descobriu todas as letras!", cw/2, ch/2 + 60, '#FFF', '#68A68F', false));
-                player.emoState = 'happy';
-                player.emoTimer = 4000;
-                
-                for(let j=0; j<50; j++) { 
-                    let angle = Math.random() * Math.PI * 2; 
-                    let speed = Math.random() * 12 + 5; 
-                    particulas.push(new Particula(cw/2, ch/2, Math.random() > 0.5 ? '#FFD700' : '#FF9AA2', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); 
+            if (shakeIntensity > 0) { 
+                let sx = Math.sin(timeStamp * 0.05) * shakeIntensity; 
+                let sy = Math.cos(timeStamp * 0.04) * shakeIntensity; 
+                ctx.translate(sx, sy); 
+                if (timeScale > 0) {
+                    shakeIntensity -= deltaTime * 0.05; 
+                    if(shakeIntensity < 0) shakeIntensity = 0; 
                 }
-            }, 1500);
+            }
 
-            let t2 = setTimeout(() => {
-                encerrarJogo(true);
-                window.isCelebration = false;
-            }, 4500);
+            if (timeScale > 0) bgX -= (gameSpeed * 0.8) * timeScale;
+            drawProceduralBG(ctx, cw, ch, timeScale);
+            let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); 
+            aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.4)'); 
+            ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); 
+
+            player.update(timeScale);
             
-            window.audioTimeouts.push(t1, t2);
-        }
-
-        if (itemTimer > itemInterval && !window.isCelebration) { 
-            let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra)); 
-            if (letrasFaltantes.length > 0) { 
-                let letraAlvo = letrasFaltantes[0].letra; 
-                if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { 
-                    let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo); 
-                    collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
-                } 
-            } 
-            itemTimer = 0; window.obstaculoTimer = 0; 
-        } else if (window.obstaculoTimer > 1000 && !window.isCelebration) { 
-            let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier); 
-            if (!temItemPerto) { let sorteio = Math.random(); if (sorteio > 0.5) collectibles.push(new Collectible('mini_obstaculo')); else if (sorteio > 0.2) collectibles.push(new Collectible('moeda')); } window.obstaculoTimer = 0; 
-        } 
-
-        for (let i = collectibles.length - 1; i >= 0; i--) {
-            let item = collectibles[i];
-            if(item.markedForDeletion) { collectibles.splice(i, 1); continue; }
-            item.update(timeScale); 
-            
-            let ajustePe = player.height * player.espacoVazio; let posYPersonagem = player.y + (player.height - ajustePe)/2; 
-            let dx = (player.x + player.width/2) - item.x; 
-            let dy = posYPersonagem - item.y; 
-            let margemX = player.width * 0.35; 
-            let margemY = player.height * 0.40; 
-            
-            if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
-                let centroYObstaculo = item.y - (item.radius * 1.5); dy = posYPersonagem - centroYObstaculo; margemX = player.width * 0.25; margemY = player.height * 0.35; 
-            } 
-
-            if (Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dy) < (item.radius * 1.5 + margemY) && (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') && !item.ignorarColisao && !item.isResolvido) {
-                if (invulneravelTimer <= 0) { 
-                    item.isResolvido = true; item.ignorarColisao = true; vidasExtra--; hitStopTime = 50; shakeIntensity = 8; player.stumbleTimer = 50;
-                    document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); 
+            if (!window.isCelebration && letrasColetadas.length >= 26) {
+                window.isCelebration = true;
+                
+                let t1 = setTimeout(() => {
+                    AudioManager.playComboSFX(3);
+                    AudioManager.playVoice("Você conseguiu! Descobriu todas as letras!");
+                    textosFlutuantes.push(new TextoFlutuante("VOCÊ CONSEGUIU!", cw/2, ch/2 - 60, '#FFF', '#FFD700', true));
+                    textosFlutuantes.push(new TextoFlutuante("Você descobriu todas as letras!", cw/2, ch/2 + 60, '#FFF', '#68A68F', false));
+                    player.emoState = 'happy';
+                    player.emoTimer = 4000;
                     
-                    AudioManager.playErrorSFX();
-                    AudioManager.playErrorVoice();
-                    player.emoState = 'sad';
-                    player.emoTimer = 800;
+                    for(let j=0; j<50; j++) { 
+                        let angle = Math.random() * Math.PI * 2; 
+                        let speed = Math.random() * 12 + 5; 
+                        particulas.push(new Particula(cw/2, ch/2, Math.random() > 0.5 ? '#FFD700' : '#FF9AA2', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); 
+                    }
+                }, 1500);
 
-                    if (vidasExtra <= 0) { encerrarJogo(false); } 
-                    else { 
-                        invulneravelTimer = 2000; 
-                        const erroFrases = ["Quase!", "Vamos tentar!"];
-                        const msgErro = erroFrases[Math.floor(Math.random() * erroFrases.length)];
-                        textosFlutuantes.push(new TextoFlutuante(msgErro, player.x, player.y - 50, '#FFF', '#E57373')); 
-                        for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#FFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); } 
+                let t2 = setTimeout(() => {
+                    encerrarJogo(true);
+                    window.isCelebration = false;
+                }, 4500);
+                
+                window.audioTimeouts.push(t1, t2);
+            }
+
+            if (timeScale > 0) {
+                if (itemTimer > itemInterval && !window.isCelebration) { 
+                    let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra)); 
+                    if (letrasFaltantes.length > 0) { 
+                        let letraAlvo = letrasFaltantes[0].letra; 
+                        if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { 
+                            let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo); 
+                            collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
+                        } 
+                    } 
+                    itemTimer = 0; window.obstaculoTimer = 0; 
+                } else if (window.obstaculoTimer > 1000 && !window.isCelebration) { 
+                    let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier); 
+                    if (!temItemPerto) { let sorteio = Math.random(); if (sorteio > 0.5) collectibles.push(new Collectible('mini_obstaculo')); else if (sorteio > 0.2) collectibles.push(new Collectible('moeda')); } window.obstaculoTimer = 0; 
+                } 
+            }
+
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                let item = collectibles[i];
+                if(item.markedForDeletion) { collectibles.splice(i, 1); continue; }
+                item.update(timeScale); 
+                
+                let ajustePe = player.height * player.espacoVazio; let posYPersonagem = player.y + (player.height - ajustePe)/2; 
+                let dx = (player.x + player.width/2) - item.x; 
+                let dy = posYPersonagem - item.y; 
+                let margemX = player.width * 0.35; 
+                let margemY = player.height * 0.40; 
+                
+                if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
+                    let centroYObstaculo = item.y - (item.radius * 1.5); dy = posYPersonagem - centroYObstaculo; margemX = player.width * 0.25; margemY = player.height * 0.35; 
+                } 
+
+                if (Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dy) < (item.radius * 1.5 + margemY) && (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') && !item.ignorarColisao && !item.isResolvido) {
+                    if (invulneravelTimer <= 0) { 
+                        item.isResolvido = true; item.ignorarColisao = true; vidasExtra--; hitStopTime = 50; shakeIntensity = 8; player.stumbleTimer = 50;
+                        document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); 
+                        
+                        AudioManager.playErrorSFX();
+                        AudioManager.playErrorVoice();
+                        player.emoState = 'sad';
+                        player.emoTimer = 800;
+
+                        if (vidasExtra <= 0) { encerrarJogo(false); } 
+                        else { 
+                            invulneravelTimer = 2000; 
+                            const erroFrases = ["Quase!", "Vamos tentar!"];
+                            const msgErro = erroFrases[Math.floor(Math.random() * erroFrases.length)];
+                            textosFlutuantes.push(new TextoFlutuante(msgErro, player.x, player.y - 50, '#FFF', '#E57373')); 
+                            for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#FFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); } 
+                        } 
+                    }
+                } else if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo' && !item.ignorarColisao && !item.isResolvido) {
+                    item.isResolvido = true; item.ignorarColisao = true; item.markedForDeletion = false; shakeIntensity = 1; 
+                    if (item.tipo === 'moeda') { 
+                        pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700')); 
+                        for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); } 
+                    }
+                    else if (item.tipo === 'letra') { 
+                        shakeIntensity = 2; gerenciarCombo(true); 
+                        let charLetra = item.info.letra || item.info; 
+                        
+                        letraFeedbacks.push(new LetraFeedback(charLetra, item.info.palavra, cw/2, ch/2));
+                        AudioManager.playColetaLetra(charLetra, item.info.palavra);
+                        player.emoState = 'happy';
+                        player.emoTimer = 1000;
+
+                        pontuacao += 500; 
+                        if (!letrasColetadas.includes(charLetra)) { letrasColetadas.push(charLetra); atualizarProgressoHUD(); } 
+                        for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); } 
                     } 
                 }
-            } else if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo' && !item.ignorarColisao && !item.isResolvido) {
-                item.isResolvido = true; item.ignorarColisao = true; item.markedForDeletion = false; shakeIntensity = 1; 
-                if (item.tipo === 'moeda') { 
-                    pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700')); 
-                    for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); } 
-                }
-                else if (item.tipo === 'letra') { 
-                    shakeIntensity = 2; gerenciarCombo(true); 
-                    let charLetra = item.info.letra || item.info; 
-                    
-                    letraFeedbacks.push(new LetraFeedback(charLetra, item.info.palavra, cw/2, ch/2));
-                    AudioManager.playColetaLetra(charLetra, item.info.palavra);
-                    player.emoState = 'happy';
-                    player.emoTimer = 1000;
-
-                    pontuacao += 500; 
-                    if (!letrasColetadas.includes(charLetra)) { letrasColetadas.push(charLetra); atualizarProgressoHUD(); } 
-                    for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); } 
-                } 
             }
-        }
 
-        for (let i = collectibles.length - 1; i >= 0; i--) { let item = collectibles[i]; if (item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo') { item.draw(ctx); } }
-        player.draw(ctx);
-        for (let i = collectibles.length - 1; i >= 0; i--) { let item = collectibles[i]; if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { item.draw(ctx); } }
+            for (let i = collectibles.length - 1; i >= 0; i--) { let item = collectibles[i]; if (item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo') { item.draw(ctx); } }
+            player.draw(ctx);
+            for (let i = collectibles.length - 1; i >= 0; i--) { let item = collectibles[i]; if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { item.draw(ctx); } }
 
-        if (ambientElements.length < 10 && Math.random() < 0.03) { ambientElements.push(new AmbientElement(cw, ch)); }
-        for (let i = ambientElements.length - 1; i >= 0; i--) { let amb = ambientElements[i]; amb.update(timeScale); amb.draw(ctx); if(amb.x < -100 || amb.y > ch + 100) ambientElements.splice(i, 1); }
-        if (particulas.length > 150) particulas.splice(0, particulas.length - 150); for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
-        let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
-        for(let i=0; i<3; i++) { 
-            ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY); 
-            if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; } 
-            if (playerSprite.complete && playerSprite.naturalWidth > 0) { 
-                let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); 
-            } else { 
-                ctx.fillStyle = '#FF9AA2'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); 
-            } 
+            if (timeScale > 0 && ambientElements.length < 10 && Math.random() < 0.03) { ambientElements.push(new AmbientElement(cw, ch)); }
+            for (let i = ambientElements.length - 1; i >= 0; i--) { let amb = ambientElements[i]; amb.update(timeScale); amb.draw(ctx); if(amb.x < -100 || amb.y > ch + 100) ambientElements.splice(i, 1); }
+            if (particulas.length > 150) particulas.splice(0, particulas.length - 150); for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
+            
+            let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
+            for(let i=0; i<3; i++) { 
+                ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY); 
+                if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; } 
+                if (playerSprite.complete && playerSprite.naturalWidth > 0) { 
+                    let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); 
+                } else { 
+                    ctx.fillStyle = '#FF9AA2'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); 
+                } 
+                ctx.restore(); 
+            }
+            
+            if (textosFlutuantes.length > 10) { textosFlutuantes.splice(0, textosFlutuantes.length - 10); } 
+            for (let i = textosFlutuantes.length - 1; i >= 0; i--) { let t = textosFlutuantes[i]; t.update(timeScale); t.draw(ctx); if(t.vida <= 0) textosFlutuantes.splice(i, 1); }
+            
+            for (let i = letraFeedbacks.length - 1; i >= 0; i--) { let f = letraFeedbacks[i]; f.update(timeScale); f.draw(ctx); if(f.vida <= 0) letraFeedbacks.splice(i, 1); }
+            
             ctx.restore(); 
+        } catch(e) {
+            console.error("Game Loop Recovered from critical draw exception:", e);
+        } finally {
+            animationId = requestAnimationFrame(animate); 
         }
-        
-        if (textosFlutuantes.length > 10) { textosFlutuantes.splice(0, textosFlutuantes.length - 10); } 
-        for (let i = textosFlutuantes.length - 1; i >= 0; i--) { let t = textosFlutuantes[i]; t.update(timeScale); t.draw(ctx); if(t.vida <= 0) textosFlutuantes.splice(i, 1); }
-        
-        for (let i = letraFeedbacks.length - 1; i >= 0; i--) { let f = letraFeedbacks[i]; f.update(timeScale); f.draw(ctx); if(f.vida <= 0) letraFeedbacks.splice(i, 1); }
-        
-        ctx.restore(); animationId = requestAnimationFrame(animate); 
     }
     
-    window.onload = () => { hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; redimensionarCanvas(); setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); if (!animationId) animationId = requestAnimationFrame(animate); }
+    window.onload = () => { hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; redimensionarCanvas(); setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); startGameLoop(); }
 
 </script>
 <script type="module">
