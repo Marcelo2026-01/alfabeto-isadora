@@ -54,7 +54,7 @@
         /* HUD DO JOGO BUBBLY - POLIMENTO PREMIUM DE COMPOSIÇÃO */
         #ui-layer { position: absolute; top: 15px; left: 3vw; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(12px); border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 20px; padding: clamp(10px, 2vmin, 16px) clamp(15px, 3vmin, 25px); box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 4px 0 rgba(255, 183, 178, 0.5); color: var(--texto-escuro); font-weight: 900; pointer-events: none; z-index: 20; display: flex; flex-direction: column; max-width: 45vw; margin-top: clamp(10px, 5vmin, 30px); }
         
-        #meta-alfabeto { font-size: clamp(10px, 2vw, 14px); color: var(--primaria); text-transform: uppercase; margin-bottom: 4px; text-shadow: 0 1px 1px rgba(0,0,0,0.03); letter-spacing: 0.5px; display: none; }
+        #meta-alfabeto { font-size: clamp(10px, 2vw, 14px); color: var(--primaria); text-transform: uppercase; margin-bottom: 4px; text-shadow: 0 1px 1px rgba(0,0,0,0.03); letter-spacing: 0.5px; }
         
         #alfabeto-grid { display: flex; flex-wrap: wrap; gap: clamp(2px, 0.5vw, 4px); justify-content: flex-start; margin-bottom: 6px; width: 100%; line-height: 1; }
         .letra-hud { font-size: clamp(10px, 1.8vw, 16px); font-weight: 900; color: #999; opacity: 0.3; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block; padding: 2px; }
@@ -97,7 +97,6 @@
         .ps5-menu-options { display: flex; flex-direction: column; gap: clamp(8px, 1.5vmin, 15px); align-items: flex-start; }
         .play-group { margin-bottom: clamp(8px, 1.5vmin, 15px); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; animation: bounceInLeft 1s both; animation-delay: 0.2s; }
         
-        /* Botões Estilo Marshmallow / Livro Infantil - Adaptados Premium */
         .ps5-btn { background: linear-gradient(180deg, #FF9AA2 0%, #E57373 100%); border: 3px solid #FFF; border-radius: 30px; color: #FFF; font-size: clamp(14px, 3vw, 24px); font-family: 'Fredoka', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: clamp(10px, 1.5vw, 15px) clamp(20px, 3vw, 35px); display: flex; align-items: center; box-shadow: 0 6px 0 #E57373, 0 10px 20px rgba(0,0,0,0.25); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: bounceInLeft 1s both; transform-origin: left center; position: relative; overflow: hidden; }
         .ps5-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(45deg); transition: 0.5s; opacity: 0; }
         .ps5-btn:hover::after { opacity: 1; left: 100%; transition: 0.5s; }
@@ -106,6 +105,9 @@
         .ps5-btn:nth-child(2) { animation-delay: 0.3s; background: linear-gradient(180deg, #A8E6CF 0%, #7AC5A9 100%); box-shadow: 0 6px 0 #68A68F, 0 10px 20px rgba(0,0,0,0.25); }
         .ps5-btn:nth-child(2):hover { box-shadow: 0 9px 0 #68A68F, 0 15px 25px rgba(0,0,0,0.3); }
         .ps5-btn:nth-child(2):active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #68A68F; }
+        .ps5-btn:nth-child(3) { animation-delay: 0.4s; background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%); box-shadow: 0 6px 0 #D2691E, 0 10px 20px rgba(0,0,0,0.25); color: #FFF; -webkit-text-stroke: 1px #D2691E;}
+        .ps5-btn:nth-child(3):hover { box-shadow: 0 9px 0 #D2691E, 0 15px 25px rgba(0,0,0,0.3); }
+        .ps5-btn:nth-child(3):active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 #D2691E; }
         .ps5-btn .ps5-icon { margin-right: 12px; font-size: 1.1em; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
 
         .ps5-hero-area { width: 45%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
@@ -116,7 +118,7 @@
         .ps5-hero-mascot { position: relative; z-index: 2; width: clamp(180px, 35vw, 450px); height: clamp(220px, 45vw, 550px); background-image: url('Isadora.png'); background-size: contain; background-position: center bottom; background-repeat: no-repeat; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2)); animation: breatheMascot 4s ease-in-out infinite; transform-origin: center bottom; }
         .ps5-hero-mascot.idle-active { animation: idlePop 1.5s ease-in-out; }
 
-        /* MODAIS E TELAS */
+        /* MODAIS, VITÓRIA PREMIUM & MENUS */
         .modal-padrao { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; padding: 20px;}
         .caixa-modal { background: #FFF; border: 5px solid var(--destaque); border-radius: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.2), inset 0 -8px 0 rgba(0,0,0,0.05); padding: clamp(15px, 4vmin, 30px); text-align: center; color: var(--texto-escuro); width: 90vw; max-width: 450px; animation: popModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
         @keyframes popModal { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -395,999 +397,985 @@
     </div>
 
 <script>
-    // FUNÇÕES DE DESENHO SEGURAS E UNIVERSAIS PARA CANVAS HTML5
-    function drawSafeRoundRect(ctx, x, y, w, h, r) {
-        if (typeof r === 'undefined') r = 0;
-        if (typeof r === 'object' && r.length > 0) r = r[0];
-        r = Math.max(0, Math.min(r, w/2, h/2));
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + w - r, y);
-        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-        ctx.lineTo(x + w, y + h - r);
-        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-        ctx.lineTo(x + r, y + h);
-        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-        ctx.lineTo(x, y + r);
-        ctx.quadraticCurveTo(x, y, x + r, y);
-        ctx.closePath();
-    }
+/**
+ * ============================================================
+ * CONFIGURAÇÕES GERAIS E ESTADO DO JOGO (STATE MACHINE)
+ * ============================================================
+ */
+const GAME_CONFIG = {
+    baseSpeed: window.innerWidth < 768 ? 4.5 : 6.5,
+    maxLetters: 26,
+    alfabeto: [
+        { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' },
+        { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' },
+        { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' },
+        { letra: 'J', palavra: 'Jacaré' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leão' },
+        { letra: 'M', palavra: 'Macaco' }, { letra: 'N', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' },
+        { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' },
+        { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' },
+        { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xícara' },
+        { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' }
+    ]
+};
 
-    function drawSafeEllipse(ctx, x, y, rx, ry, rot, sa, ea) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(rot);
-        ctx.scale(1, Math.max(0.0001, ry / Math.max(0.0001, rx)));
-        ctx.beginPath();
-        ctx.arc(0, 0, rx, sa, ea);
-        ctx.restore();
-    }
+const APP_STATES = {
+    MENU: 'MENU', INPUT_NAME: 'INPUT_NAME', LOADING: 'LOADING', 
+    PLAYING: 'PLAYING', PAUSED: 'PAUSED', VICTORY: 'VICTORY', 
+    GAME_OVER: 'GAME_OVER', STORY: 'STORY', RANKING: 'RANKING', EXIT: 'EXIT'
+};
 
-    const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d');
-    const startScreen = document.getElementById('start-screen'); const victoryScreen = document.getElementById('victory-screen');
-    const btnJogar = document.getElementById('btn-jogar'); const btnSomMenu = document.getElementById('btn-som-menu');
-    const btnHistoria = document.getElementById('btn-historia'); const modalHistoria = document.getElementById('modal-historia'); 
-    const btnFecharHistoria = document.getElementById('btn-fechar-historia'); const prevBtnLivro = document.getElementById('prevBtnLivro'); 
-    const nextBtnLivro = document.getElementById('nextBtnLivro'); const paginacaoLivro = document.getElementById('paginacaoLivro'); 
-    const btnSairMenu = document.getElementById('btn-sair-menu'); const exitScreen = document.getElementById('exit-screen'); const btnCancelarSair = document.getElementById('btn-cancelar-sair');
+const gameState = {
+    status: APP_STATES.LOADING,
+    playerName: localStorage.getItem('isadora_jogador_nome') || "",
+    score: 0,
+    lives: 3,
+    collectedLetters: [],
+    gameSpeed: GAME_CONFIG.baseSpeed,
+    combo: 0,
+    audioEnabled: localStorage.getItem('isadora_som') !== 'false',
+    groundHeight: 0,
+    scale: 1,
+    bgOffset: 0,
+    hitStopTime: 0,
+    shakeIntensity: 0,
+    invulnerableTimer: 0
+};
+
+/**
+ * ============================================================
+ * GERENCIAMENTO DE INTERFACE E TELAS (DOM / UI)
+ * ============================================================
+ */
+const UI = {
+    // Canvas
+    canvas: document.getElementById('gameCanvas'),
+    ctx: document.getElementById('gameCanvas')?.getContext('2d'),
     
-    let paginaAtual = 1; const totalPaginas = 4;
-    const pauseScreen = document.getElementById('pause-screen');
-    const btnPause = document.getElementById('btn-pause'); const btnContinuar = document.getElementById('btn-continuar');
-    const btnReiniciar = document.getElementById('btn-reiniciar'); const btnVoltarMenu = document.getElementById('btn-voltar-menu');
-    const btnVitoriaMenu = document.getElementById('btn-vitoria-menu'); const btnJogarNovamente = document.getElementById('btn-jogar-novamente'); 
-    const btnSom = document.getElementById('btn-som'); const avisoRotacao = document.getElementById('aviso-rotacao'); 
-    const btnForcarGiro = document.getElementById('btn-forcar-giro'); const metaAlfabeto = document.getElementById('meta-alfabeto'); 
-    const letraUi = document.getElementById('letra-ui'); const tutorialUI = document.getElementById('tutorial-ui'); 
-    const hudLayer = document.getElementById('ui-layer'); const progressFill = document.getElementById('progress-fill');
-    const damageOverlay = document.getElementById('damage-overlay'); const flashOverlay = document.getElementById('flash-overlay');
-    const cinematicOverlay = document.getElementById('cinematic-overlay'); const cinematicTitle = document.getElementById('cinematic-title'); const cinematicSubtitle = document.getElementById('cinematic-subtitle');
-    const modalNome = document.getElementById('modal-nome'); const inputNomeJogador = document.getElementById('input-nome-jogador');
-    const btnSalvarNome = document.getElementById('btn-salvar-nome'); const saudacaoUI = document.getElementById('saudacao');
-    const btnRanking = document.getElementById('btn-ranking'); const modalRanking = document.getElementById('modal-ranking');
-    const btnFecharRanking = document.getElementById('btn-fechar-ranking'); const listaRankingConteudo = document.getElementById('lista-ranking-conteudo');
-    const gridAlfabeto = document.getElementById('alfabeto-grid');
+    // Screens
+    screens: {
+        loading: document.getElementById('loading-screen'),
+        start: document.getElementById('start-screen'),
+        pause: document.getElementById('pause-screen'),
+        victory: document.getElementById('victory-screen'),
+        exit: document.getElementById('exit-screen')
+    },
     
-    let nomeJogador = localStorage.getItem('isadora_jogador_nome') || "";
-    if (nomeJogador !== "") { saudacaoUI.style.display = 'inline-block'; saudacaoUI.innerText = `Olá, ${nomeJogador}!`; }
-
-    let alturaChao = 0; let baseGameSpeed = 4.5; let gameSpeed = baseGameSpeed; let scaleMultiplier = 1; 
-    let gameActive = false; let isPaused = false; let bgX = 0; let estradaOffset = 0;
-    let tutorialAtivo = false; let isInfinite = false;
-    let animationId = null; let initTimeoutId = null; let hitStopTime = 0; let shakeIntensity = 0; let pontuacao = 0; 
-    let vidasExtra = 3; let invulneravelTimer = 0;
-    window.isCelebration = false; window.audioTimeouts = [];
-
-    const AlfabetoIsadora = [ { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, { letra: 'J', palavra: 'Jacaré' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leão' }, { letra: 'M', palavra: 'Macaco' }, { letra: 'N', initial: 'Nuvem', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xícara' }, { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } ];
-    let letrasParaVencerFase1 = 26; let letrasColetadas = []; let isHolding = false; let idleTime = 0;
-    let particulas = [];
+    // Modals
+    modals: {
+        name: document.getElementById('modal-nome'),
+        ranking: document.getElementById('modal-ranking'),
+        story: document.getElementById('modal-historia')
+    },
     
-    /* GESTOR DE LOOP CENTRALIZADO PARA EVITAR LOOPS ÓRFÃOS */
-    function startGameLoop() {
-        if (animationId) { cancelAnimationFrame(animationId); }
-        lastTime = performance.now();
-        animationId = requestAnimationFrame(animate);
-    }
+    // Overlays & HUD
+    overlays: {
+        flash: document.getElementById('flash-overlay'),
+        damage: document.getElementById('damage-overlay'),
+        cinematic: document.getElementById('cinematic-overlay'),
+        tutorial: document.getElementById('tutorial-ui'),
+        rotation: document.getElementById('aviso-rotacao')
+    },
+    hud: {
+        layer: document.getElementById('ui-layer'),
+        grid: document.getElementById('alfabeto-grid'),
+        progressFill: document.getElementById('progress-fill'),
+        message: document.getElementById('letra-ui'),
+        greeting: document.getElementById('saudacao')
+    },
 
-    gridAlfabeto.innerHTML = AlfabetoIsadora.map(a => `<span class="letra-hud" id="hud-letra-${a.letra}">${a.letra}</span>`).join('');
+    // Buttons
+    btns: {
+        play: document.getElementById('btn-jogar'),
+        ranking: document.getElementById('btn-ranking'),
+        story: document.getElementById('btn-historia'),
+        soundMenu: document.getElementById('btn-som-menu'),
+        soundHud: document.getElementById('btn-som'),
+        exitMenu: document.getElementById('btn-sair-menu'),
+        pause: document.getElementById('btn-pause'),
+        resume: document.getElementById('btn-continuar'),
+        restart: document.getElementById('btn-reiniciar'),
+        backToMenu: document.getElementById('btn-voltar-menu'),
+        victoryMenu: document.getElementById('btn-vitoria-menu'),
+        playAgain: document.getElementById('btn-jogar-novamente'),
+        saveName: document.getElementById('btn-salvar-nome'),
+        closeRanking: document.getElementById('btn-fechar-ranking'),
+        closeStory: document.getElementById('btn-fechar-historia'),
+        cancelExit: document.getElementById('btn-cancelar-sair'),
+        forceRotate: document.getElementById('btn-forcar-giro'),
+        storyPrev: document.getElementById('prevBtnLivro'),
+        storyNext: document.getElementById('nextBtnLivro')
+    },
 
-    function resetIdleTimer() { idleTime = 0; const mascot = document.querySelector('.ps5-hero-mascot'); if(mascot) mascot.classList.remove('idle-active'); }
-    window.addEventListener('mousemove', resetIdleTimer); window.addEventListener('touchstart', resetIdleTimer, {passive: true}); window.addEventListener('keydown', resetIdleTimer);
-    setInterval(() => { let isExitOpen = exitScreen && exitScreen.style.display === 'flex'; if (!gameActive && startScreen.style.display !== 'none' && modalNome.style.display !== 'flex' && modalRanking.style.display !== 'flex' && !isExitOpen) { idleTime += 1; if (idleTime >= 5) { const mascot = document.querySelector('.ps5-hero-mascot'); if (mascot && !mascot.classList.contains('idle-active')) { mascot.classList.add('idle-active'); if(AudioManager.somAtivo) AudioManager.playHoverTick(); setTimeout(() => mascot.classList.remove('idle-active'), 1500); idleTime = 0; } } } }, 1000);
+    // Elements
+    elements: {
+        nameInput: document.getElementById('input-nome-jogador'),
+        rankingList: document.getElementById('lista-ranking-conteudo'),
+        storyPagination: document.getElementById('paginacaoLivro'),
+        cinematicTitle: document.getElementById('cinematic-title'),
+        cinematicSubtitle: document.getElementById('cinematic-subtitle'),
+        victoryTitle: document.getElementById('titulo-vitoria'),
+        victorySubtitle: document.getElementById('subtitulo-vitoria'),
+        victoryBadge: document.getElementById('badge-vitoria'),
+        victoryStats: {
+            letters: document.getElementById('stat-letras'),
+            score: document.getElementById('stat-pontos'),
+            lives: document.getElementById('stat-vidas')
+        },
+        victoryAlphabet: document.getElementById('victory-alphabet'),
+        victoryCredits: document.getElementById('creditos-vitoria')
+    },
 
-    let comboAtual = 0; 
-    
-    function gerenciarCombo(acertou) { 
-        if (acertou) { 
-            comboAtual++; 
-            if (comboAtual >= 3) { progressFill.classList.add('combo-ativo'); letraUi.classList.add('texto-combo-ativo'); }
-            
-            if (comboAtual === 3) { 
-                AudioManager.playComboSFX(1);
-                AudioManager.playVoice("Muito bem!"); 
-                textosFlutuantes.push(new TextoFlutuante("MUITO BEM!", window.innerWidth/2, window.innerHeight/2, '#FFF', '#FFD700', true));
-            } else if (comboAtual === 5) { 
-                AudioManager.playComboSFX(2);
-                AudioManager.playVoice("Você está arrasando!"); 
-                textosFlutuantes.push(new TextoFlutuante("VOCÊ ESTÁ ARRASANDO!", window.innerWidth/2, window.innerHeight/2, '#FFF', '#FF8C00', true));
-            } else if (comboAtual === 10) { 
-                AudioManager.playComboSFX(3);
-                AudioManager.playVoice("Que mestre das letras!"); 
-                textosFlutuantes.push(new TextoFlutuante("QUE MESTRE DAS LETRAS!", window.innerWidth/2, window.innerHeight/2, '#FFF', '#FF1493', true));
-            }
-        } else { 
-            comboAtual = 0; progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo'); 
-        } 
-    }
-    
-    function atualizarLivroUI() { for(let i = 1; i <= totalPaginas; i++) { document.getElementById(`livro-p${i}`).classList.remove('ativa'); } document.getElementById(`livro-p${paginaAtual}`).classList.add('ativa'); prevBtnLivro.disabled = (paginaAtual === 1); nextBtnLivro.disabled = (paginaAtual === totalPaginas); paginacaoLivro.innerText = `${paginaAtual} / ${totalPaginas}`; }
-    btnHistoria.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); paginaAtual = 1; atualizarLivroUI(); modalHistoria.style.display = 'flex'; setTimeout(() => { modalHistoria.style.opacity = '1'; }, 10); });
-    btnFecharHistoria.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); modalHistoria.style.opacity = '0'; setTimeout(() => { modalHistoria.style.display = 'none'; }, 300); });
-    prevBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(paginaAtual > 1) { paginaAtual--; atualizarLivroUI(); } }); 
-    nextBtnLivro.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(paginaAtual < totalPaginas) { paginaAtual++; atualizarLivroUI(); } });
-    btnRanking.addEventListener('click', async (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); modalRanking.style.display = 'flex'; setTimeout(() => { modalRanking.style.opacity = '1'; }, 10); listaRankingConteudo.innerHTML = '<div class="loader-ranking">A LIGAR AOS SERVIDORES...</div>'; if (window.carregarRankingGlobal) { await window.carregarRankingGlobal(); } else { listaRankingConteudo.innerHTML = '<p style="color: #FF1493;">Conexão com a nuvem falhou.</p>'; } });
-    btnFecharRanking.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); modalRanking.style.opacity = '0'; setTimeout(() => { modalRanking.style.display = 'none'; }, 300); });
-    if(btnSairMenu) { btnSairMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); try { window.close(); } catch(err) {} if(exitScreen) { exitScreen.style.display = 'flex'; setTimeout(() => { exitScreen.style.opacity = '1'; }, 10); } }); }
-    if(btnCancelarSair) { btnCancelarSair.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(exitScreen) { exitScreen.style.opacity = '0'; setTimeout(() => { exitScreen.style.display = 'none'; }, 300); } }); }
-    btnSalvarNome.addEventListener('click', () => { AudioManager.playHoverTick(); let nomeDigitado = inputNomeJogador.value.trim().toUpperCase(); if (nomeDigitado.length > 1) { nomeJogador = nomeDigitado; localStorage.setItem('isadora_jogador_nome', nomeJogador); saudacaoUI.style.display = 'inline-block'; saudacaoUI.innerText = `Olá, ${nomeJogador}!`; modalNome.style.opacity = '0'; setTimeout(() => { modalNome.style.display = 'none'; iniciarJogoReal(); }, 300); } else { inputNomeJogador.style.borderColor = "red"; setTimeout(()=> inputNomeJogador.style.borderColor = "var(--primaria)", 1000); } });
-
-    if ('speechSynthesis' in window) { window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; }
-    const AudioManager = {
-        somAtivo: localStorage.getItem('isadora_som') !== 'false', audioCtx: null, masterCompressor: null, 
-        bgmMenu: new Audio('musica_menu.mp3'), bgmJogo: new Audio('musica_jogo.mp3'), sfxRisada: new Audio('risada.mp3'), 
-        musicaAtual: null, ultimaVoz: "", isMutedGlobal: false, vozHumana: new Audio(),
-        init() { try { if (!this.audioCtx) { this.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); this.masterCompressor = this.audioCtx.createDynamicsCompressor(); this.masterCompressor.threshold.setValueAtTime(-15, this.audioCtx.currentTime); this.masterCompressor.knee.setValueAtTime(10, this.audioCtx.currentTime); this.masterCompressor.ratio.setValueAtTime(12, this.audioCtx.currentTime); this.masterCompressor.attack.setValueAtTime(0.003, this.audioCtx.currentTime); this.masterCompressor.release.setValueAtTime(0.25, this.audioCtx.currentTime); this.masterCompressor.connect(this.audioCtx.destination); } if (this.audioCtx.state === 'suspended' && this.somAtivo && !this.isMutedGlobal) { this.audioCtx.resume(); } this.bgmMenu.loop = true; this.bgmJogo.loop = true; } catch(e) {} },
-        stopAll() { 
-            this.isMutedGlobal = true; 
-            if (this.bgmMenu) { this.bgmMenu.pause(); this.bgmMenu.currentTime = 0; } 
-            if (this.bgmJogo) { this.bgmJogo.pause(); this.bgmJogo.currentTime = 0; } 
-            if (this.sfxRisada) { this.sfxRisada.pause(); this.sfxRisada.currentTime = 0; } 
-            if (this.vozHumana) { this.vozHumana.pause(); this.vozHumana.currentTime = 0; } 
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel(); 
-            if (this.audioCtx && this.audioCtx.state === 'running') { this.audioCtx.suspend(); } 
-            if(window.audioTimeouts) { window.audioTimeouts.forEach(t => clearTimeout(t)); window.audioTimeouts = []; }
-        },
-        toggle() { this.somAtivo = !this.somAtivo; localStorage.setItem('isadora_som', this.somAtivo); if (!this.somAtivo) { this.stopAll(); } else { this.isMutedGlobal = false; this.init(); if (this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume(); if (gameActive) { this.playBGM('game'); } else { this.playBGM('menu'); } } this.updateUI(); return this.somAtivo; },
-        updateUI() { if(btnSom) btnSom.innerText = this.somAtivo ? '♪ SOM' : 'x MUDO'; if(btnSomMenu) btnSomMenu.innerHTML = this.somAtivo ? '♪' : '🔇'; },
-        fadeVolume(audioObj, targetVol, duration) { if(!audioObj || this.isMutedGlobal || !this.somAtivo) { if(audioObj) { audioObj.pause(); audioObj.volume = 0; } return; } if(audioObj.fadeReqId) cancelAnimationFrame(audioObj.fadeReqId); let startVol = audioObj.volume; let startTime = performance.now(); const step = (t) => { if (this.isMutedGlobal || !this.somAtivo) { audioObj.volume = 0; audioObj.pause(); return; } let elapsed = t - startTime; let progress = Math.min(elapsed / duration, 1); let ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress; audioObj.volume = Math.max(0, Math.min(1, startVol + (targetVol - startVol) * ease)); if (progress < 1) { audioObj.fadeReqId = requestAnimationFrame(step); } else { audioObj.volume = targetVol; if(targetVol === 0) { audioObj.pause(); audioObj.currentTime = 0; } } }; audioObj.fadeReqId = requestAnimationFrame(step); },
-        playBGM(trackName) { if (this.isMutedGlobal || !this.somAtivo) return; let nextTrack = trackName === 'menu' ? this.bgmMenu : this.bgmJogo; let otherTrack = trackName === 'menu' ? this.bgmJogo : this.bgmMenu; if (otherTrack) { if(otherTrack.fadeReqId) cancelAnimationFrame(otherTrack.fadeReqId); otherTrack.pause(); otherTrack.currentTime = 0; } if (this.musicaAtual === nextTrack && !nextTrack.paused) return; this.musicaAtual = nextTrack; this.musicaAtual.volume = 0; this.init(); let playPromise = this.musicaAtual.play(); if (playPromise !== undefined) { playPromise.then(() => { this.fadeVolume(this.musicaAtual, 0.4, 800); }).catch(e => { console.log("Blocked play"); }); } },
-        playHoverTick() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.05, now + 0.01); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2); const osc = this.audioCtx.createOscillator(); osc.type = 'triangle'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(1200, now+0.1); osc.connect(gain); osc.start(now); osc.stop(now + 0.2); } catch(e) {} },
-        playCinematicSweep() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.15, now + 0.5); gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5); const osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(200, now); osc.frequency.exponentialRampToValueAtTime(800, now + 2.5); osc.connect(gain); osc.start(now); osc.stop(now + 2.5); } catch(e){} },
-        playMagicSFX() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gainL = this.audioCtx.createGain(); const gainR = this.audioCtx.createGain(); const pannerL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; const pannerR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null; if(pannerL && pannerR) { pannerL.pan.value = -0.5; pannerR.pan.value = 0.5; gainL.connect(pannerL); pannerL.connect(this.masterCompressor); gainR.connect(pannerR); pannerR.connect(this.masterCompressor); } else { gainL.connect(this.masterCompressor); gainR.connect(this.masterCompressor); } [gainL, gainR].forEach(g => { g.gain.setValueAtTime(0.001, now); g.gain.exponentialRampToValueAtTime(0.15, now + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + 0.8); }); [880, 1108, 1318].forEach((f, i) => { let o1 = this.audioCtx.createOscillator(); let o2 = this.audioCtx.createOscillator(); o1.frequency.setValueAtTime(f, now + (i*0.05)); o2.frequency.setValueAtTime(f * 1.005, now + (i*0.05)); o1.connect(gainL); o2.connect(gainR); o1.start(now + (i*0.05)); o2.start(now + (i*0.05)); o1.stop(now + 0.8); o2.stop(now + 0.8); }); } catch(e) {} },
-        playSuccessSFX() { if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; try { const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.15, now + 0.1); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); const freqs = [523.25, 659.25, 783.99, 1046.50]; let timeOffset = 0; freqs.forEach(f => { let osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + timeOffset); osc.connect(gain); osc.start(now + timeOffset); osc.stop(now + 0.8); timeOffset += 0.1; }); } catch (e) {} },
-        playComboSFX(level) {
-            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return;
-            try {
-                const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor);
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
-                let freqs = []; let duration = 0.5;
-                if (level === 1) { freqs = [440, 554, 659]; duration = 0.6; } 
-                else if (level === 2) { freqs = [523, 659, 783, 1046]; duration = 0.8; } 
-                else { freqs = [523, 659, 783, 1046, 1318, 1567]; duration = 1.2; } 
-                gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-                freqs.forEach((f, i) => { let osc = this.audioCtx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + (i * 0.1)); osc.connect(gain); osc.start(now + (i * 0.1)); osc.stop(now + duration); });
-            } catch (e) {}
-        },
-        playErrorSFX() { 
-            if (!this.somAtivo || this.isMutedGlobal || !this.audioCtx || this.audioCtx.state !== 'running') return; 
-            try { 
-                const now = this.audioCtx.currentTime; const gain = this.audioCtx.createGain(); gain.connect(this.masterCompressor); 
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now + 0.05); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3); 
-                const osc = this.audioCtx.createOscillator(); osc.type = 'triangle'; 
-                osc.frequency.setValueAtTime(250, now); osc.frequency.exponentialRampToValueAtTime(150, now + 0.3); 
-                osc.connect(gain); osc.start(now); osc.stop(now + 0.3); 
-            } catch(e) {} 
-        },
-        playRisada() { if (this.somAtivo && !this.isMutedGlobal && this.sfxRisada) { this.sfxRisada.currentTime = 0; let playPromise = this.sfxRisada.play(); if (playPromise !== undefined) { playPromise.catch(e => console.log("Blocked")); } } },
-        playVoice(texto) { 
-            if (!this.somAtivo || this.isMutedGlobal) return; 
-            try { 
-                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-                this.ultimaVoz = texto; let src = ""; 
-                if (texto === "Incrível! Você está pegando fogo!") src = "audios/combo_fogo.mp3"; 
-                else if (texto === "Ops!") src = "audios/erro_ops.mp3"; 
-                else if (texto === "Quase lá!") src = "audios/erro_quase.mp3"; 
-                else if (texto === "Tente de novo!") src = "audios/erro_tente.mp3"; 
-                else if (texto.length === 1 && texto.match(/[A-Z]/i)) { src = `audios/som_letra_${texto.toUpperCase()}.mp3`; } 
-                
-                if (src !== "") { 
-                    if(!this.vozHumana) this.vozHumana = new Audio(); 
-                    this.vozHumana.src = src; this.vozHumana.currentTime = 0; 
-                    this.vozHumana.play().catch(e => { if ('speechSynthesis' in window) { let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR'; window.speechSynthesis.speak(utter); } }); 
-                } else { 
-                    if ('speechSynthesis' in window) { let utter = new SpeechSynthesisUtterance(texto); utter.lang = 'pt-BR'; window.speechSynthesis.speak(utter); } 
-                } 
-            } catch(e) {} 
-        },
-        repeatVoice() { if (this.ultimaVoz !== "" && !this.isMutedGlobal && this.somAtivo) { this.playVoice(this.ultimaVoz); } },
-        playErrorVoice() { 
-            const erroFrases = ["Ops!", "Quase lá!", "Tente de novo!"]; 
-            const msgErro = erroFrases[Math.floor(Math.random() * erroFrases.length)]; 
-            this.playVoice(msgErro); 
-        },
-        playColetaLetra(letra, palavra) { 
-            if (this.isMutedGlobal || !this.somAtivo) return; 
-            this.playMagicSFX(); 
-            let t = setTimeout(() => this.playVoice(`${letra} de ${palavra}!`), 150); 
-            window.audioTimeouts.push(t);
+    init() {
+        this.buildHudGrid();
+        if (gameState.playerName) {
+            this.hud.greeting.style.display = 'inline-block';
+            this.hud.greeting.innerText = `Olá, ${gameState.playerName}!`;
         }
-    };
-    AudioManager.updateUI();
-    document.querySelectorAll('.ps5-btn, .ps5-btn-small, .ps5-icon-btn, .btn-livro, .btn-corner').forEach(btn => { btn.addEventListener('mouseenter', () => AudioManager.playHoverTick()); });
-    btnSom.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); AudioManager.playHoverTick(); }); 
-    btnSomMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.toggle(); AudioManager.playHoverTick(); });
-    document.body.addEventListener('click', function initMenuMusic() { if(!AudioManager.isMutedGlobal) AudioManager.playBGM('menu'); document.body.removeEventListener('click', initMenuMusic); }, { once: true });
-    window.addEventListener('blur', () => { isHolding = false; }); window.addEventListener('visibilitychange', () => { if(document.hidden) isHolding = false; });
+        this.updateAudioBtns();
+    },
 
-    /* OFFSCREEN CACHING PARA ALTA PERFORMANCE (AAA) E GESTOR DE ASSETS */
-    const fundoImg1 = new Image();
-    const ceuFundo = new Image();
-    const playerSprite = new Image();
+    buildHudGrid() {
+        if (!this.hud.grid) return;
+        this.hud.grid.innerHTML = GAME_CONFIG.alfabeto.map(a => 
+            `<span class="letra-hud" id="hud-letra-${a.letra}">${a.letra}</span>`
+        ).join('');
+    },
 
-    const GameAssets = {
-        ready: false,
-        load: function(callback) {
-            if (this.ready) { callback(); return; }
-            let loaded = 0; let total = 3;
-            const checkDone = () => {
-                loaded++;
-                if(loaded >= total) {
-                    this.ready = true;
-                    callback();
-                }
-            };
-            fundoImg1.onload = checkDone; fundoImg1.onerror = checkDone;
-            ceuFundo.onload = checkDone; ceuFundo.onerror = checkDone;
-            playerSprite.onload = checkDone; playerSprite.onerror = checkDone;
-            fundoImg1.src = 'cenario.png';
-            ceuFundo.src = 'cenario_ceu.png';
-            playerSprite.src = 'seu_personagem.png';
-        }
-    };
+    updateAudioBtns() {
+        if(this.btns.soundHud) this.btns.soundHud.innerText = gameState.audioEnabled ? '♪ SOM' : 'x MUDO';
+        if(this.btns.soundMenu) this.btns.soundMenu.innerHTML = gameState.audioEnabled ? '♪' : '🔇';
+    },
 
-    const AssetCache = {
-        blockCanvas: null, blockCtx: null,
-        cloudCanvas: null, cloudCtx: null,
-        bubbleCanvas: null, bubbleCtx: null,
-        init() {
-            this.blockCanvas = document.createElement('canvas');
-            this.blockCanvas.width = 150; this.blockCanvas.height = 150;
-            this.blockCtx = this.blockCanvas.getContext('2d');
-            this.drawCachedBlock(this.blockCtx, 75, 75, 60);
+    hideAllScreens() {
+        Object.values(this.screens).forEach(el => { if(el) { el.style.opacity = '0'; el.style.display = 'none'; } });
+        Object.values(this.modals).forEach(el => { if(el) { el.style.opacity = '0'; el.style.display = 'none'; } });
+        this.hud.layer.style.display = 'none';
+        this.btns.soundHud.style.display = 'none';
+        this.btns.pause.style.display = 'none';
+    },
 
-            this.cloudCanvas = document.createElement('canvas');
-            this.cloudCanvas.width = 200; this.cloudCanvas.height = 150;
-            this.cloudCtx = this.cloudCanvas.getContext('2d');
-            this.drawCachedCloud(this.cloudCtx, 100, 75, 50);
-
-            this.bubbleCanvas = document.createElement('canvas');
-            this.bubbleCanvas.width = 120; this.bubbleCanvas.height = 120;
-            this.bubbleCtx = this.bubbleCanvas.getContext('2d');
-            this.drawCachedBubble(this.bubbleCtx, 60, 60, 50);
-        },
-        drawCachedBlock(ctx, cx, cy, s) {
-            let hs = s/2;
-            ctx.shadowColor = 'rgba(0,0,0,0.2)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
-            ctx.fillStyle = '#FF9AA2'; drawSafeRoundRect(ctx, cx-hs, cy-hs, s, s, 12); ctx.fill();
-            ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-            ctx.fillStyle = '#E57373'; drawSafeRoundRect(ctx, cx-hs, cy-hs + s - 10, s, 10, 12); ctx.fill(); 
-            ctx.fillStyle = 'rgba(255,255,255,0.3)'; drawSafeRoundRect(ctx, cx-hs, cy-hs, s, 8, 12); ctx.fill(); 
-            ctx.strokeStyle = '#E57373'; ctx.lineWidth = 4; drawSafeRoundRect(ctx, cx-hs + 6, cy-hs + 6, s - 12, s - 12, 8); ctx.stroke();
-            ctx.fillStyle = '#FFF'; ctx.font = `900 ${s*0.6}px 'Fredoka'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('A', cx, cy + 2);
-        },
-        drawCachedCloud(ctx, cx, cy, r) {
-            let cloudGrad = ctx.createLinearGradient(0, cy-r, 0, cy+r);
-            cloudGrad.addColorStop(0, '#FFFFFF'); cloudGrad.addColorStop(1, '#E0F6FF');
-            ctx.fillStyle = cloudGrad;
-            ctx.shadowColor = 'rgba(0,0,0,0.1)'; ctx.shadowBlur = 15; ctx.shadowOffsetY = 8;
-            ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill(); 
-            ctx.beginPath(); ctx.arc(cx-r*0.65, cy+10, r*0.75, 0, Math.PI*2); ctx.fill(); 
-            ctx.beginPath(); ctx.arc(cx+r*0.65, cy+10, r*0.75, 0, Math.PI*2); ctx.fill(); 
-            ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-            ctx.fillStyle = '#333'; ctx.beginPath(); ctx.arc(cx-r*0.3, cy-r*0.1, 4, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cx+r*0.3, cy-r*0.1, 4, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = 'rgba(255, 182, 193, 0.6)'; ctx.beginPath(); ctx.arc(cx-r*0.4, cy+5, 6, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cx+r*0.4, cy+5, 6, 0, Math.PI*2); ctx.fill();
-            ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy+2, 6, 0.2, Math.PI-0.2); ctx.stroke();
-        },
-        drawCachedBubble(ctx, cx, cy, r) {
-            let grad = ctx.createRadialGradient(cx-r*0.3, cy-r*0.3, r*0.1, cx, cy, r);
-            grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)'); grad.addColorStop(0.5, 'rgba(255, 215, 0, 0.85)'); grad.addColorStop(1, 'rgba(255, 140, 0, 0.9)');
-            ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); 
-            ctx.fillStyle = 'rgba(255,255,255,0.8)'; drawSafeEllipse(ctx, cx-r*0.3, cy-r*0.4, r*0.4, r*0.2, Math.PI/6, 0, Math.PI * 2); ctx.fill(); 
-        }
-    };
-    AssetCache.init();
-
-    function atualizarProgressoHUD() { 
-        metaAlfabeto.style.display = 'none';
-        gridAlfabeto.style.display = 'flex';
+    showScreen(stateKey) {
+        if (!APP_STATES[stateKey]) return;
+        gameState.status = APP_STATES[stateKey];
         
-        AlfabetoIsadora.forEach(a => {
-            let el = document.getElementById(`hud-letra-${a.letra}`);
-            if(el) {
-                if(letrasColetadas.includes(a.letra)) el.classList.add('coletada');
+        switch (stateKey) {
+            case 'MENU':
+                this.hideAllScreens();
+                this.screens.start.style.display = 'flex';
+                setTimeout(() => this.screens.start.style.opacity = '1', 50);
+                break;
+            case 'PLAYING':
+                this.hideAllScreens();
+                this.hud.layer.style.display = 'flex';
+                this.btns.soundHud.style.display = 'flex';
+                this.btns.pause.style.display = 'flex';
+                break;
+            case 'PAUSED':
+                this.screens.pause.style.display = 'flex';
+                setTimeout(() => this.screens.pause.style.opacity = '1', 10);
+                break;
+            case 'VICTORY':
+            case 'GAME_OVER':
+                this.hud.layer.style.display = 'none';
+                this.btns.soundHud.style.display = 'none';
+                this.btns.pause.style.display = 'none';
+                this.screens.victory.style.display = 'flex';
+                setTimeout(() => this.screens.victory.style.opacity = '1', 10);
+                break;
+        }
+    },
+
+    showModal(modalName) {
+        if (!this.modals[modalName]) return;
+        const m = this.modals[modalName];
+        m.style.display = 'flex';
+        setTimeout(() => m.style.opacity = '1', 10);
+    },
+
+    hideModal(modalName) {
+        if (!this.modals[modalName]) return;
+        const m = this.modals[modalName];
+        m.style.opacity = '0';
+        setTimeout(() => m.style.display = 'none', 300);
+    },
+
+    updateHUD() {
+        GAME_CONFIG.alfabeto.forEach(a => {
+            const el = document.getElementById(`hud-letra-${a.letra}`);
+            if (el) {
+                if (gameState.collectedLetters.includes(a.letra)) el.classList.add('coletada');
                 else el.classList.remove('coletada');
             }
         });
-        progressFill.style.width = ((letrasColetadas.length / letrasParaVencerFase1) * 100) + '%'; 
-    }
+        const pct = (gameState.collectedLetters.length / GAME_CONFIG.maxLetters) * 100;
+        this.hud.progressFill.style.width = `${pct}%`;
+    },
     
-    function mostrarCinematica(titulo, subtitulo, corBase) { cinematicTitle.innerText = titulo; cinematicSubtitle.innerText = subtitulo; cinematicSubtitle.style.color = corBase; cinematicOverlay.classList.remove('cinematic-fadeout'); cinematicOverlay.classList.add('cinematic-active'); AudioManager.playCinematicSweep(); setTimeout(() => { cinematicOverlay.classList.remove('cinematic-active'); cinematicOverlay.classList.add('cinematic-fadeout'); }, 2200); }
-    function dispararFlashTransicao() { flashOverlay.classList.add('flash-active'); setTimeout(() => flashOverlay.classList.remove('flash-active'), 50); }
-
-    function resetGameState() {
-        letrasColetadas = []; collectibles = []; particulas = []; textosFlutuantes = []; letraFeedbacks = []; ambientElements = [];
-        faseAtual = 1; isInfinite = false; comboAtual = 0; pontuacao = 0; vidasExtra = 3; invulneravelTimer = 0;
-        window.extraGroundOffset = 0; window.nextGap8 = 0; window.obstaculoTimer = 0; itemTimer = -2500;
-        progressFill.classList.remove('combo-ativo'); letraUi.classList.remove('texto-combo-ativo');
-        bgX = 0; hitStopTime = 0; shakeIntensity = 0; gameSpeed = baseGameSpeed;
-        player.tilt = 0; player.vy = 0; player.stumbleTimer = 0; player.emoState = 'normal';
-    }
-
-    function prepararFase() {
-        if (gameActive) dispararFlashTransicao();
-        window.isCelebration = false;
-        
-        metaAlfabeto.innerText = "COLETE O ALFABETO"; metaAlfabeto.style.color = "var(--primaria)"; 
-        letraUi.innerText = "Vamos começar..."; 
-        mostrarCinematica("ATO I", "O ALFABETO", "#FFD700"); 
-        let ajustePe = player.height * player.espacoVazio;
-        player.y = window.innerHeight - alturaChao - (player.height - ajustePe) + 20;
-        
-        let t1 = setTimeout(() => { if(gameActive && !isPaused) { AudioManager.playVoice("Vamos brincar das letras!"); letraUi.innerText = "Letras!"; } }, 1800); 
-        window.audioTimeouts.push(t1);
-
-        atualizarProgressoHUD(); player.isJumping = true; isHolding = false;
-    }
-    
-    async function encerrarJogo(vitoria = false) {
-        gameActive = false; isHolding = false; hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; 
-        AudioManager.stopAll(); 
-        
-        let pontosFinais = Math.floor(pontuacao); 
-        victoryScreen.style.display = 'flex'; setTimeout(() => { victoryScreen.style.opacity = '1'; }, 10);
-        
-        const isAlfabetoCompleto = letrasColetadas.length >= 26;
-
-        if (isAlfabetoCompleto || vitoria) {
-            document.getElementById('titulo-vitoria').innerText = "VOCÊ CONSEGUIU!"; 
-            document.getElementById('titulo-vitoria').style.color = "#FFD700"; 
-            document.getElementById('subtitulo-vitoria').innerText = "Você descobriu todas as letras!"; 
-            
-            document.getElementById('badge-vitoria').style.display = 'inline-block';
-            document.getElementById('stat-pontos').innerText = pontosFinais;
-            document.getElementById('stat-vidas').innerText = vidasExtra;
-            document.getElementById('stat-letras').innerText = `${letrasColetadas.length}/26`;
-            
-            let alphaHtml = '';
-            AlfabetoIsadora.forEach((a, i) => {
-                alphaHtml += `<span style="animation: popAlpha 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${i*0.05}s; opacity: 0; transform: scale(0.1); display: inline-block;">${a.letra}</span>`;
-            });
-            document.getElementById('victory-alphabet').innerHTML = alphaHtml;
-
-            for(let j=0; j<80; j++) { 
-                let angle = Math.random() * Math.PI;
-                let speed = Math.random() * 15 + 5; 
-                particulas.push(new Particula(window.innerWidth/2, -50, ['#FFD700', '#FF9AA2', '#B5EAD7', '#87CEEB'][Math.floor(Math.random()*4)], Math.cos(angle)*speed, Math.abs(Math.sin(angle))*speed + 5, Math.random()*15+5)); 
+    updateCombo(isHit) {
+        if (isHit) {
+            gameState.combo++;
+            if (gameState.combo >= 3) {
+                this.hud.progressFill.classList.add('combo-ativo');
+                this.hud.message.classList.add('texto-combo-ativo');
             }
         } else {
-            document.getElementById('titulo-vitoria').innerText = "FIM DE JOGO!"; 
-            document.getElementById('titulo-vitoria').style.color = "#FF9AA2"; 
-            document.getElementById('subtitulo-vitoria').innerText = "Continue treinando!"; 
-            
-            document.getElementById('badge-vitoria').style.display = 'none';
-            document.getElementById('stat-pontos').innerText = pontosFinais;
-            document.getElementById('stat-vidas').innerText = vidasExtra;
-            document.getElementById('stat-letras').innerText = `${letrasColetadas.length}/26`;
-            document.getElementById('victory-alphabet').innerHTML = ''; 
+            gameState.combo = 0;
+            this.hud.progressFill.classList.remove('combo-ativo');
+            this.hud.message.classList.remove('texto-combo-ativo');
         }
+    },
 
-        startGameLoop();
+    triggerFlash() {
+        this.overlays.flash.classList.add('flash-active');
+        setTimeout(() => this.overlays.flash.classList.remove('flash-active'), 50);
+    },
 
-        let gravouOnline = false; 
-        if(window.salvarPontuacaoGlobal && nomeJogador !== "") { 
-            document.getElementById('creditos-vitoria').innerHTML = "A enviar pontos para a nuvem...";
-            gravouOnline = await window.salvarPontuacaoGlobal(nomeJogador, pontosFinais, 1); 
-        }
+    triggerDamage() {
+        this.overlays.damage.classList.add('damage-active');
+        setTimeout(() => this.overlays.damage.classList.remove('damage-active'), 50);
+    },
+
+    showCinematic(title, subtitle, color) {
+        this.elements.cinematicTitle.innerText = title;
+        this.elements.cinematicSubtitle.innerText = subtitle;
+        this.elements.cinematicSubtitle.style.color = color;
+        this.overlays.cinematic.classList.remove('cinematic-fadeout');
+        this.overlays.cinematic.classList.add('cinematic-active');
+        AudioSys.playCinematicSweep();
+        setTimeout(() => {
+            this.overlays.cinematic.classList.remove('cinematic-active');
+            this.overlays.cinematic.classList.add('cinematic-fadeout');
+        }, 2200);
+    },
+
+    fillVictoryScreen(isWin) {
+        this.elements.victoryTitle.innerText = isWin ? "VOCÊ CONSEGUIU!" : "FIM DE JOGO!";
+        this.elements.victoryTitle.style.color = isWin ? "#FFD700" : "#FF9AA2";
+        this.elements.victorySubtitle.innerText = isWin ? "Você descobriu todas as letras!" : "Continue treinando!";
+        this.elements.victoryBadge.style.display = isWin ? 'inline-block' : 'none';
         
-        if (gravouOnline) { 
-            if(isAlfabetoCompleto) AudioManager.playSuccessSFX(); 
-            document.getElementById('creditos-vitoria').innerHTML = "Seu recorde está no Ranking Global!"; 
-        } else { 
-            if(isAlfabetoCompleto) AudioManager.playSuccessSFX(); else AudioManager.playErrorVoice(); 
-            document.getElementById('creditos-vitoria').innerHTML = "Jogue novamente para bater seu recorde!"; 
+        this.elements.victoryStats.score.innerText = Math.floor(gameState.score);
+        this.elements.victoryStats.lives.innerText = gameState.lives;
+        this.elements.victoryStats.letters.innerText = `${gameState.collectedLetters.length}/26`;
+
+        if (isWin) {
+            this.elements.victoryAlphabet.innerHTML = GAME_CONFIG.alfabeto.map((a, i) => 
+                `<span style="animation: popAlpha 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${i*0.05}s; opacity: 0; transform: scale(0.1); display: inline-block;">${a.letra}</span>`
+            ).join('');
+        } else {
+            this.elements.victoryAlphabet.innerHTML = '';
         }
     }
+};
 
-    function iniciarJogo() { AudioManager.playHoverTick(); if (nomeJogador === "") { modalNome.style.display = 'flex'; setTimeout(() => modalNome.style.opacity = '1', 10); inputNomeJogador.focus(); } else { iniciarJogoReal(); } }
-    function iniciarJogoReal() {
-        if (gameActive) return; 
-        try { let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } } catch(e){}
-        if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; }
-        AudioManager.init(); AudioManager.playMagicSFX(); AudioManager.playRisada(); 
-
-        const loader = document.getElementById('loading-screen'); 
-        if (loader) { loader.style.display = 'flex'; loader.style.visibility = 'visible'; loader.style.opacity = '1'; } 
-        startScreen.style.transform = 'scale(1.1)';
-        startScreen.style.opacity = '0';
-        
-        GameAssets.load(() => {
-            initTimeoutId = setTimeout(() => { 
-                startScreen.style.display = 'none'; 
-                startScreen.style.transform = 'scale(1)';
-                hudLayer.style.display = 'flex'; btnSom.style.display = 'flex'; btnPause.style.display = 'flex'; 
-                AudioManager.playBGM('game'); 
-                resetGameState();
-                prepararFase(); 
-                
-                gameActive = true; 
-                isPaused = false; 
-                startGameLoop();
-                if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } 
-            }, 1800); 
-        });
-    }
-
-    btnJogar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); iniciarJogo(); });
-    btnPause.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); if(gameActive && !isPaused) { isPaused = true; isHolding = false; pauseScreen.style.display = 'flex'; setTimeout(() => { pauseScreen.style.opacity = '1'; }, 10); AudioManager.stopAll(); } });
-    btnContinuar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; }, 300); startGameLoop(); AudioManager.playBGM('game'); });
+/**
+ * ============================================================
+ * SISTEMA DE ÁUDIO CENTRALIZADO
+ * ============================================================
+ */
+const AudioSys = {
+    ctx: null, compressor: null,
+    bgmMenu: null, bgmGame: null,
+    currentBGM: null, humanVoice: null,
     
-    function voltarAoMenu(screenElement) { if(initTimeoutId) { clearTimeout(initTimeoutId); initTimeoutId = null; } isPaused = false; screenElement.style.opacity = '0'; setTimeout(() => { screenElement.style.display = 'none'; }, 300); const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } gameActive = false; isHolding = false; player.isJumping = false; player.y = 0; player.vy = 0; cinematicOverlay.classList.remove('cinematic-active', 'cinematic-fadeout'); hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; if(AudioManager.somAtivo) AudioManager.playBGM('menu'); startScreen.style.display = 'flex'; setTimeout(() => { startScreen.style.opacity = '1'; }, 50); resetIdleTimer(); startGameLoop(); }
-    btnReiniciar.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); isPaused = false; pauseScreen.style.opacity = '0'; setTimeout(() => { pauseScreen.style.display = 'none'; gameActive = false; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
-    btnVoltarMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); voltarAoMenu(pauseScreen); }); btnVitoriaMenu.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); voltarAoMenu(victoryScreen); });
-    btnJogarNovamente.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AudioManager.playHoverTick(); victoryScreen.style.opacity = '0'; setTimeout(() => { victoryScreen.style.display = 'none'; gameActive = false; AudioManager.stopAll(); AudioManager.isMutedGlobal = false; iniciarJogoReal(); }, 300); });
-
-    function redimensionarCanvas() { 
-        let dpr = window.devicePixelRatio || 1; 
-        canvas.style.width = window.innerWidth + 'px'; 
-        canvas.style.height = window.innerHeight + 'px'; 
-        canvas.width = window.innerWidth * dpr; 
-        canvas.height = window.innerHeight * dpr; 
-        ctx.setTransform(1, 0, 0, 1, 0, 0); 
-        ctx.scale(dpr, dpr); 
-        ctx.imageSmoothingEnabled = true; 
-        ctx.imageSmoothingQuality = "high"; 
-        alturaChao = window.innerHeight * 0.18; 
-        if (window.innerHeight < 500 || window.innerWidth < 768) { scaleMultiplier = window.innerHeight < 400 ? 0.45 : 0.60; baseGameSpeed = 4.5; if(player) { player.jumpPower = -15.5; player.gravity = 0.8; } } else { scaleMultiplier = 1; baseGameSpeed = 6.5; if(player) { player.jumpPower = -21; player.gravity = 1.1; } } gameSpeed = baseGameSpeed; if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) { avisoRotacao.style.display = 'flex'; } else { avisoRotacao.style.display = 'none'; } }
-    window.addEventListener('resize', redimensionarCanvas); window.addEventListener('orientationchange', () => { setTimeout(redimensionarCanvas, 100); setTimeout(redimensionarCanvas, 500); });
-    if (btnForcarGiro) { btnForcarGiro.addEventListener('click', (e) => { e.preventDefault(); btnForcarGiro.innerText = "VIRE O APARELHO..."; let docEl = document.documentElement; let requestFS = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen; if (requestFS) { requestFS.call(docEl).catch(()=>{}); } if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(() => { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; }); } else { btnForcarGiro.innerText = "POR FAVOR, DEITE O CELULAR"; } }); }
-
-    /* SISTEMAS PREMIUM DE EFEITOS E PARTÍCULAS */
-    class Particula {
-        constructor(x, y, cor, vx, vy, tamanho) { this.x = x; this.y = y; this.cor = cor; this.vx = vx; this.vy = vy; this.tamanho = tamanho * scaleMultiplier; this.vida = 1.0; }
-        update(timeScale) { this.vx *= Math.pow(0.92, timeScale); this.vy *= Math.pow(0.92, timeScale); this.x += (this.vx - (gameSpeed * 0.7)) * timeScale; this.y += (this.vy - 0.5) * timeScale; this.vida -= 0.02 * timeScale; this.tamanho *= Math.pow(0.95, timeScale); }
-        draw(ctx) { ctx.save(); ctx.globalAlpha = Math.max(0, this.vida); if (this.cor !== '#555' && !this.cor.includes('rgba(200')) { ctx.globalCompositeOperation = 'lighter'; } ctx.fillStyle = this.cor; ctx.beginPath(); ctx.arc(this.x, this.y, Math.max(0, this.tamanho), 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
-    }
-
-    class TextoFlutuante {
-        constructor(texto, x, y, cor = '#FFF', contorno = '#FF9AA2', isGiant = false) { 
-            this.texto = texto; this.x = x; this.y = y; this.vida = 1.0; this.cor = cor; this.contorno = contorno; 
-            this.isGiant = isGiant;
-            this.vy = isGiant ? -0.5 : -3; 
-            if(isGiant) { this.scale = 0.1; this.targetScale = 1; this.lifeTime = 80; } 
-        }
-        update(timeScale) { 
-            this.y += this.vy * timeScale; 
-            if (this.isGiant) {
-                this.scale += (this.targetScale - this.scale) * 0.15 * timeScale;
-                this.lifeTime -= timeScale;
-                if(this.lifeTime <= 0) this.vida -= 0.05 * timeScale;
-            } else {
-                this.vy *= Math.pow(0.92, timeScale); this.vida -= 0.015 * timeScale; 
-            }
-        }
-        draw(ctx) { 
-            ctx.save(); ctx.globalAlpha = Math.max(0, this.vida); 
-            if (this.isGiant) {
-                ctx.translate(this.x, this.y); ctx.scale(this.scale, this.scale);
-                ctx.fillStyle = this.cor; ctx.font = `900 ${80 * scaleMultiplier}px 'Fredoka', sans-serif`; 
-                ctx.strokeStyle = this.contorno; ctx.lineWidth = 12 * scaleMultiplier; ctx.lineJoin = 'round';
-                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.strokeText(this.texto, 0, 0); ctx.fillText(this.texto, 0, 0);
-            } else {
-                ctx.fillStyle = this.cor; ctx.font = `bold ${40 * scaleMultiplier}px 'Fredoka', sans-serif`; 
-                ctx.strokeStyle = this.contorno; ctx.lineWidth = 6 * scaleMultiplier; 
-                ctx.strokeText(this.texto, this.x, this.y); 
-                ctx.fillStyle = this.contorno;
-                ctx.fillText(this.texto, this.x, this.y + (2*scaleMultiplier)); 
-                ctx.fillStyle = this.cor;
-                ctx.fillText(this.texto, this.x, this.y); 
-            }
-            ctx.restore(); 
-        }
-    }
-
-    /* SISTEMA PEDAGÓGICO - FEEDBACK DE LETRA */
-    class LetraFeedback {
-        constructor(letra, palavra, x, y) {
-            this.letra = letra;
-            this.palavra = palavra.toUpperCase();
-            this.frase = `${letra} de ${this.palavra}!`;
-            this.x = x;
-            this.y = y;
-            this.vida = 1.0;
-            this.scale = 0.1;
-            this.targetScale = 1.0;
-            this.timer = 0;
-        }
-        update(timeScale) {
-            this.timer += timeScale;
-            if (this.timer < 50) {
-                this.scale += (this.targetScale - this.scale) * 0.15 * timeScale;
-            } else {
-                this.y -= 1.5 * timeScale;
-                this.vida -= 0.02 * timeScale;
-            }
-        }
-        draw(ctx) {
-            ctx.save();
-            ctx.globalAlpha = Math.max(0, this.vida);
-            ctx.translate(this.x, this.y);
-            ctx.scale(this.scale, this.scale);
-
-            let w = 260 * scaleMultiplier;
-            let h = 180 * scaleMultiplier;
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-            drawSafeRoundRect(ctx, -w/2, -h/2 - 10*scaleMultiplier, w, h, 25*scaleMultiplier);
-            ctx.fill();
-            ctx.strokeStyle = '#FFD700';
-            ctx.lineWidth = 4 * scaleMultiplier;
-            ctx.stroke();
-
-            ctx.font = `900 ${80 * scaleMultiplier}px 'Fredoka'`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#FFF';
-            ctx.strokeStyle = '#FF9AA2';
-            ctx.lineWidth = 8 * scaleMultiplier;
-            ctx.strokeText(this.letra, 0, -40 * scaleMultiplier);
-            ctx.fillText(this.letra, 0, -40 * scaleMultiplier);
-
-            ctx.font = `900 ${30 * scaleMultiplier}px 'Fredoka'`;
-            ctx.strokeStyle = '#FFD700';
-            ctx.lineWidth = 5 * scaleMultiplier;
-            ctx.strokeText(this.palavra, 0, 15 * scaleMultiplier);
-            ctx.fillText(this.palavra, 0, 15 * scaleMultiplier);
-
-            ctx.font = `bold ${20 * scaleMultiplier}px 'Fredoka'`;
-            ctx.strokeStyle = '#FFB7B2';
-            ctx.lineWidth = 4 * scaleMultiplier;
-            ctx.strokeText(this.frase, 0, 50 * scaleMultiplier);
-            ctx.fillText(this.frase, 0, 50 * scaleMultiplier);
-
-            ctx.restore();
-        }
-    }
-
-    class AmbientElement {
-        constructor(cw, ch) {
-            this.type = Math.random() > 0.5 ? 'butterfly' : 'leaf';
-            this.x = cw + 50;
-            this.y = Math.random() * (ch - alturaChao - 100) + 50;
-            this.vx = (Math.random() * -1.5) - (gameSpeed * 0.4);
-            this.vy = Math.random() * 2 - 1;
-            this.size = (Math.random() * 4 + 4) * scaleMultiplier;
-            this.angle = Math.random() * Math.PI * 2;
-            this.frame = Math.random() * 10;
-            this.color = ['#FF9AA2', '#FFD700', '#FFF', '#B5EAD7'][Math.floor(Math.random()*4)];
-        }
-        update(timeScale) {
-            this.x += this.vx * timeScale;
-            this.y += this.vy * timeScale;
-            this.frame += 0.2 * timeScale;
-            if (this.type === 'butterfly') {
-                this.y += Math.sin(this.frame) * 2;
-                this.x += Math.cos(this.frame * 0.5) * 1.5;
-            } else {
-                this.angle += 0.05 * timeScale;
-                this.y += 1.5 * timeScale; 
-            }
-        }
-        draw(ctx) {
-            ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
-            if (this.type === 'butterfly') {
-                ctx.fillStyle = this.color;
-                let flap = Math.abs(Math.sin(this.frame)) * this.size;
-                drawSafeEllipse(ctx, -this.size/2, 0, flap, this.size, 0, 0, Math.PI*2); ctx.fill();
-                drawSafeEllipse(ctx, this.size/2, 0, flap, this.size, 0, 0, Math.PI*2); ctx.fill();
-            } else {
-                ctx.fillStyle = '#82C9AD'; ctx.globalAlpha = 0.8;
-                drawSafeEllipse(ctx, 0, 0, this.size, this.size/2, 0, 0, Math.PI*2); ctx.fill();
-            }
-            ctx.restore();
-        }
-    }
-
-    class Collectible {
-        constructor(tipo = 'letra', info = null) {
-            this.tipo = tipo; this.info = info; this.markedForDeletion = false; this.spin = 0; this.ignorarColisao = false; this.isResolvido = false; this.timerOscilacao = Math.random() * 100;
-            let cw = window.innerWidth; let ch = window.innerHeight;
-            let laneY = ch - alturaChao + 75 * scaleMultiplier; 
-            
-            if (this.tipo === 'mini_obstaculo') { this.variation = Math.floor(Math.random() * 3); this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; this.x = cw + 100 * scaleMultiplier; this.y = laneY - this.radius; this.spin = 0; this.hasLanded = true; }
-            else if (this.tipo === 'moeda') { this.radius = 35 * scaleMultiplier; this.x = cw + 100 * scaleMultiplier; this.y = Math.random() > 0.5 ? laneY - 75 * scaleMultiplier : laneY - 235 * scaleMultiplier; }
-            else if (this.tipo === 'obstaculo') { this.variation = Math.floor(Math.random() * 3); this.radius = (this.variation === 1 ? 48 : 40) * scaleMultiplier; this.x = cw + 100 * scaleMultiplier; this.y = laneY - this.radius; this.spin = 0; this.hasLanded = true; }
-            else { this.radius = 45 * scaleMultiplier; this.x = cw + 600 * scaleMultiplier; this.baseY = laneY - 135 * scaleMultiplier; this.y = this.baseY; this.comportamento = Math.floor(Math.random() * 3); }
-            
-            if (this.tipo === 'obstaculo' || this.tipo === 'mini_obstaculo') {
-                const colors = [ ['#FF9AA2', '#E57373'], ['#FFDAC1', '#FFB7B2'], ['#B5EAD7', '#68A68F'], ['#C7CEEA', '#9BA4D6'] ];
-                this.blockColors = colors[Math.floor(Math.random() * colors.length)];
-            }
-        }
-        update(timeScale) { 
-            this.x -= (gameSpeed * 1.5) * timeScale; 
-            if(this.tipo === 'letra') { 
-                this.spin += 0.05 * timeScale; this.timerOscilacao += 0.1 * timeScale; 
-                if (this.comportamento === 0) { this.y = this.baseY + Math.sin(this.timerOscilacao * 0.8) * 10 * scaleMultiplier; } 
-                else if (this.comportamento === 1) { this.y = this.baseY + Math.abs(Math.sin(this.timerOscilacao * 1.2)) * -40 * scaleMultiplier; } 
-                else { this.y = this.baseY - 50 * scaleMultiplier + Math.sin(this.timerOscilacao * 0.5) * 15 * scaleMultiplier; } 
-            } else if (this.tipo === 'moeda') { 
-                this.spin += 0.05 * timeScale; this.timerOscilacao += 0.1 * timeScale; this.y += Math.sin(this.timerOscilacao) * 1.5 * timeScale; 
-            } 
-            if (this.x < -200) this.markedForDeletion = true; 
-        }
-        draw(ctx) {
-            if(!AssetCache.blockCanvas) return;
-            ctx.save(); ctx.translate(this.x, (this.tipo === 'obstaculo' || this.tipo === 'mini_obstaculo') ? this.y : this.y - 10); 
-            let scl = scaleMultiplier; let displayTexto = this.info ? (this.info.letra || this.info) : '?'; let bgAlpha = this.isResolvido ? 0.3 : 1; let textAlpha = this.isResolvido ? 0 : 1;
-            
-            if (this.tipo === 'moeda') { 
-                ctx.globalAlpha = bgAlpha; ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 15; 
-                let pulse = 1 + Math.sin(performance.now() * 0.01) * 0.1; ctx.scale(pulse, pulse);
-                ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fill(); 
-                ctx.fillStyle = '#FFA500'; ctx.beginPath(); ctx.arc(0,0, this.radius*0.7, 0, Math.PI*2); ctx.fill(); 
-                ctx.shadowBlur = 0; ctx.globalAlpha = textAlpha; ctx.fillStyle = '#FFF'; ctx.font = `bold ${this.radius*1.2}px 'Fredoka'`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('★', 0, 2*scl); 
-            }
-            else if (this.tipo === 'obstaculo' || this.tipo === 'mini_obstaculo') {
-                ctx.globalAlpha = this.isResolvido ? 0 : 1; let chaoAjuste = this.radius; ctx.translate(0, chaoAjuste); 
-                let jumpOffset = Math.abs(Math.sin(performance.now() * 0.005 + this.x)) * (10 * scl);
-                ctx.fillStyle = 'rgba(0,0,0,0.15)'; drawSafeEllipse(ctx, 0, 0, this.radius * 1.3 - jumpOffset*0.5, this.radius * 0.35, 0, 0, Math.PI * 2); ctx.fill();
-                
-                let s = this.radius * 1.8; let hs = s/2; 
-                ctx.translate(0, -hs - jumpOffset + (this.variation * 5 * scl)); 
-                
-                ctx.fillStyle = this.blockColors[0]; drawSafeRoundRect(ctx, -hs, -hs, s, s, 12*scl); ctx.fill();
-                ctx.fillStyle = this.blockColors[1]; drawSafeRoundRect(ctx, -hs, -hs + s - 10*scl, s, 10*scl, 12*scl); ctx.fill(); 
-                ctx.fillStyle = 'rgba(255,255,255,0.3)'; drawSafeRoundRect(ctx, -hs, -hs, s, 8*scl, 12*scl); ctx.fill(); 
-                ctx.strokeStyle = this.blockColors[1]; ctx.lineWidth = 4*scl; drawSafeRoundRect(ctx, -hs + 6*scl, -hs + 6*scl, s - 12*scl, s - 12*scl, 8*scl); ctx.stroke();
-                ctx.fillStyle = '#FFF'; ctx.font = `900 ${s*0.6}px 'Fredoka'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                let letrasBrinquedo = ['A', 'B', 'C']; ctx.fillText(letrasBrinquedo[this.variation % 3], 0, 2*scl);
-                ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(-hs - 5*scl, -hs + 10*scl, 3*scl, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(hs + 5*scl, -hs - 5*scl, 4*scl, 0, Math.PI*2); ctx.fill();
-            }
-            else if (this.tipo === 'letra') {
-                let pulse = 1 + Math.sin(performance.now() * 0.005) * 0.1; ctx.scale(pulse, pulse);
-                ctx.globalAlpha = bgAlpha; 
-                ctx.drawImage(AssetCache.bubbleCanvas, -this.radius*1.2, -this.radius*1.2, this.radius*2.4, this.radius*2.4);
-                
-                ctx.globalAlpha = textAlpha; ctx.fillStyle = '#FFF'; ctx.font = `900 ${this.radius * 1.3}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; 
-                ctx.shadowColor = 'rgba(0,0,0,0.25)'; ctx.shadowBlur = 4 * scl; ctx.shadowOffsetY = 2 * scl;
-                ctx.fillText(displayTexto, 0, 4*scl); 
-                ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-                
-                ctx.save(); ctx.rotate(this.spin * 1.5); 
-                for(let i=0; i<3; i++) { ctx.rotate((Math.PI*2)/3); ctx.fillStyle = '#FFF'; ctx.beginPath(); ctx.arc(this.radius + 12*scl, 0, 5*scl, 0, Math.PI*2); ctx.fill(); }
-                ctx.restore(); 
-            } 
-            ctx.restore();
-        }
-    }
-
-    class Player {
-        constructor() { 
-            this.baseScale = 0.28; this.width = 100; this.height = 200; this.baseX = window.innerWidth * 0.15; this.x = this.baseX; this.y = 0; 
-            this.vy = 0; this.gravity = 1.2; this.jumpPower = -22; this.isJumping = false; this.frameX = 0; this.staggerFrames = 3; this.gameFrame = 0; 
-            this.espacoVazio = 0.25; this.tilt = 0; this.stumbleTimer = 0;
-            this.emoState = 'normal'; this.emoTimer = 0;
-        }
-        update(timeScale) {
-            this.baseX = window.innerWidth * 0.15; this.x = this.baseX; 
-            if (this.stumbleTimer > 0) this.stumbleTimer -= timeScale * 16.6;
-            
-            if (this.emoTimer > 0) {
-                this.emoTimer -= timeScale * 16.6;
-            } else {
-                this.emoState = 'normal';
-            }
-            
-            this.scale = this.baseScale * scaleMultiplier; let ajustePe = this.height * this.espacoVazio; let ch = window.innerHeight; let groundY = ch - alturaChao - (this.height - ajustePe) + 20;
-            this.y += this.vy * timeScale;
-            if (this.y >= groundY) { if (this.isJumping) { for(let i=0;i<12;i++) { particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 255, 255, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } } this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt += (0 - this.tilt) * 0.2 * timeScale; } 
-            else { this.vy += this.gravity * timeScale; this.isJumping = true; let targetTilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); this.tilt += (targetTilt - this.tilt) * 0.15 * timeScale; }
-            if (!this.isJumping) { if (this.gameFrame % this.staggerFrames === 0) { this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; } if (this.gameFrame % 3 === 0) { particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(255, 255, 255, 0.5)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4)); if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#E2F0CB', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2)); } this.gameFrame++; } else { this.frameX = 1; this.gameFrame++; }
-        }
-        draw(ctx) {
-            let prevAlpha = ctx.globalAlpha; let rW = 0, rH = 0; let ajustePe = 0; let groundY = window.innerHeight - alturaChao + 20; 
-            
-            this.width = 100 * this.scale * 1.5; 
-            this.height = 150 * this.scale * 1.5;
-            ajustePe = 10 * this.scale; 
-            groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; 
-            if (!this.isJumping && this.y > groundY) this.y = groundY;
-            
-            if (playerSprite && playerSprite.complete && playerSprite.naturalWidth > 0) { 
-                rW = playerSprite.naturalWidth / 3; rH = playerSprite.naturalHeight; this.width = rW * this.scale; this.height = rH * this.scale; ajustePe = this.height * this.espacoVazio; groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; if (!this.isJumping && this.y > groundY) this.y = groundY; 
-            } 
-            
-            if (invulneravelTimer > 0) { if (Math.floor(performance.now() / 150) % 2 === 0) { ctx.globalAlpha = 0.5; } }
-            
-            let alturaDoChao = groundY - this.y; 
-            let tamanhoSombra = Math.max(15 * scaleMultiplier, (this.width/2) - (alturaDoChao * 0.15)); 
-            let opSombra = Math.max(0.05, 0.25 - (alturaDoChao * 0.0015)); 
-            ctx.fillStyle = `rgba(0,0,0,${opSombra})`; drawSafeEllipse(ctx, this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); 
-            
-            ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height/2 - (ajustePe - this.height/2)); 
-            
-            let displayTilt = this.tilt;
-            if (this.emoState === 'happy') {
-                ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 15 * scaleMultiplier;
-                let bounce = Math.sin(performance.now() * 0.02) * 0.05;
-                ctx.scale(1 + bounce, 1 + bounce);
-            } else if (this.emoState === 'sad') {
-                displayTilt -= 0.15;
-            }
-            
-            ctx.rotate(displayTilt); 
-            
-            let pisadaY = (!this.isJumping && this.frameX === 1) ? (6 * scaleMultiplier) : 0;
-            
-            if (playerSprite && playerSprite.complete && playerSprite.naturalWidth > 0) { 
-                ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -this.height/2 + pisadaY, this.width, this.height); 
-            }
-            ctx.restore(); ctx.globalAlpha = prevAlpha;
-        }
-        jump() { if (!this.isJumping) { if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } this.vy = this.jumpPower; this.isJumping = true; AudioManager.playHoverTick(); for(let i=0;i<10;i++) { particulas.push(new Particula(this.x + this.width/2, this.y + this.height - (this.height*this.espacoVazio), 'rgba(255, 255, 255, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*10+5)); } } }
-    }
-
-    const player = new Player(); let collectibles = []; let itemTimer = 0; let itemInterval = 2500; let textosFlutuantes = []; let ambientElements = []; let letraFeedbacks = [];
-    function handleDown(e) { if (e.target.closest('button') || e.target.closest('.ps5-btn') || e.target.closest('.ps5-btn-small') || e.target.closest('.ps5-icon-btn') || e.target.closest('.btn-corner') || (document.getElementById('modal-historia') && document.getElementById('modal-historia').style.display === 'flex') || (document.getElementById('exit-screen') && document.getElementById('exit-screen').style.display === 'flex') || (document.getElementById('modal-nome') && document.getElementById('modal-nome').style.display === 'flex') || (document.getElementById('modal-ranking') && document.getElementById('modal-ranking').style.display === 'flex') || !gameActive) return; isHolding = true; if (tutorialUI.style.display !== 'none' && tutorialUI.style.opacity === '1') { tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } if(gameActive && !isPaused) { e.preventDefault(); player.jump(); } }
-    function handleUp(e) { isHolding = false; } window.addEventListener('mousedown', handleDown); window.addEventListener('mouseup', handleUp); window.addEventListener('touchstart', handleDown, {passive: false}); window.addEventListener('touchend', handleUp); window.addEventListener('touchcancel', handleUp); window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') { isHolding = true; if (tutorialUI.style.display !== 'none' && tutorialUI.style.opacity === '1') { tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } if(gameActive && !isPaused) player.jump(); } }); window.addEventListener('keyup', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') isHolding = false; });
-    
-    function drawProceduralBG(ctx, cw, ch, timeScale, isMenu = false) {
-        let bgScroll = isMenu ? (performance.now() * 0.015) % cw : bgX;
-        let groundY = ch - alturaChao;
-
-        let bgGrad = ctx.createLinearGradient(0,0,0,ch);
-        bgGrad.addColorStop(0,'#87CEEB'); bgGrad.addColorStop(1,'#E0F6FF');
-        ctx.fillStyle=bgGrad; ctx.fillRect(0,0,cw,ch);
-
-        ctx.save(); ctx.translate(cw * 0.8, ch * 0.2); ctx.rotate(performance.now() * 0.0002);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-        for(let i=0; i<12; i++) { ctx.rotate(Math.PI / 6); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(cw, -20); ctx.lineTo(cw, 20); ctx.fill(); } ctx.restore();
-
-        ctx.fillStyle = 'rgba(255,255,255,0.6)';
-        for(let i=0; i<4; i++) {
-            let cx = (cw + bgScroll * 0.05 + i*350) % (cw + 300) - 150; let cy = 80 + (i%2)*60;
-            ctx.beginPath(); ctx.arc(cx, cy, 50, 0, Math.PI*2); ctx.arc(cx-35, cy+15, 35, 0, Math.PI*2); ctx.arc(cx+35, cy+15, 35, 0, Math.PI*2); ctx.fill();
-        }
-
-        ctx.fillStyle = '#9CE0C3'; ctx.beginPath(); ctx.moveTo(0, ch);
-        for(let x=0; x<=cw; x+=40) { ctx.lineTo(x, groundY - 150 + Math.sin(x*0.004 + bgScroll*0.002) * 80); }
-        ctx.lineTo(cw, ch); ctx.fill();
-
-        ctx.fillStyle = '#7AC5A9'; ctx.beginPath(); ctx.moveTo(0, ch);
-        for(let x=0; x<=cw; x+=40) { ctx.lineTo(x, groundY - 80 + Math.sin(x*0.007 + bgScroll*0.004 + 100) * 50); }
-        ctx.lineTo(cw, ch); ctx.fill();
+    init() {
+        if (!this.bgmMenu) this.bgmMenu = new Audio('musica_menu.mp3');
+        if (!this.bgmGame) this.bgmGame = new Audio('musica_jogo.mp3');
+        if (!this.humanVoice) this.humanVoice = new Audio();
         
-        ctx.fillStyle = '#5A9E82';
-        for(let i=0; i<5; i++) {
-            let tx = (cw + bgScroll * 0.3 + i*250) % (cw + 100) - 50; let ty = groundY - 80 + Math.sin(tx*0.007 + bgScroll*0.004 + 100) * 50;
-            ctx.beginPath(); ctx.arc(tx, ty+20, 40, 0, Math.PI*2); ctx.arc(tx-20, ty+30, 30, 0, Math.PI*2); ctx.arc(tx+20, ty+30, 30, 0, Math.PI*2); ctx.fill();
-        }
+        this.bgmMenu.loop = true;
+        this.bgmGame.loop = true;
 
-        ctx.fillStyle = '#68A68F'; ctx.fillRect(0, groundY, cw, alturaChao);
-        ctx.fillStyle = '#82C9AD'; ctx.fillRect(0, groundY, cw, 15); 
-
-        ctx.fillStyle = '#559079';
-        let offset = (bgScroll * 1.0) % 60;
-        for(let x = offset - 60; x < cw + 60; x += 60) {
-            ctx.beginPath(); ctx.moveTo(x, groundY+15); ctx.lineTo(x-15, groundY+35); ctx.lineTo(x+15, groundY+35); ctx.fill();
-            if(x % 120 < 10) { ctx.fillStyle = '#FF9AA2'; ctx.beginPath(); ctx.arc(x, groundY+25, 4, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#559079'; }
-        }
-    }
-
-    let lastTime = 0; 
-    function animate(timeStamp) {
         try {
-            if (!timeStamp || isNaN(timeStamp)) timeStamp = performance.now();
-            if (!lastTime || isNaN(lastTime)) lastTime = timeStamp;
-
-            let deltaTime = timeStamp - lastTime;
-            if (isNaN(deltaTime) || deltaTime > 100 || deltaTime < 0) deltaTime = 16.666;
-            lastTime = timeStamp;
-            let timeScale = deltaTime / 16.666;
-            if (isNaN(timeScale) || timeScale <= 0) timeScale = 1;
-
-            if (isNaN(bgX)) bgX = 0;
-            if (isNaN(gameSpeed)) gameSpeed = baseGameSpeed;
-            
-            let cw = window.innerWidth; let ch = window.innerHeight;
-            if (cw <= 0 || ch <= 0) return; // Evita erros de renderização
-            
-            if (!gameActive) {
-                ctx.clearRect(0, 0, cw, ch);
-                drawProceduralBG(ctx, cw, ch, timeScale, true);
-                
-                for (let i = particulas.length - 1; i >= 0; i--) { 
-                    let p = particulas[i]; p.update(timeScale); p.draw(ctx); 
-                    if (p.vida <= 0) particulas.splice(i, 1); 
-                }
-                return;
-            }
-
-            /* Correção do Loop no Pause: timeScale zero congela atualizações sem apagar a tela! */
-            if (isPaused) {
-                timeScale = 0;
-                deltaTime = 0;
-            } else if (hitStopTime > 0) {
-                hitStopTime -= deltaTime;
-                timeScale = 0;
-            }
-
-            itemTimer += deltaTime; 
-            if (invulneravelTimer > 0) invulneravelTimer -= deltaTime;
-            window.obstaculoTimer = (window.obstaculoTimer || 0) + deltaTime; 
-
-            ctx.clearRect(0, 0, cw, ch); 
-            ctx.save();
-            
-            if (shakeIntensity > 0) { 
-                let sx = Math.sin(timeStamp * 0.05) * shakeIntensity; 
-                let sy = Math.cos(timeStamp * 0.04) * shakeIntensity; 
-                ctx.translate(sx, sy); 
-                if (timeScale > 0) {
-                    shakeIntensity -= deltaTime * 0.05; 
-                    if(shakeIntensity < 0) shakeIntensity = 0; 
+            if (!this.ctx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if(AudioContext) {
+                    this.ctx = new AudioContext();
+                    this.compressor = this.ctx.createDynamicsCompressor();
+                    this.compressor.connect(this.ctx.destination);
                 }
             }
-
-            if (timeScale > 0) bgX -= (gameSpeed * 0.8) * timeScale;
-            drawProceduralBG(ctx, cw, ch, timeScale);
-            let aoGrad = ctx.createLinearGradient(0, ch - 60, 0, ch); 
-            aoGrad.addColorStop(0, 'rgba(0,0,0,0)'); aoGrad.addColorStop(1, 'rgba(0,0,0,0.4)'); 
-            ctx.fillStyle = aoGrad; ctx.fillRect(0, ch - 60, cw, 60); 
-
-            player.update(timeScale);
-            
-            if (!window.isCelebration && letrasColetadas.length >= 26) {
-                window.isCelebration = true;
-                
-                let t1 = setTimeout(() => {
-                    AudioManager.playComboSFX(3);
-                    AudioManager.playVoice("Você conseguiu! Descobriu todas as letras!");
-                    textosFlutuantes.push(new TextoFlutuante("VOCÊ CONSEGUIU!", cw/2, ch/2 - 60, '#FFF', '#FFD700', true));
-                    textosFlutuantes.push(new TextoFlutuante("Você descobriu todas as letras!", cw/2, ch/2 + 60, '#FFF', '#68A68F', false));
-                    player.emoState = 'happy';
-                    player.emoTimer = 4000;
-                    
-                    for(let j=0; j<50; j++) { 
-                        let angle = Math.random() * Math.PI * 2; 
-                        let speed = Math.random() * 12 + 5; 
-                        particulas.push(new Particula(cw/2, ch/2, Math.random() > 0.5 ? '#FFD700' : '#FF9AA2', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); 
-                    }
-                }, 1500);
-
-                let t2 = setTimeout(() => {
-                    encerrarJogo(true);
-                    window.isCelebration = false;
-                }, 4500);
-                
-                window.audioTimeouts.push(t1, t2);
+            if (this.ctx && this.ctx.state === 'suspended' && gameState.audioEnabled) {
+                this.ctx.resume();
             }
+        } catch(e) { console.warn("Audio Context init failed."); }
+    },
 
-            if (timeScale > 0) {
-                if (itemTimer > itemInterval && !window.isCelebration) { 
-                    let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra)); 
-                    if (letrasFaltantes.length > 0) { 
-                        let letraAlvo = letrasFaltantes[0].letra; 
-                        if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) { 
-                            let itemInfo = AlfabetoIsadora.find(i=>i.letra===letraAlvo); 
-                            collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: itemInfo.palavra})); 
-                        } 
-                    } 
-                    itemTimer = 0; window.obstaculoTimer = 0; 
-                } else if (window.obstaculoTimer > 1000 && !window.isCelebration) { 
-                    let temItemPerto = collectibles.some(c => Math.abs(c.x - cw) < 400 * scaleMultiplier); 
-                    if (!temItemPerto) { let sorteio = Math.random(); if (sorteio > 0.5) collectibles.push(new Collectible('mini_obstaculo')); else if (sorteio > 0.2) collectibles.push(new Collectible('moeda')); } window.obstaculoTimer = 0; 
-                } 
+    toggle() {
+        gameState.audioEnabled = !gameState.audioEnabled;
+        localStorage.setItem('isadora_som', gameState.audioEnabled);
+        UI.updateAudioBtns();
+        
+        if (!gameState.audioEnabled) {
+            this.stopAll();
+        } else {
+            this.init();
+            this.playBGM(gameState.status === APP_STATES.PLAYING ? 'game' : 'menu');
+        }
+    },
+
+    stopAll() {
+        if(this.bgmMenu) { this.bgmMenu.pause(); this.bgmMenu.currentTime = 0; }
+        if(this.bgmGame) { this.bgmGame.pause(); this.bgmGame.currentTime = 0; }
+        if(this.humanVoice) { this.humanVoice.pause(); this.humanVoice.currentTime = 0; }
+        if('speechSynthesis' in window) window.speechSynthesis.cancel();
+    },
+
+    playBGM(type) {
+        if (!gameState.audioEnabled) return;
+        this.init();
+        const nextTrack = type === 'menu' ? this.bgmMenu : this.bgmGame;
+        const otherTrack = type === 'menu' ? this.bgmGame : this.bgmMenu;
+        
+        if (otherTrack) { otherTrack.pause(); otherTrack.currentTime = 0; }
+        if (this.currentBGM === nextTrack && !nextTrack.paused) return;
+        
+        this.currentBGM = nextTrack;
+        this.currentBGM.volume = 0.4;
+        const playPromise = this.currentBGM.play();
+        if (playPromise !== undefined) playPromise.catch(() => {});
+    },
+
+    playSFX(type, level = 1) {
+        if (!gameState.audioEnabled || !this.ctx || this.ctx.state !== 'running') return;
+        try {
+            const now = this.ctx.currentTime;
+            const gain = this.ctx.createGain();
+            gain.connect(this.compressor);
+            
+            const osc = this.ctx.createOscillator();
+            osc.connect(gain);
+            
+            if (type === 'tick') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.05, now + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            } 
+            else if (type === 'magic') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, now);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                osc.start(now); osc.stop(now + 0.8);
             }
-
-            for (let i = collectibles.length - 1; i >= 0; i--) {
-                let item = collectibles[i];
-                if(item.markedForDeletion) { collectibles.splice(i, 1); continue; }
-                item.update(timeScale); 
-                
-                let ajustePe = player.height * player.espacoVazio; let posYPersonagem = player.y + (player.height - ajustePe)/2; 
-                let dx = (player.x + player.width/2) - item.x; 
-                let dy = posYPersonagem - item.y; 
-                let margemX = player.width * 0.35; 
-                let margemY = player.height * 0.40; 
-                
-                if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { 
-                    let centroYObstaculo = item.y - (item.radius * 1.5); dy = posYPersonagem - centroYObstaculo; margemX = player.width * 0.25; margemY = player.height * 0.35; 
-                } 
-
-                if (Math.abs(dx) < (item.radius * 0.5 + margemX) && Math.abs(dy) < (item.radius * 1.5 + margemY) && (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') && !item.ignorarColisao && !item.isResolvido) {
-                    if (invulneravelTimer <= 0) { 
-                        item.isResolvido = true; item.ignorarColisao = true; vidasExtra--; hitStopTime = 50; shakeIntensity = 8; player.stumbleTimer = 50;
-                        document.getElementById('damage-overlay').classList.add('damage-active'); setTimeout(() => document.getElementById('damage-overlay').classList.remove('damage-active'), 50); 
-                        
-                        AudioManager.playErrorSFX();
-                        AudioManager.playErrorVoice();
-                        player.emoState = 'sad';
-                        player.emoTimer = 800;
-
-                        if (vidasExtra <= 0) { encerrarJogo(false); } 
-                        else { 
-                            invulneravelTimer = 2000; 
-                            const erroFrases = ["Quase!", "Vamos tentar!"];
-                            const msgErro = erroFrases[Math.floor(Math.random() * erroFrases.length)];
-                            textosFlutuantes.push(new TextoFlutuante(msgErro, player.x, player.y - 50, '#FFF', '#E57373')); 
-                            for(let j=0;j<15;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*8+4; particulas.push(new Particula(item.x, item.y - item.radius, '#FFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*12+5)); } 
-                        } 
-                    }
-                } else if (Math.abs(dx) < (item.radius + margemX) && Math.abs(dy) < (item.radius + margemY) && item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo' && !item.ignorarColisao && !item.isResolvido) {
-                    item.isResolvido = true; item.ignorarColisao = true; item.markedForDeletion = false; shakeIntensity = 1; 
-                    if (item.tipo === 'moeda') { 
-                        pontuacao += 100; AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("+100", item.x, item.y - 40, '#FFF', '#FFD700')); 
-                        for(let j=0;j<10;j++){ let angle = Math.random() * Math.PI*2; let speed = Math.random()*5+2; particulas.push(new Particula(item.x, item.y, '#FFD700', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*10+5)); } 
-                    }
-                    else if (item.tipo === 'letra') { 
-                        shakeIntensity = 2; gerenciarCombo(true); 
-                        let charLetra = item.info.letra || item.info; 
-                        
-                        letraFeedbacks.push(new LetraFeedback(charLetra, item.info.palavra, cw/2, ch/2));
-                        AudioManager.playColetaLetra(charLetra, item.info.palavra);
-                        player.emoState = 'happy';
-                        player.emoTimer = 1000;
-
-                        pontuacao += 500; 
-                        if (!letrasColetadas.includes(charLetra)) { letrasColetadas.push(charLetra); atualizarProgressoHUD(); } 
-                        for(let j=0; j<20; j++) { let angle = Math.random() * Math.PI * 2; let speed = Math.random() * 8 + 4; particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', Math.cos(angle)*speed, Math.sin(angle)*speed, Math.random()*15+5)); } 
-                    } 
-                }
+            else if (type === 'error') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(250, now);
+                osc.frequency.exponentialRampToValueAtTime(150, now + 0.3);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
             }
-
-            for (let i = collectibles.length - 1; i >= 0; i--) { let item = collectibles[i]; if (item.tipo !== 'obstaculo' && item.tipo !== 'mini_obstaculo') { item.draw(ctx); } }
-            player.draw(ctx);
-            for (let i = collectibles.length - 1; i >= 0; i--) { let item = collectibles[i]; if (item.tipo === 'obstaculo' || item.tipo === 'mini_obstaculo') { item.draw(ctx); } }
-
-            if (timeScale > 0 && ambientElements.length < 10 && Math.random() < 0.03) { ambientElements.push(new AmbientElement(cw, ch)); }
-            for (let i = ambientElements.length - 1; i >= 0; i--) { let amb = ambientElements[i]; amb.update(timeScale); amb.draw(ctx); if(amb.x < -100 || amb.y > ch + 100) ambientElements.splice(i, 1); }
-            if (particulas.length > 150) particulas.splice(0, particulas.length - 150); for (let i = particulas.length - 1; i >= 0; i--) { let p = particulas[i]; p.update(timeScale); p.draw(ctx); if (p.vida <= 0) particulas.splice(i, 1); }
-            
-            let faceSize = 35 * scaleMultiplier; let startX = cw - (3 * (faceSize + 15)) - 20; let startY = 20;
-            for(let i=0; i<3; i++) { 
-                ctx.save(); ctx.translate(startX + i * (faceSize + 15), startY); 
-                if (i >= vidasExtra) { ctx.globalAlpha = 0.3; ctx.filter = 'grayscale(100%)'; } 
-                if (playerSprite.complete && playerSprite.naturalWidth > 0) { 
-                    let rW = playerSprite.naturalWidth / 3; ctx.drawImage(playerSprite, 0, 0, rW, rW, 0, 0, faceSize, faceSize); 
-                } else { 
-                    ctx.fillStyle = '#FF9AA2'; ctx.beginPath(); ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); ctx.fill(); 
-                } 
-                ctx.restore(); 
+            else if (type === 'combo') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440 * level, now);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
             }
-            
-            if (textosFlutuantes.length > 10) { textosFlutuantes.splice(0, textosFlutuantes.length - 10); } 
-            for (let i = textosFlutuantes.length - 1; i >= 0; i--) { let t = textosFlutuantes[i]; t.update(timeScale); t.draw(ctx); if(t.vida <= 0) textosFlutuantes.splice(i, 1); }
-            
-            for (let i = letraFeedbacks.length - 1; i >= 0; i--) { let f = letraFeedbacks[i]; f.update(timeScale); f.draw(ctx); if(f.vida <= 0) letraFeedbacks.splice(i, 1); }
-            
-            ctx.restore(); 
-        } catch(e) {
-            console.error("Game Loop Recovered from critical draw exception:", e);
-        } finally {
-            animationId = requestAnimationFrame(animate); 
+        } catch(e) {}
+    },
+    
+    playVoice(text) {
+        if (!gameState.audioEnabled) return;
+        try {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'pt-BR';
+                window.speechSynthesis.speak(utter);
+            }
+        } catch(e) {}
+    },
+    
+    playCinematicSweep() { this.playSFX('magic'); }
+};
+
+/**
+ * ============================================================
+ * GERENCIADOR DE ASSETS (CACHE DE DESENHOS)
+ * ============================================================
+ */
+const AssetManager = {
+    images: { player: new Image(), bg: new Image() },
+    cache: { block: null, bubble: null },
+    
+    init() {
+        this.images.player.src = 'seu_personagem.png';
+        this.images.bg.src = 'cenario.png';
+        
+        // Cache Block
+        const bCanv = document.createElement('canvas');
+        bCanv.width = 150; bCanv.height = 150;
+        const bCtx = bCanv.getContext('2d');
+        this.drawBlock(bCtx, 75, 75, 60);
+        this.cache.block = bCanv;
+
+        // Cache Bubble
+        const bubCanv = document.createElement('canvas');
+        bubCanv.width = 120; bubCanv.height = 120;
+        const bubCtx = bubCanv.getContext('2d');
+        this.drawBubble(bubCtx, 60, 60, 50);
+        this.cache.bubble = bubCanv;
+    },
+    
+    drawBlock(ctx, cx, cy, s) {
+        const hs = s/2;
+        ctx.fillStyle = '#FF9AA2'; ctx.fillRect(cx-hs, cy-hs, s, s);
+        ctx.fillStyle = '#E57373'; ctx.fillRect(cx-hs, cy-hs + s - 10, s, 10);
+        ctx.strokeStyle = '#E57373'; ctx.lineWidth = 4; ctx.strokeRect(cx-hs+6, cy-hs+6, s-12, s-12);
+    },
+
+    drawBubble(ctx, cx, cy, r) {
+        const grad = ctx.createRadialGradient(cx-r*0.3, cy-r*0.3, r*0.1, cx, cy, r);
+        grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+        grad.addColorStop(0.5, 'rgba(255, 215, 0, 0.85)');
+        grad.addColorStop(1, 'rgba(255, 140, 0, 0.9)');
+        ctx.fillStyle = grad; 
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+    }
+};
+
+/**
+ * ============================================================
+ * ENTIDADES DO JOGO
+ * ============================================================
+ */
+class PlayerEntity {
+    constructor() {
+        this.reset();
+    }
+    reset() {
+        this.width = 100; this.height = 200;
+        this.x = window.innerWidth * 0.15;
+        this.y = 0;
+        this.vy = 0;
+        this.gravity = 1.2;
+        this.jumpPower = -22;
+        this.isJumping = false;
+        this.scale = 0.28 * gameState.scale;
+        this.stumbleTimer = 0;
+        this.tilt = 0;
+    }
+    update(dtScale) {
+        if (this.stumbleTimer > 0) this.stumbleTimer -= dtScale * 16.6;
+        
+        this.scale = 0.28 * gameState.scale;
+        const groundY = window.innerHeight - gameState.groundHeight - (this.height * 0.75) + 20;
+        
+        this.y += this.vy * dtScale;
+        
+        if (this.y >= groundY) {
+            this.y = groundY;
+            this.vy = 0;
+            this.isJumping = false;
+            this.tilt += (0 - this.tilt) * 0.2 * dtScale;
+        } else {
+            this.vy += this.gravity * dtScale;
+            this.isJumping = true;
+            this.tilt += (Math.min(Math.max(this.vy * 0.015, -0.2), 0.2) - this.tilt) * 0.15 * dtScale;
         }
     }
+    draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x + this.width/2, this.y + this.height/2);
+        ctx.rotate(this.tilt);
+        
+        if (gameState.invulnerableTimer > 0 && Math.floor(performance.now() / 150) % 2 === 0) {
+            ctx.globalAlpha = 0.5;
+        }
+
+        // Draw Player Fallback
+        const s = this.scale * 1.5;
+        ctx.fillStyle = '#FFDAC1';
+        ctx.beginPath(); ctx.arc(0, -50*s, 25*s, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#FF9AA2';
+        ctx.fillRect(-20*s, -20*s, 40*s, 60*s);
+        
+        ctx.restore();
+    }
+    jump() {
+        if (!this.isJumping && gameState.status === APP_STATES.PLAYING) {
+            this.vy = this.jumpPower;
+            this.isJumping = true;
+            AudioSys.playSFX('tick');
+        }
+    }
+}
+
+class CollectibleEntity {
+    constructor(type, info = null) {
+        this.type = type; // 'letra', 'obstaculo'
+        this.info = info;
+        this.markedForDeletion = false;
+        this.resolved = false;
+        
+        const laneY = window.innerHeight - gameState.groundHeight + 75 * gameState.scale;
+        this.radius = 40 * gameState.scale;
+        this.x = window.innerWidth + 100 * gameState.scale;
+        
+        if (this.type === 'obstaculo') {
+            this.y = laneY - this.radius;
+        } else {
+            this.baseY = laneY - 135 * gameState.scale;
+            this.y = this.baseY;
+            this.timer = Math.random() * 100;
+        }
+    }
+    update(dtScale) {
+        this.x -= (gameState.gameSpeed * 1.5) * dtScale;
+        if (this.type === 'letra') {
+            this.timer += 0.1 * dtScale;
+            this.y = this.baseY + Math.sin(this.timer * 0.8) * 10 * gameState.scale;
+        }
+        if (this.x < -150) this.markedForDeletion = true;
+    }
+    draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.globalAlpha = this.resolved ? 0.3 : 1;
+        
+        if (this.type === 'obstaculo') {
+            if (AssetManager.cache.block) {
+                ctx.drawImage(AssetManager.cache.block, -this.radius, -this.radius, this.radius*2, this.radius*2);
+            }
+        } else if (this.type === 'letra') {
+            if (AssetManager.cache.bubble) {
+                ctx.drawImage(AssetManager.cache.bubble, -this.radius*1.2, -this.radius*1.2, this.radius*2.4, this.radius*2.4);
+            }
+            ctx.fillStyle = '#FFF';
+            ctx.font = `900 ${this.radius * 1.2}px 'Fredoka'`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(this.info.letra, 0, 0);
+        }
+        ctx.restore();
+    }
+}
+
+class FloatingText {
+    constructor(text, x, y, color) {
+        this.text = text; this.x = x; this.y = y; this.color = color;
+        this.life = 1.0; this.vy = -2;
+    }
+    update(dtScale) {
+        this.y += this.vy * dtScale;
+        this.vy *= 0.95;
+        this.life -= 0.02 * dtScale;
+    }
+    draw(ctx) {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.font = `bold ${30 * gameState.scale}px 'Fredoka'`;
+        ctx.strokeStyle = '#FFF'; ctx.lineWidth = 4;
+        ctx.strokeText(this.text, this.x, this.y);
+        ctx.fillText(this.text, this.x, this.y);
+        ctx.restore();
+    }
+}
+
+/**
+ * ============================================================
+ * SISTEMAS GLOBAIS DO JOGO
+ * ============================================================
+ */
+const EntityManager = {
+    player: new PlayerEntity(),
+    items: [],
+    texts: [],
+    spawnTimer: 0,
     
-    window.onload = () => { hudLayer.style.display = 'none'; btnSom.style.display = 'none'; btnPause.style.display = 'none'; redimensionarCanvas(); setTimeout(() => { const loader = document.getElementById('loading-screen'); if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); } }, 1500); startGameLoop(); }
+    reset() {
+        this.player.reset();
+        this.items = [];
+        this.texts = [];
+        this.spawnTimer = 0;
+    },
+    
+    update(dtScale) {
+        this.player.update(dtScale);
+        
+        // Spawner
+        this.spawnTimer += dtScale * 16.6;
+        if (this.spawnTimer > 2000) {
+            this.spawnTimer = 0;
+            const isObstacle = Math.random() > 0.6;
+            if (isObstacle) {
+                this.items.push(new CollectibleEntity('obstaculo'));
+            } else {
+                const missing = GAME_CONFIG.alfabeto.filter(a => !gameState.collectedLetters.includes(a.letra));
+                if (missing.length > 0) {
+                    const target = missing[0];
+                    if (!this.items.some(i => i.type === 'letra' && i.info.letra === target.letra)) {
+                        this.items.push(new CollectibleEntity('letra', target));
+                    }
+                }
+            }
+        }
+        
+        // Update Items & Collision
+        for (let i = this.items.length - 1; i >= 0; i--) {
+            const item = this.items[i];
+            item.update(dtScale);
+            
+            if (!item.resolved) {
+                const dx = (this.player.x + this.player.width/2) - item.x;
+                const dy = (this.player.y + this.player.height/2) - item.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if (dist < item.radius + 30) {
+                    item.resolved = true;
+                    if (item.type === 'obstaculo') {
+                        this.handleHit();
+                    } else {
+                        this.handleCollect(item);
+                    }
+                }
+            }
+            if (item.markedForDeletion) this.items.splice(i, 1);
+        }
+        
+        // Update Texts
+        for (let i = this.texts.length - 1; i >= 0; i--) {
+            this.texts[i].update(dtScale);
+            if(this.texts[i].life <= 0) this.texts.splice(i, 1);
+        }
+    },
+    
+    draw(ctx) {
+        this.items.forEach(i => i.type === 'letra' && i.draw(ctx));
+        this.player.draw(ctx);
+        this.items.forEach(i => i.type === 'obstaculo' && i.draw(ctx));
+        this.texts.forEach(t => t.draw(ctx));
+    },
+    
+    handleHit() {
+        if (gameState.invulnerableTimer > 0) return;
+        gameState.lives--;
+        gameState.invulnerableTimer = 2000;
+        gameState.hitStopTime = 50;
+        gameState.shakeIntensity = 8;
+        this.player.stumbleTimer = 50;
+        
+        UI.triggerDamage();
+        AudioSys.playSFX('error');
+        UI.updateCombo(false);
+        
+        if (gameState.lives <= 0) GameController.endGame(false);
+    },
+    
+    handleCollect(item) {
+        const letra = item.info.letra;
+        gameState.score += 500;
+        
+        if (!gameState.collectedLetters.includes(letra)) {
+            gameState.collectedLetters.push(letra);
+            UI.updateHUD();
+        }
+        
+        UI.updateCombo(true);
+        AudioSys.playSFX('magic');
+        AudioSys.playVoice(`${letra} de ${item.info.palavra}!`);
+        this.texts.push(new FloatingText("+500", item.x, item.y - 30, '#FFD700'));
+        
+        if (gameState.collectedLetters.length >= GAME_CONFIG.maxLetters) {
+            GameController.endGame(true);
+        }
+    }
+};
+
+/**
+ * ============================================================
+ * CONTROLADOR PRINCIPAL DO JOGO
+ * ============================================================
+ */
+const GameController = {
+    lastTime: 0,
+    animationId: null,
+
+    init() {
+        UI.init();
+        AssetManager.init();
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.setupBindings();
+        UI.showScreen('MENU');
+        
+        // Start loop for background rendering
+        this.animationId = requestAnimationFrame(t => this.loop(t));
+    },
+
+    resize() {
+        const dpr = window.devicePixelRatio || 1;
+        UI.canvas.style.width = window.innerWidth + 'px';
+        UI.canvas.style.height = window.innerHeight + 'px';
+        UI.canvas.width = window.innerWidth * dpr;
+        UI.canvas.height = window.innerHeight * dpr;
+        UI.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        UI.ctx.scale(dpr, dpr);
+        
+        gameState.groundHeight = window.innerHeight * 0.18;
+        gameState.scale = window.innerWidth < 768 ? 0.6 : 1;
+        GAME_CONFIG.baseSpeed = window.innerWidth < 768 ? 4.5 : 6.5;
+        
+        if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
+            UI.overlays.rotation.style.display = 'flex';
+        } else {
+            UI.overlays.rotation.style.display = 'none';
+        }
+    },
+
+    setupBindings() {
+        // Menu Bindings
+        UI.btns.play.addEventListener('click', () => this.handlePlayClick());
+        UI.btns.saveName.addEventListener('click', () => {
+            const name = UI.elements.nameInput.value.trim().toUpperCase();
+            if (name.length > 1) {
+                gameState.playerName = name;
+                localStorage.setItem('isadora_jogador_nome', name);
+                UI.hud.greeting.style.display = 'inline-block';
+                UI.hud.greeting.innerText = `Olá, ${name}!`;
+                UI.hideModal('name');
+                this.startGame();
+            }
+        });
+        
+        // System Bindings
+        UI.btns.soundMenu.addEventListener('click', () => AudioSys.toggle());
+        UI.btns.soundHud.addEventListener('click', () => AudioSys.toggle());
+        
+        // Pause Bindings
+        UI.btns.pause.addEventListener('click', () => this.pauseGame());
+        UI.btns.resume.addEventListener('click', () => this.resumeGame());
+        UI.btns.restart.addEventListener('click', () => {
+            UI.hideAllScreens();
+            this.startGame();
+        });
+        UI.btns.backToMenu.addEventListener('click', () => this.returnToMenu());
+        UI.btns.victoryMenu.addEventListener('click', () => this.returnToMenu());
+        UI.btns.playAgain.addEventListener('click', () => {
+            UI.hideAllScreens();
+            this.startGame();
+        });
+
+        // Input Bindings
+        const handleJump = (e) => {
+            if (!UI.canvas.contains(e.target) && e.target !== document.body) return;
+            if (gameState.status === APP_STATES.PLAYING) {
+                e.preventDefault();
+                EntityManager.player.jump();
+            }
+        };
+        window.addEventListener('mousedown', handleJump);
+        window.addEventListener('touchstart', handleJump, {passive: false});
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'ArrowUp') handleJump(e);
+        });
+    },
+
+    handlePlayClick() {
+        AudioSys.playSFX('tick');
+        if (!gameState.playerName) {
+            UI.showModal('name');
+        } else {
+            this.startGame();
+        }
+    },
+
+    startGame() {
+        gameState.status = APP_STATES.LOADING;
+        UI.screens.loading.style.display = 'flex';
+        UI.screens.loading.style.opacity = '1';
+        
+        AudioSys.init();
+        
+        setTimeout(() => {
+            gameState.score = 0;
+            gameState.lives = 3;
+            gameState.collectedLetters = [];
+            gameState.combo = 0;
+            gameState.gameSpeed = GAME_CONFIG.baseSpeed;
+            EntityManager.reset();
+            
+            UI.updateHUD();
+            UI.showCinematic("ATO I", "O ALFABETO", "#FFD700");
+            UI.showScreen('PLAYING');
+            AudioSys.playBGM('game');
+            AudioSys.playVoice("Vamos brincar das letras!");
+            
+            gameState.status = APP_STATES.PLAYING;
+            UI.screens.loading.style.opacity = '0';
+            setTimeout(() => UI.screens.loading.style.display = 'none', 600);
+        }, 1500);
+    },
+
+    pauseGame() {
+        if (gameState.status !== APP_STATES.PLAYING) return;
+        gameState.status = APP_STATES.PAUSED;
+        UI.showScreen('PAUSED');
+        AudioSys.stopAll();
+    },
+
+    resumeGame() {
+        if (gameState.status !== APP_STATES.PAUSED) return;
+        gameState.status = APP_STATES.PLAYING;
+        UI.hideAllScreens();
+        UI.showScreen('PLAYING');
+        AudioSys.playBGM('game');
+    },
+
+    returnToMenu() {
+        gameState.status = APP_STATES.MENU;
+        AudioSys.stopAll();
+        UI.showScreen('MENU');
+        AudioSys.playBGM('menu');
+    },
+
+    async endGame(isWin) {
+        gameState.status = isWin ? APP_STATES.VICTORY : APP_STATES.GAME_OVER;
+        AudioSys.stopAll();
+        UI.fillVictoryScreen(isWin);
+        UI.showScreen('VICTORY');
+        
+        if (isWin) {
+            AudioSys.playSFX('magic');
+            AudioSys.playVoice("Você conseguiu!");
+        } else {
+            AudioSys.playSFX('error');
+        }
+
+        if (window.StorageAPI && gameState.playerName) {
+            UI.elements.victoryCredits.innerText = "Enviando pontuação...";
+            const success = await window.StorageAPI.saveScore(gameState.playerName, Math.floor(gameState.score));
+            UI.elements.victoryCredits.innerText = success ? "Score salvo no Ranking!" : "Jogue novamente para salvar.";
+        } else {
+            UI.elements.victoryCredits.innerText = "Jogue novamente para melhorar seu recorde!";
+        }
+    },
+
+    drawBackground(ctx, cw, ch, dtScale) {
+        if (gameState.status !== APP_STATES.PAUSED) {
+            gameState.bgOffset -= (gameState.gameSpeed * 0.8) * dtScale;
+        }
+        
+        const grad = ctx.createLinearGradient(0,0,0,ch);
+        grad.addColorStop(0, '#87CEEB'); grad.addColorStop(1, '#E0F6FF');
+        ctx.fillStyle = grad; ctx.fillRect(0,0,cw,ch);
+        
+        const groundY = ch - gameState.groundHeight;
+        
+        // Mountains
+        ctx.fillStyle = '#9CE0C3';
+        ctx.beginPath(); ctx.moveTo(0, ch);
+        for(let x=0; x<=cw; x+=40) { ctx.lineTo(x, groundY - 150 + Math.sin(x*0.004 + gameState.bgOffset*0.002) * 80); }
+        ctx.lineTo(cw, ch); ctx.fill();
+        
+        // Ground
+        ctx.fillStyle = '#68A68F'; ctx.fillRect(0, groundY, cw, gameState.groundHeight);
+        ctx.fillStyle = '#82C9AD'; ctx.fillRect(0, groundY, cw, 15);
+    },
+
+    loop(timestamp) {
+        if (!this.lastTime) this.lastTime = timestamp;
+        let dt = timestamp - this.lastTime;
+        if (dt > 100) dt = 16.6; // prevent jumps
+        this.lastTime = timestamp;
+        const dtScale = dt / 16.666;
+        
+        const cw = window.innerWidth;
+        const ch = window.innerHeight;
+        
+        UI.ctx.clearRect(0, 0, cw, ch);
+        
+        // Handle Freeze Frames (Hit Stop)
+        if (gameState.hitStopTime > 0) {
+            gameState.hitStopTime -= dt;
+            this.drawBackground(UI.ctx, cw, ch, 0);
+            EntityManager.draw(UI.ctx);
+            this.animationId = requestAnimationFrame(t => this.loop(t));
+            return;
+        }
+
+        // Handle Timers
+        if (gameState.invulnerableTimer > 0) gameState.invulnerableTimer -= dt;
+
+        // Apply Screen Shake
+        UI.ctx.save();
+        if (gameState.shakeIntensity > 0) {
+            const sx = Math.sin(timestamp * 0.05) * gameState.shakeIntensity;
+            const sy = Math.cos(timestamp * 0.04) * gameState.shakeIntensity;
+            UI.ctx.translate(sx, sy);
+            gameState.shakeIntensity -= dt * 0.05;
+        }
+
+        // Draw Env
+        const isPlaying = gameState.status === APP_STATES.PLAYING;
+        this.drawBackground(UI.ctx, cw, ch, isPlaying ? dtScale : 0);
+        
+        if (isPlaying) {
+            EntityManager.update(dtScale);
+        }
+        
+        if (gameState.status !== APP_STATES.MENU && gameState.status !== APP_STATES.LOADING) {
+            EntityManager.draw(UI.ctx);
+            
+            // Draw Lives
+            const faceSize = 35 * gameState.scale;
+            for(let i=0; i<3; i++) {
+                UI.ctx.save();
+                UI.ctx.translate(cw - 20 - (3 * (faceSize + 15)) + i * (faceSize + 15), 20);
+                if (i >= gameState.lives) { UI.ctx.globalAlpha = 0.3; }
+                UI.ctx.fillStyle = '#FF9AA2';
+                UI.ctx.beginPath(); UI.ctx.arc(faceSize/2, faceSize/2, faceSize/2, 0, Math.PI*2); UI.ctx.fill();
+                UI.ctx.restore();
+            }
+        }
+
+        UI.ctx.restore();
+        this.animationId = requestAnimationFrame(t => this.loop(t));
+    }
+};
+
+/**
+ * ============================================================
+ * INTEGRAÇÃO FIREBASE (WRAPPER SEGURO)
+ * ============================================================
+ */
+window.StorageAPI = {
+    async saveScore(name, score) {
+        if (!window.db) return false;
+        try {
+            const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+            await addDoc(collection(window.db, "ranking_global"), { nome: name, pontuacao: score, data: serverTimestamp() });
+            return true;
+        } catch(e) { return false; }
+    }
+};
+
+// Initialization Boot
+window.onload = () => {
+    GameController.init();
+};
 
 </script>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-  const firebaseConfig = { apiKey: "AIzaSyD_gYdKNnnhFr-bg1u0HT-O8kUsBWS9akY", authDomain: "isadora-game.firebaseapp.com", projectId: "isadora-game", storageBucket: "isadora-game.firebasestorage.app", messagingSenderId: "256153804637", appId: "1:256153804637:web:34e19d317f1e41ba1892b4" };
-  const app = initializeApp(firebaseConfig); const db = getFirestore(app); 
-  window.salvarPontuacaoGlobal = async function(nome, pontos, fase) { if (pontos <= 0) return false; try { await addDoc(collection(db, "ranking_global"), { nome: nome, pontuacao: pontos, fase: fase, data: serverTimestamp() }); return true; } catch (e) { console.error("Erro ao salvar rank:", e); return false; } };
-  window.carregarRankingGlobal = async function() { 
-      const listaRankUI = document.getElementById('lista-ranking-conteudo'); 
-      try { 
-          const q = query(collection(db, "ranking_global"), orderBy("pontuacao", "desc"), limit(10)); 
-          const querySnapshot = await getDocs(q); 
-          if (querySnapshot.empty) { listaRankUI.innerHTML = '<p style="color: #A0AAB5;">Seja o primeiro a deixar sua marca!</p>'; return; } 
-          let htmlHtml = ''; let posicao = 1; 
-          const escapeHTML = (str) => str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); 
-          querySnapshot.forEach((doc) => { 
-              let d = doc.data(); 
-              let nomeSeguro = escapeHTML(d.nome || 'ANÔNIMO');
-              let classeTop = posicao <= 3 ? `top-${posicao}` : ''; 
-              let medalha = posicao === 1 ? '🥇' : (posicao === 2 ? '🥈' : (posicao === 3 ? '🥉' : '🎮')); 
-              htmlHtml += `<div class="item-ranking ${classeTop}"><span class="rank-pos">${medalha}</span><span class="rank-nome">${nomeSeguro}</span><span class="rank-pts">${d.pontuacao} PTS</span></div>`; 
-              posicao++; 
-          }); 
-          listaRankUI.innerHTML = htmlHtml; 
-      } catch (e) { console.error("Erro ao carregar rank:", e); listaRankUI.innerHTML = '<p style="color: #FF1493;">Não foi possível carregar o ranking. Tente novamente mais tarde.</p>'; } 
-  };
+    // Recurso Secundário: Firebase. Se falhar, o jogo continua.
+    try {
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        const firebaseConfig = { apiKey: "AIzaSyD_gYdKNnnhFr-bg1u0HT-O8kUsBWS9akY", authDomain: "isadora-game.firebaseapp.com", projectId: "isadora-game" };
+        const app = initializeApp(firebaseConfig);
+        window.db = getFirestore(app);
+    } catch(e) {
+        console.warn("Firebase Offline Mode.");
+    }
 </script>
 </body>
 </html>
