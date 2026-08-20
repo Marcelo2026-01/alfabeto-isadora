@@ -447,7 +447,7 @@ const gameState = {
  * ============================================================
  */
 const UI = {
-    currentStoryPage: 1, // Controle de estado da história
+    currentStoryPage: 1,
     // Canvas
     canvas: document.getElementById('gameCanvas'),
     ctx: document.getElementById('gameCanvas')?.getContext('2d'),
@@ -806,7 +806,6 @@ const AssetManager = {
     cache: { block: null, bubble: null },
     
     init() {
-        // Tratamento seguro de carregamento
         this.images.player.onerror = () => console.warn('Falha ao carregar Isadora.png - usando fallback visual.');
         this.images.bg.onerror = () => console.warn('Falha ao carregar cenario.png - usando fallback visual.');
         
@@ -885,23 +884,48 @@ class PlayerEntity {
             this.tilt += (Math.min(Math.max(this.vy * 0.015, -0.2), 0.2) - this.tilt) * 0.15 * dtScale;
         }
     }
+    
+    // ==========================================
+    // BUG CRÍTICO CORRIGIDO (APENAS ESSE BLOCO)
+    // ==========================================
     draw(ctx) {
         ctx.save();
-        ctx.translate(this.x + this.width/2, this.y + this.height/2);
-        ctx.rotate(this.tilt);
         
-        if (gameState.invulnerableTimer > 0 && Math.floor(performance.now() / 150) % 2 === 0) {
-            ctx.globalAlpha = 0.5;
+        // 1. Prevenção absoluta contra valores corrompidos (NaN) que fazem o Canvas parar de renderizar
+        const safeX = isNaN(this.x) ? 0 : this.x;
+        const safeY = isNaN(this.y) ? 0 : this.y;
+        const safeTilt = isNaN(this.tilt) ? 0 : this.tilt;
+
+        ctx.translate(safeX + this.width / 2, safeY + this.height / 2);
+        ctx.rotate(safeTilt);
+
+        // 2. Garante o controle robusto do canal Alpha durante o efeito de invulnerabilidade e dano.
+        // Utiliza Date.now() em vez de performance.now() para suportar todas as webviews garantindo que a condicional não falhe e suma.
+        let currentAlpha = 1.0;
+        if (gameState.invulnerableTimer > 0) {
+            if (Math.floor(Date.now() / 150) % 2 === 0) {
+                currentAlpha = 0.3; // Visível, mas transparente indicando o dano/piscar.
+            }
+        }
+        ctx.globalAlpha = currentAlpha;
+
+        // 3. Restaurado a chamada para o asset gráfico oficial para que a personagem verdadeira reapareça na tela.
+        // O Bloco de Fallback só será utilizado em último caso se o arquivo não tiver sido carregado pelo AssetManager.
+        if (AssetManager.images.player && AssetManager.images.player.complete && AssetManager.images.player.naturalWidth > 0) {
+            ctx.drawImage(AssetManager.images.player, -this.width / 2, -this.height / 2, this.width, this.height);
+        } else {
+            // Fallback
+            const s = (isNaN(this.scale) ? 0.28 : this.scale) * 1.5;
+            ctx.fillStyle = '#FFDAC1';
+            ctx.beginPath(); ctx.arc(0, -50 * s, 25 * s, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#FF9AA2';
+            ctx.fillRect(-20 * s, -20 * s, 40 * s, 60 * s);
         }
 
-        const s = this.scale * 1.5;
-        ctx.fillStyle = '#FFDAC1';
-        ctx.beginPath(); ctx.arc(0, -50*s, 25*s, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = '#FF9AA2';
-        ctx.fillRect(-20*s, -20*s, 40*s, 60*s);
-        
         ctx.restore();
     }
+    // ==========================================
+
     jump() {
         if (!this.isJumping && gameState.status === APP_STATES.PLAYING) {
             this.vy = this.jumpPower;
@@ -913,7 +937,7 @@ class PlayerEntity {
 
 class CollectibleEntity {
     constructor(type, info = null) {
-        this.type = type; // 'letra', 'obstaculo'
+        this.type = type; 
         this.info = info;
         this.markedForDeletion = false;
         this.resolved = false;
@@ -1011,7 +1035,6 @@ const EntityManager = {
             if (isObstacle) {
                 this.items.push(new CollectibleEntity('obstaculo'));
             } else {
-                // Sorteia letras ausentes primeiro, mas pode incluir repetidas
                 const missing = GAME_CONFIG.alfabeto.filter(a => !gameState.collectedLetters.includes(a.letra));
                 const target = missing.length > 0 && Math.random() > 0.3 
                     ? missing[0] 
@@ -1078,7 +1101,6 @@ const EntityManager = {
         const letra = item.info.letra;
         
         if (!gameState.collectedLetters.includes(letra)) {
-            // Nova Letra - Adiciona Pontos e Avança o Progresso
             gameState.score += 500;
             gameState.collectedLetters.push(letra);
             UI.updateHUD();
@@ -1087,7 +1109,6 @@ const EntityManager = {
             this.texts.push(new FloatingText("+500", item.x, item.y - 30, '#FFD700'));
             AudioSys.playVoice(`${letra} de ${item.info.palavra}!`);
         } else {
-            // Letra Repetida - Sem pontuação abusiva e sem penalização
             AudioSys.playSFX('combo');
             this.texts.push(new FloatingText("JÁ PEGOU!", item.x, item.y - 30, '#FFF'));
             AudioSys.playVoice(`${letra} de ${item.info.palavra}!`);
@@ -1116,7 +1137,6 @@ const GameController = {
         this.setupBindings();
         UI.showScreen('MENU');
         
-        // Start background visual loop on menu
         if(this.animationId) cancelAnimationFrame(this.animationId);
         this.animationId = requestAnimationFrame(t => this.loop(t));
     },
@@ -1275,7 +1295,6 @@ const GameController = {
         
         AudioSys.init();
         
-        // Reset full state here
         setTimeout(() => {
             gameState.score = 0;
             gameState.lives = 3;
@@ -1369,7 +1388,7 @@ const GameController = {
     loop(timestamp) {
         if (!this.lastTime) this.lastTime = timestamp;
         let dt = timestamp - this.lastTime;
-        if (dt > 100) dt = 16.6; // prevent physics jumps
+        if (dt > 100) dt = 16.6; 
         this.lastTime = timestamp;
         const dtScale = dt / 16.666;
         
@@ -1463,7 +1482,6 @@ window.onload = () => {
 
 </script>
 <script type="module">
-    // Recurso Secundário: Firebase. Se falhar, o jogo continua normalmente offline.
     try {
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
