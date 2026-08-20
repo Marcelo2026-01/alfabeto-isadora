@@ -447,6 +447,7 @@ const gameState = {
  * ============================================================
  */
 const UI = {
+    currentStoryPage: 1, // Controle de estado da história
     // Canvas
     canvas: document.getElementById('gameCanvas'),
     ctx: document.getElementById('gameCanvas')?.getContext('2d'),
@@ -616,12 +617,12 @@ const UI = {
             gameState.combo++;
             if (gameState.combo >= 3) {
                 this.hud.progressFill.classList.add('combo-ativo');
-                this.hud.message.classList.add('texto-combo-ativo');
+                if (this.hud.message) this.hud.message.classList.add('texto-combo-ativo');
             }
         } else {
             gameState.combo = 0;
             this.hud.progressFill.classList.remove('combo-ativo');
-            this.hud.message.classList.remove('texto-combo-ativo');
+            if (this.hud.message) this.hud.message.classList.remove('texto-combo-ativo');
         }
     },
 
@@ -651,7 +652,7 @@ const UI = {
     fillVictoryScreen(isWin) {
         this.elements.victoryTitle.innerText = isWin ? "VOCÊ CONSEGUIU!" : "FIM DE JOGO!";
         this.elements.victoryTitle.style.color = isWin ? "#FFD700" : "#FF9AA2";
-        this.elements.victorySubtitle.innerText = isWin ? "Você descobriu todas as letras!" : "Continue treinando!";
+        this.elements.victorySubtitle.innerText = isWin ? "Você descobriu todas as letras!" : "Continue treinando e divirta-se!";
         this.elements.victoryBadge.style.display = isWin ? 'inline-block' : 'none';
         
         this.elements.victoryStats.score.innerText = Math.floor(gameState.score);
@@ -679,12 +680,9 @@ const AudioSys = {
     currentBGM: null, humanVoice: null,
     
     init() {
-        if (!this.bgmMenu) this.bgmMenu = new Audio('musica_menu.mp3');
-        if (!this.bgmGame) this.bgmGame = new Audio('musica_jogo.mp3');
+        if (!this.bgmMenu) { this.bgmMenu = new Audio('musica_menu.mp3'); this.bgmMenu.loop = true; }
+        if (!this.bgmGame) { this.bgmGame = new Audio('musica_jogo.mp3'); this.bgmGame.loop = true; }
         if (!this.humanVoice) this.humanVoice = new Audio();
-        
-        this.bgmMenu.loop = true;
-        this.bgmGame.loop = true;
 
         try {
             if (!this.ctx) {
@@ -808,6 +806,10 @@ const AssetManager = {
     cache: { block: null, bubble: null },
     
     init() {
+        // Tratamento seguro de carregamento
+        this.images.player.onerror = () => console.warn('Falha ao carregar Isadora.png - usando fallback visual.');
+        this.images.bg.onerror = () => console.warn('Falha ao carregar cenario.png - usando fallback visual.');
+        
         this.images.player.src = 'seu_personagem.png';
         this.images.bg.src = 'cenario.png';
         
@@ -892,7 +894,6 @@ class PlayerEntity {
             ctx.globalAlpha = 0.5;
         }
 
-        // Draw Player Fallback
         const s = this.scale * 1.5;
         ctx.fillStyle = '#FFDAC1';
         ctx.beginPath(); ctx.arc(0, -50*s, 25*s, 0, Math.PI*2); ctx.fill();
@@ -1010,12 +1011,14 @@ const EntityManager = {
             if (isObstacle) {
                 this.items.push(new CollectibleEntity('obstaculo'));
             } else {
+                // Sorteia letras ausentes primeiro, mas pode incluir repetidas
                 const missing = GAME_CONFIG.alfabeto.filter(a => !gameState.collectedLetters.includes(a.letra));
-                if (missing.length > 0) {
-                    const target = missing[0];
-                    if (!this.items.some(i => i.type === 'letra' && i.info.letra === target.letra)) {
-                        this.items.push(new CollectibleEntity('letra', target));
-                    }
+                const target = missing.length > 0 && Math.random() > 0.3 
+                    ? missing[0] 
+                    : GAME_CONFIG.alfabeto[Math.floor(Math.random() * GAME_CONFIG.alfabeto.length)];
+                
+                if (!this.items.some(i => i.type === 'letra' && i.info.letra === target.letra)) {
+                    this.items.push(new CollectibleEntity('letra', target));
                 }
             }
         }
@@ -1073,17 +1076,22 @@ const EntityManager = {
     
     handleCollect(item) {
         const letra = item.info.letra;
-        gameState.score += 500;
         
         if (!gameState.collectedLetters.includes(letra)) {
+            // Nova Letra - Adiciona Pontos e Avança o Progresso
+            gameState.score += 500;
             gameState.collectedLetters.push(letra);
             UI.updateHUD();
+            UI.updateCombo(true);
+            AudioSys.playSFX('magic');
+            this.texts.push(new FloatingText("+500", item.x, item.y - 30, '#FFD700'));
+            AudioSys.playVoice(`${letra} de ${item.info.palavra}!`);
+        } else {
+            // Letra Repetida - Sem pontuação abusiva e sem penalização
+            AudioSys.playSFX('combo');
+            this.texts.push(new FloatingText("JÁ PEGOU!", item.x, item.y - 30, '#FFF'));
+            AudioSys.playVoice(`${letra} de ${item.info.palavra}!`);
         }
-        
-        UI.updateCombo(true);
-        AudioSys.playSFX('magic');
-        AudioSys.playVoice(`${letra} de ${item.info.palavra}!`);
-        this.texts.push(new FloatingText("+500", item.x, item.y - 30, '#FFD700'));
         
         if (gameState.collectedLetters.length >= GAME_CONFIG.maxLetters) {
             GameController.endGame(true);
@@ -1108,7 +1116,8 @@ const GameController = {
         this.setupBindings();
         UI.showScreen('MENU');
         
-        // Start loop for background rendering
+        // Start background visual loop on menu
+        if(this.animationId) cancelAnimationFrame(this.animationId);
         this.animationId = requestAnimationFrame(t => this.loop(t));
     },
 
@@ -1132,6 +1141,19 @@ const GameController = {
         }
     },
 
+    updateStoryUI() {
+        for (let i = 1; i <= 4; i++) {
+            const page = document.getElementById(`livro-p${i}`);
+            if (page) {
+                if (i === UI.currentStoryPage) page.classList.add('ativa');
+                else page.classList.remove('ativa');
+            }
+        }
+        UI.elements.storyPagination.innerText = `${UI.currentStoryPage} / 4`;
+        UI.btns.storyPrev.disabled = (UI.currentStoryPage === 1);
+        UI.btns.storyNext.disabled = (UI.currentStoryPage === 4);
+    },
+
     setupBindings() {
         // Menu Bindings
         UI.btns.play.addEventListener('click', () => this.handlePlayClick());
@@ -1147,10 +1169,67 @@ const GameController = {
             }
         });
         
+        // Firebase/Ranking Modal
+        UI.btns.ranking.addEventListener('click', async () => {
+            UI.showModal('ranking');
+            UI.elements.rankingList.innerHTML = '<div class="loader-ranking">A LIGAR AOS SERVIDORES...</div>';
+            if (!window.db) {
+                UI.elements.rankingList.innerHTML = '<div style="text-align:center; padding: 20px; font-weight: bold; color: #888;">Servidor Offline. Conecte-se à internet para ver o ranking!</div>';
+                return;
+            }
+            const scores = await window.StorageAPI.loadScores();
+            if (scores.length === 0) {
+                 UI.elements.rankingList.innerHTML = '<div style="text-align:center; padding: 20px; font-weight: bold; color: #888;">Nenhuma pontuação registrada ainda. Seja o primeiro!</div>';
+            } else {
+                 UI.elements.rankingList.innerHTML = scores.map((s, i) => `
+                    <div class="item-ranking top-${i+1}">
+                        <div class="rank-pos">#${i+1}</div>
+                        <div class="rank-nome">${s.nome}</div>
+                        <div class="rank-pts">${s.pontuacao}</div>
+                    </div>
+                 `).join('');
+            }
+        });
+        UI.btns.closeRanking.addEventListener('click', () => UI.hideModal('ranking'));
+
+        // História Modal
+        UI.btns.story.addEventListener('click', () => {
+            UI.currentStoryPage = 1;
+            this.updateStoryUI();
+            UI.showModal('story');
+        });
+        UI.btns.closeStory.addEventListener('click', () => UI.hideModal('story'));
+        UI.btns.storyPrev.addEventListener('click', () => {
+            if (UI.currentStoryPage > 1) { UI.currentStoryPage--; this.updateStoryUI(); }
+        });
+        UI.btns.storyNext.addEventListener('click', () => {
+            if (UI.currentStoryPage < 4) { UI.currentStoryPage++; this.updateStoryUI(); }
+        });
+
         // System Bindings
         UI.btns.soundMenu.addEventListener('click', () => AudioSys.toggle());
         UI.btns.soundHud.addEventListener('click', () => AudioSys.toggle());
-        
+        UI.btns.exitMenu.addEventListener('click', () => {
+            UI.screens.exit.style.display = 'flex';
+            setTimeout(() => UI.screens.exit.style.opacity = '1', 10);
+        });
+        UI.btns.cancelExit.addEventListener('click', () => {
+            UI.screens.exit.style.opacity = '0';
+            setTimeout(() => UI.screens.exit.style.display = 'none', 300);
+        });
+
+        // Device rotation helper
+        UI.btns.forceRotate.addEventListener('click', () => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().then(() => {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(()=>{});
+                    }
+                }).catch(()=>{});
+            }
+            UI.overlays.rotation.style.display = 'none';
+        });
+
         // Pause Bindings
         UI.btns.pause.addEventListener('click', () => this.pauseGame());
         UI.btns.resume.addEventListener('click', () => this.resumeGame());
@@ -1196,12 +1275,17 @@ const GameController = {
         
         AudioSys.init();
         
+        // Reset full state here
         setTimeout(() => {
             gameState.score = 0;
             gameState.lives = 3;
             gameState.collectedLetters = [];
             gameState.combo = 0;
             gameState.gameSpeed = GAME_CONFIG.baseSpeed;
+            gameState.invulnerableTimer = 0;
+            gameState.hitStopTime = 0;
+            gameState.shakeIntensity = 0;
+            gameState.bgOffset = 0;
             EntityManager.reset();
             
             UI.updateHUD();
@@ -1251,12 +1335,12 @@ const GameController = {
             AudioSys.playSFX('error');
         }
 
-        if (window.StorageAPI && gameState.playerName) {
+        if (window.StorageAPI && gameState.playerName && window.db) {
             UI.elements.victoryCredits.innerText = "Enviando pontuação...";
             const success = await window.StorageAPI.saveScore(gameState.playerName, Math.floor(gameState.score));
-            UI.elements.victoryCredits.innerText = success ? "Score salvo no Ranking!" : "Jogue novamente para salvar.";
+            UI.elements.victoryCredits.innerText = success ? "Score salvo no Ranking global!" : "Falha na conexão, mas ótimo jogo!";
         } else {
-            UI.elements.victoryCredits.innerText = "Jogue novamente para melhorar seu recorde!";
+            UI.elements.victoryCredits.innerText = "Jogue novamente para melhorar o seu recorde!";
         }
     },
 
@@ -1285,7 +1369,7 @@ const GameController = {
     loop(timestamp) {
         if (!this.lastTime) this.lastTime = timestamp;
         let dt = timestamp - this.lastTime;
-        if (dt > 100) dt = 16.6; // prevent jumps
+        if (dt > 100) dt = 16.6; // prevent physics jumps
         this.lastTime = timestamp;
         const dtScale = dt / 16.666;
         
@@ -1345,7 +1429,7 @@ const GameController = {
 
 /**
  * ============================================================
- * INTEGRAÇÃO FIREBASE (WRAPPER SEGURO)
+ * INTEGRAÇÃO FIREBASE (WRAPPER SEGURO / ASYNC)
  * ============================================================
  */
 window.StorageAPI = {
@@ -1356,6 +1440,19 @@ window.StorageAPI = {
             await addDoc(collection(window.db, "ranking_global"), { nome: name, pontuacao: score, data: serverTimestamp() });
             return true;
         } catch(e) { return false; }
+    },
+    async loadScores() {
+        if (!window.db) return [];
+        try {
+            const { collection, query, orderBy, limit, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+            const q = query(collection(window.db, "ranking_global"), orderBy("pontuacao", "desc"), limit(10));
+            const querySnapshot = await getDocs(q);
+            let scores = [];
+            querySnapshot.forEach((doc) => {
+                scores.push(doc.data());
+            });
+            return scores;
+        } catch(e) { return []; }
     }
 };
 
@@ -1366,7 +1463,7 @@ window.onload = () => {
 
 </script>
 <script type="module">
-    // Recurso Secundário: Firebase. Se falhar, o jogo continua.
+    // Recurso Secundário: Firebase. Se falhar, o jogo continua normalmente offline.
     try {
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -1375,6 +1472,7 @@ window.onload = () => {
         window.db = getFirestore(app);
     } catch(e) {
         console.warn("Firebase Offline Mode.");
+        window.db = undefined;
     }
 </script>
 </body>
