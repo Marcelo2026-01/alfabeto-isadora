@@ -1127,71 +1127,68 @@
                 ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 4*scl); 
             } 
             else if (this.tipo === 'letra') {
-                // FASE 1: PEÇA DE LETRA DO ALFABETO EM 3D (Brinquedo Educativo Premium)
-                let cardW = this.radius * 1.8;
-                let cardH = this.radius * 1.8;
+                // FASE 1: PEÇA DE LETRA DO ALFABETO EM 3D
+                let cardW = this.radius * 1.6;
+                let cardH = this.radius * 1.6;
                 let cX = -cardW / 2;
                 let cY = -cardH / 2;
-                let corner = 18 * scl;
-                let thick = 14 * scl; // Profundidade 3D
+                let corner = 15 * scl;
+                let thick = 12 * scl; 
 
                 ctx.save();
                 
                 if (this.isResolvido) {
                     let progress = Math.min(1, (this.coletaTimer || 0) / 20); 
-                    let s = 1 - (progress * 0.5); // Reduz de tamanho
-                    let alpha = 1 - Math.pow(progress, 2); // Desaparece no final
+                    let s = 1 - (progress * 0.4); 
+                    let alpha = 1 - Math.pow(progress, 2); 
                     ctx.scale(s, s);
                     ctx.globalAlpha = Math.max(0, alpha);
-                    
-                    // Brilho intenso ao coletar
                     ctx.shadowColor = '#FFD700';
-                    ctx.shadowBlur = 30 * scl;
+                    ctx.shadowBlur = 25 * scl;
                 } else if (this.ignorarColisao) {
                     ctx.globalAlpha = 0.4;
                     ctx.scale(0.85, 0.85);
                 } else {
-                    // Brilho sutil para indicar que a peça é interativa
-                    ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
-                    ctx.shadowBlur = 20 * scl;
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+                    ctx.shadowBlur = 15 * scl;
                 }
 
-                // 1. Sombra projetada
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                // Sombra projetada
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
                 ctx.beginPath();
-                ctx.roundRect(cX, cY + thick + 8*scl, cardW, cardH, corner);
+                ctx.roundRect(cX, cY + thick + 10*scl, cardW, cardH, corner);
                 ctx.fill();
-                ctx.shadowBlur = 0; // Desliga sombra do contexto global
+                ctx.shadowBlur = 0;
 
-                // 2. Base 3D (Espessura premium)
-                ctx.fillStyle = '#FDCB6E'; // Dourado/Amarelo premium
+                // Base 3D (Espessura)
+                ctx.fillStyle = '#E5B85C'; // Dourado escuro
                 ctx.beginPath();
                 ctx.roundRect(cX, cY + thick, cardW, cardH, corner);
                 ctx.fill();
 
-                // 3. Face Superior (Branco iluminado)
-                ctx.fillStyle = '#FFFFFF';
+                // Face Superior 
+                ctx.fillStyle = '#FFF5E1'; // Branco creme/marfim (Premium)
                 ctx.beginPath();
                 ctx.roundRect(cX, cY, cardW, cardH, corner);
                 ctx.fill();
 
-                // 4. Borda (Bevel suave)
-                ctx.strokeStyle = '#FFEAA7';
-                ctx.lineWidth = 3 * scl;
+                // Borda / Bevel
+                ctx.strokeStyle = '#FDECA6';
+                ctx.lineWidth = 4 * scl;
                 ctx.stroke();
 
-                // 5. Letra em Relevo (Emboss)
-                ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`;
+                // Letra Relevo (Emboss)
+                ctx.font = `900 ${this.radius * 1.0}px 'Fredoka', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
 
-                // Profundidade da letra
-                ctx.fillStyle = '#076FBC'; // Azul Escuro
-                ctx.fillText(displayTexto, 0, 7 * scl);
+                // Sombra interna/profundidade da letra
+                ctx.fillStyle = '#055A9C'; 
+                ctx.fillText(displayTexto, 0, 6 * scl);
 
                 // Face da letra
-                ctx.fillStyle = '#0984E3'; // Azul Vibrante
-                ctx.fillText(displayTexto, 0, 3 * scl);
+                ctx.fillStyle = '#0984E3'; 
+                ctx.fillText(displayTexto, 0, 2 * scl);
 
                 ctx.restore();
             }
