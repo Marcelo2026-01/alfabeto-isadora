@@ -457,16 +457,11 @@
     
     let hitStopTime = 0;
     let shakeIntensity = 0;
-    let lastTime = 0;
     
     let desafioFase2 = null;
     let desafioFase4 = null;
     let desafioFase5 = null;
     let desafioFase6 = null;
-
-    let collectibles = [];
-    let particulas = [];
-    let textosFlutuantes = [];
 
     const AlfabetoIsadora = [ 
         { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, 
@@ -711,7 +706,7 @@
         
         atualizarProgressoHUD();
         tutorialAtivo = true; tutorialUI.style.display = 'flex'; setTimeout(() => { tutorialUI.style.opacity = '1'; }, 50);
-        if(player) { player.isJumping = true; player.y = 0; } isHolding = false;
+        player.isJumping = true; player.y = 0; isHolding = false;
     }
 
     function atualizarHUDVitoria() {
@@ -734,10 +729,9 @@
         for(let i=0; i<100; i++) particulas.push(new Particula(canvas.width/2, canvas.height/2, Math.random() > 0.5 ? '#FFD700' : '#FF1493', (Math.random()*20)-10, (Math.random()*20)-10, Math.random()*25+10));
         
         function renderVictory() {
-            ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height);
-            particulas.forEach(p => { p.update(1.0); p.draw(ctx); });
+            particulas.forEach(p => { p.update(); p.draw(ctx); });
             particulas = particulas.filter(p => p.vida > 0);
             if (particulas.length > 0 && !gameActive) { requestAnimationFrame(renderVictory); }
         }
@@ -792,12 +786,9 @@
             progressFill.classList.remove('combo-ativo');
             letraUi.classList.remove('texto-combo-ativo');
             
-            redimensionarCanvas(); // Fix sizes before game starts
             prepararFase(faseAtual);
-            
             gameActive = true; isPaused = false; lastTime = performance.now(); gameSpeed = baseGameSpeed;
             hitStopTime = 0; shakeIntensity = 0;
-            spawnTimer = 0;
             
             animationId = requestAnimationFrame(animate);
 
@@ -857,7 +848,7 @@
         if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; setTimeout(() => loader.style.display = 'none', 800); }
         
         gameActive = false; isHolding = false; 
-        if(player) { player.isJumping = false; player.y = 0; player.vy = 0; }
+        player.isJumping = false; player.y = 0; player.vy = 0;
         
         tutorialAtivo = false; 
         tutorialUI.style.opacity = '0'; tutorialUI.style.display = 'none';
@@ -866,7 +857,6 @@
         btnSom.style.display = 'none';
         btnPause.style.display = 'none';
 
-        ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height);
         
@@ -996,7 +986,7 @@
         
         draw(ctx) {
             ctx.save(); ctx.translate(this.x, this.y - 10); let scl = scaleMultiplier;
-            let displayTexto = this.info ? (this.info.letra || this.info.s || this.info.l || this.info.p || this.info) : '?';
+            let displayTexto = this.info ? (this.info.letra || this.info.s || this.info.palavra || this.info) : '?';
 
             if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') {
                 let isFrase = this.tipo === 'caixa_frase';
@@ -1071,394 +1061,442 @@
     }
 
     class Player {
-        constructor() { 
-            this.baseScale = 0.28; 
-            this.width = 100; 
-            this.height = 200; 
-            this.baseX = window.innerWidth * 0.15; 
-            this.x = this.baseX; 
-            this.y = 0; 
-            this.vy = 0; 
-            this.gravity = 1.2; 
-            this.jumpPower = -22; 
-            this.isJumping = false; 
-            this.frameX = 0; 
-            this.staggerFrames = 4; 
-            this.gameFrame = 0; 
-            this.espacoVazio = 0.25; 
-            this.tilt = 0; 
-            this.gradCache = null; 
-        }
-        
+        constructor() { this.baseScale = 0.28; this.width = 100; this.height = 200; this.baseX = window.innerWidth * 0.15; this.x = this.baseX; this.y = 0; this.vy = 0; this.gravity = 1.2; this.jumpPower = -22; this.isJumping = false; this.frameX = 0; this.staggerFrames = 4; this.gameFrame = 0; this.espacoVazio = 0.25; this.tilt = 0; this.gradCache = null; }
         update(timeScale) {
-            this.scale = this.baseScale * scaleMultiplier;
-            this.baseX = window.innerWidth * 0.15;
-            this.x = this.baseX;
-            let ajustePe = this.height * this.espacoVazio;
+            this.scale = this.baseScale * scaleMultiplier; this.baseX = window.innerWidth * 0.15; this.x = this.baseX; let ajustePe = this.height * this.espacoVazio; 
             let scl = scaleMultiplier;
             let ch = window.innerHeight;
-            let groundY = ch - alturaChao - (this.height * this.scale) + (ajustePe * this.scale);
+            let groundY = ch - alturaChao - (this.height - ajustePe) + 20;
 
             if (faseAtual === 3) {
-                if (isHolding) {
-                    this.vy -= 0.6 * timeScale;
-                } else {
-                    this.vy += 0.4 * timeScale;
-                }
-                this.vy *= Math.pow(0.9, timeScale); // dampening
-                this.y += this.vy * timeScale;
-                
-                if (this.y < 0) { this.y = 0; this.vy = 0; }
-                if (this.y > groundY) { this.y = groundY; this.vy = 0; }
+                let thrust = ch < 500 ? 0.6 : 0.8; let grav = ch < 500 ? 0.2 : 0.3;
+                if (isHolding) { this.vy -= thrust * timeScale; particulas.push(new Particula(this.x + this.width/2, this.y - this.height*0.6, 'rgba(255, 69, 0, 0.8)', (Math.random()*-1)-0.5, Math.random()*2+1, Math.random()*8+4)); } else { this.vy += grav * timeScale; }
+                if (this.vy > 8) this.vy = 8; if (this.vy < -8) this.vy = -8; this.y += this.vy * timeScale;
+                let floorY = ch - alturaChao - this.height + 30; if (this.y > floorY) { this.y = floorY; this.vy = 0; } if (this.y < this.height * 0.5) { this.y = this.height * 0.5; this.vy = 0; }
+                this.isJumping = true; this.frameX = 1; this.tilt = Math.min(Math.max(this.vy * 0.03, -0.15), 0.15);
             } else {
-                this.vy += this.gravity * timeScale;
                 this.y += this.vy * timeScale;
-                if (this.y >= groundY) {
-                    this.y = groundY;
-                    this.isJumping = false;
-                    this.vy = 0;
+                if (this.y >= groundY) { 
+                    if (this.isJumping) { for(let i=0;i<12;i++) particulas.push(new Particula(this.x + this.width/2, groundY + this.height - ajustePe, 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*12+5)); } 
+                    this.y = groundY; this.vy = 0; this.isJumping = false; this.tilt = 0; 
+                } else { 
+                    this.vy += this.gravity * timeScale; 
+                    this.isJumping = true; 
+                    this.tilt = Math.min(Math.max(this.vy * 0.015, -0.2), 0.2); 
+                }
+                
+                if (!this.isJumping) { 
+                    if (this.gameFrame % this.staggerFrames === 0) { 
+                        this.frameX = (this.frameX < 2) ? this.frameX + 1 : 0; 
+                    } 
+                    
+                    if (this.gameFrame % 3 === 0 && faseAtual !== 3) {
+                        particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, 'rgba(200, 200, 220, 0.4)', -gameSpeed * 1.5, -0.2, Math.random() * 12 + 4));
+                        if (Math.random() > 0.6) particulas.push(new Particula(this.x + this.width * 0.3, groundY + this.height - ajustePe, '#00FFFF', -gameSpeed * 1.8, (Math.random()*-2), Math.random() * 5 + 2));
+                    }
+                    this.gameFrame++; 
+                } else { 
+                    this.frameX = 1; 
                 }
             }
-            
-            // Animation
-            if (this.gameFrame % this.staggerFrames === 0) {
-                if (this.isJumping && faseAtual !== 3) this.frameX = 2; // Frame de pulo
-                else this.frameX = (this.frameX < 3) ? this.frameX + 1 : 0; // Animando andando/voando
-            }
-            this.gameFrame++;
         }
-        
         draw(ctx) {
-            let dw = this.width * this.scale;
-            let dh = this.height * this.scale;
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            if (faseAtual === 3) {
-                ctx.rotate(this.vy * 0.05);
-            }
             if (playerSprite.complete && playerSprite.naturalWidth > 0) {
-                ctx.drawImage(playerSprite, this.frameX * this.width, 0, this.width, this.height, 0, 0, dw, dh);
-            } else {
-                // Fallback de placeholder se imagem falhar
-                ctx.fillStyle = '#FF1493';
-                ctx.fillRect(0, 0, dw, dh);
-            }
-            ctx.restore();
-        }
-    }
-
-    const player = new Player();
-
-    let spawnTimer = 0;
-    function spawnObjects(timeScale) {
-        spawnTimer += timeScale;
-        let limit = faseAtual === 3 ? 60 : 130;
-        
-        if (spawnTimer > limit) {
-            spawnTimer = 0;
-            
-            if (faseAtual === 1) {
-                let available = AlfabetoIsadora.filter(a => !letrasColetadas.includes(a.letra));
-                if (available.length > 0) {
-                    let info = available[0];
-                    collectibles.push(new Collectible('letra', info));
-                }
-            } 
-            else if (faseAtual === 2) {
-                if (!desafioFase2 && acertosAtuaisFase2 < acertosParaVencerFase2) {
-                    let correct = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
-                    let wrong = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
-                    while(wrong.letra === correct.letra) wrong = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
-                    desafioFase2 = { correct, wrong };
-                    AudioManager.playVoice("Ache a letra " + correct.letra + " de " + correct.palavra);
-                    
-                    let cw = window.innerWidth;
-                    let x1 = cw + 100 * scaleMultiplier; 
-                    let x2 = cw + 400 * scaleMultiplier;
-                    
-                    if (Math.random() > 0.5) {
-                        collectibles.push(new Collectible('letra_desafio', correct, x1, true));
-                        collectibles.push(new Collectible('letra_desafio', wrong, x2, false));
-                    } else {
-                        collectibles.push(new Collectible('letra_desafio', wrong, x1, false));
-                        collectibles.push(new Collectible('letra_desafio', correct, x2, true));
-                    }
-                }
-            } 
-            else if (faseAtual === 3) {
-                if (palavraAtualIndex < palavrasVitoria.length) {
-                    let char = palavrasVitoria[palavraAtualIndex][letraVitoriaIndex];
-                    let cw = window.innerWidth;
-                    collectibles.push(new Collectible('estrela_vitória', char, cw + 200 * scaleMultiplier, true));
-                }
-            }
-            else if (faseAtual === 4) {
-                if (!desafioFase4 && acertosFase4 < dadosFase4.length) {
-                    let d = dadosFase4[acertosFase4];
-                    desafioFase4 = d;
-                    AudioManager.playVoice("Forme a palavra " + d.p);
-                    
-                    let cw = window.innerWidth;
-                    let wrongSyl = d.w[Math.floor(Math.random() * d.w.length)];
-                    let x1 = cw + 100 * scaleMultiplier; 
-                    let x2 = cw + 400 * scaleMultiplier;
-
-                    if (Math.random() > 0.5) {
-                        collectibles.push(new Collectible('silaba', {s: d.s}, x1, true));
-                        collectibles.push(new Collectible('silaba', {s: wrongSyl}, x2, false));
-                    } else {
-                        collectibles.push(new Collectible('silaba', {s: wrongSyl}, x1, false));
-                        collectibles.push(new Collectible('silaba', {s: d.s}, x2, true));
-                    }
-                }
-            }
-            else if (faseAtual === 5) {
-                if (!desafioFase5 && acertosFase5 < dadosFase5.length) {
-                    let d = dadosFase5[acertosFase5];
-                    desafioFase5 = d;
-                    AudioManager.playVoice("Qual letra começa " + d.p + "?");
-                    
-                    let cw = window.innerWidth;
-                    let wrongLetter = d.w[Math.floor(Math.random() * d.w.length)];
-                    let x1 = cw + 100 * scaleMultiplier; 
-                    let x2 = cw + 400 * scaleMultiplier;
-
-                    if (Math.random() > 0.5) {
-                        collectibles.push(new Collectible('caixa_memoria', {l: d.l}, x1, true));
-                        collectibles.push(new Collectible('caixa_memoria', {l: wrongLetter}, x2, false));
-                    } else {
-                        collectibles.push(new Collectible('caixa_memoria', {l: wrongLetter}, x1, false));
-                        collectibles.push(new Collectible('caixa_memoria', {l: d.l}, x2, true));
-                    }
-                }
-            }
-            else if (faseAtual === 6) {
-                if (!desafioFase6 && acertosFase6 < dadosFase6.length) {
-                    let d = dadosFase6[acertosFase6];
-                    desafioFase6 = d;
-                    AudioManager.playVoice(d.f.replace("_____", d.p));
-                    letraUi.innerText = d.f;
-                    
-                    let cw = window.innerWidth;
-                    let wrongWord = d.w[Math.floor(Math.random() * d.w.length)];
-                    let x1 = cw + 150 * scaleMultiplier; 
-                    let x2 = cw + 550 * scaleMultiplier;
-
-                    if (Math.random() > 0.5) {
-                        collectibles.push(new Collectible('caixa_frase', {p: d.p}, x1, true));
-                        collectibles.push(new Collectible('caixa_frase', {p: wrongWord}, x2, false));
-                    } else {
-                        collectibles.push(new Collectible('caixa_frase', {p: wrongWord}, x1, false));
-                        collectibles.push(new Collectible('caixa_frase', {p: d.p}, x2, true));
-                    }
-                }
-            }
-            else if (faseAtual === 7) {
-                if (numeroAtualIndex < numerosVitoria.length) {
-                    let num = numerosVitoria[numeroAtualIndex];
-                    let cw = window.innerWidth;
-                    collectibles.push(new Collectible('numero', num, cw + 200 * scaleMultiplier, true));
-                } else if (!isInfinite) {
-                    dispararGrandFinale();
-                }
-            }
-        }
-    }
-
-    function checkCollisions() {
-        let playerRect = {
-            x: player.x + (player.width * player.scale * 0.2),
-            y: player.y + (player.height * player.scale * 0.1),
-            w: player.width * player.scale * 0.6,
-            h: player.height * player.scale * 0.8
-        };
-
-        collectibles.forEach(c => {
-            if (c.ignorarColisao || c.isResolvido || c.markedForDeletion) return;
-            
-            // Basic AABB / Circle overlap
-            let cx = c.x;
-            let cy = c.y;
-            let testX = cx;
-            let testY = cy;
-
-            if (cx < playerRect.x) testX = playerRect.x;
-            else if (cx > playerRect.x + playerRect.w) testX = playerRect.x + playerRect.w;
-            if (cy < playerRect.y) testY = playerRect.y;
-            else if (cy > playerRect.y + playerRect.h) testY = playerRect.y + playerRect.h;
-
-            let distX = cx - testX;
-            let distY = cy - testY;
-            let distance = Math.sqrt((distX * distX) + (distY * distY));
-
-            if (distance <= c.radius * 0.8) {
-                handleCollision(c);
-            }
-        });
-    }
-
-    function triggerHitStop(ms) { hitStopTime = ms; }
-    function createExplosion(x, y, color) { 
-        for(let i=0; i<15; i++) {
-            particulas.push(new Particula(x, y, color, (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
-        }
-    }
-    function flashDamage() { 
-        damageOverlay.classList.add('damage-active'); 
-        setTimeout(() => damageOverlay.classList.remove('damage-active'), 200); 
-    }
-
-    function handleCollision(c) {
-        c.markedForDeletion = true;
-        
-        if (c.tipo === 'letra') {
-            letrasColetadas.push(c.info.letra);
-            AudioManager.playColetaLetra(c.info.letra + " de " + c.info.palavra);
-            gerenciarCombo(true);
-            triggerHitStop(50);
-            createExplosion(c.x, c.y, '#FFD700');
-            atualizarProgressoHUD();
-            if (!isInfinite && letrasColetadas.length >= letrasParaVencerFase1) dispararGrandFinale();
-        } 
-        else if (c.tipo === 'letra_desafio' || c.tipo === 'silaba' || c.tipo === 'caixa_memoria' || c.tipo === 'caixa_frase') {
-            if (c.isCorrect) {
-                AudioManager.playSuccessSFX();
-                gerenciarCombo(true);
-                createExplosion(c.x, c.y, '#00FF00');
+                let rW = playerSprite.naturalWidth / 3; let rH = playerSprite.naturalHeight; this.width = rW * this.scale; this.height = rH * this.scale; let ajustePe = this.height * this.espacoVazio; let groundY = window.innerHeight - alturaChao - (this.height - ajustePe) + 20; if (!this.isJumping && this.y > groundY && faseAtual !== 3) this.y = groundY; let alturaDoChao = groundY - this.y; let tamanhoSombra = Math.max(10 * scaleMultiplier, (this.width/3) - (alturaDoChao * 0.15)); let opSombra = Math.max(0.1, 0.4 - (alturaDoChao * 0.002)); 
+                ctx.fillStyle = `rgba(0,0,0,${opSombra})`; ctx.beginPath(); ctx.ellipse(this.x + this.width/2, groundY + this.height - ajustePe, tamanhoSombra, 8 * scaleMultiplier, 0, 0, Math.PI * 2); ctx.fill(); 
+                ctx.save(); ctx.translate(this.x + this.width/2, this.y + this.height - ajustePe); ctx.rotate(this.tilt);
+                let scl = scaleMultiplier;
                 
-                if (faseAtual === 2) { acertosAtuaisFase2++; desafioFase2 = null; if (!isInfinite && acertosAtuaisFase2 >= acertosParaVencerFase2) dispararGrandFinale(); }
-                if (faseAtual === 4) { acertosFase4++; desafioFase4 = null; if (!isInfinite && acertosFase4 >= dadosFase4.length) dispararGrandFinale(); }
-                if (faseAtual === 5) { acertosFase5++; desafioFase5 = null; if (!isInfinite && acertosFase5 >= dadosFase5.length) dispararGrandFinale(); }
-                if (faseAtual === 6) { acertosFase6++; desafioFase6 = null; if (!isInfinite && acertosFase6 >= dadosFase6.length) dispararGrandFinale(); }
+                if (faseAtual === 3) {
+                    let bW = this.width * 1.2; let bH = this.height * 1.2; let envY = -this.height * 1.0; let basketW = this.width * 1.2; let basketH = this.height * 0.35; let basketX = -basketW / 2; let basketY = -this.height * 0.3;
+                    
+                    if(!this.gradCache) {
+                        this.gradCache = ctx.createLinearGradient(0, basketY, 0, basketY + basketH); 
+                        this.gradCache.addColorStop(0, '#C17D3F'); this.gradCache.addColorStop(0.5, '#8B5A2B'); this.gradCache.addColorStop(1, '#5C3A21');
+                    }
+
+                    ctx.fillStyle = '#2A1608'; ctx.beginPath(); ctx.rect(basketX, basketY, basketW, basketH); ctx.fill();
+                    ctx.strokeStyle = '#B8860B'; ctx.lineWidth = 2*scl; ctx.beginPath(); ctx.moveTo(basketX + 10*scl, basketY); ctx.lineTo(-bW*0.4, envY + bH/2 - 10*scl); ctx.stroke(); ctx.beginPath(); ctx.moveTo(basketX + basketW - 10*scl, basketY); ctx.lineTo(bW*0.4, envY + bH/2 - 10*scl); ctx.stroke();
+                    ctx.shadowColor = 'rgba(255, 105, 180, 0.5)'; ctx.shadowBlur = 15*scl; 
+                    
+                    let gradBalao = ctx.createRadialGradient(0, envY - bH/6, 10*scl, 0, envY, bW); gradBalao.addColorStop(0, 'rgba(255, 230, 150, 0.95)'); gradBalao.addColorStop(0.4, 'rgba(255, 105, 180, 0.9)'); gradBalao.addColorStop(0.8, 'rgba(138, 43, 226, 0.85)'); gradBalao.addColorStop(1, 'rgba(75, 0, 130, 0.8)'); 
+                    ctx.beginPath(); ctx.moveTo(0, envY + bH/2); ctx.quadraticCurveTo(bW*0.4, envY + bH/4, bW*0.7, envY - bH/6); ctx.arc(0, envY - bH/6, bW*0.7, 0, Math.PI, true); ctx.quadraticCurveTo(-bW*0.4, envY + bH/4, 0, envY + bH/2); ctx.fillStyle = gradBalao; ctx.fill(); ctx.shadowBlur = 0;
+                    ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'; ctx.lineWidth = 2*scl; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.moveTo(0, envY + bH/2); ctx.quadraticCurveTo(bW*0.4*i, envY, 0, envY - bH/6 - bW*0.7); ctx.stroke(); } ctx.beginPath(); ctx.ellipse(-bW/4, envY - bH/6, bW/5, bH/3, Math.PI/6, 0, Math.PI*2); ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'; ctx.fill(); ctx.restore();
+                    ctx.fillStyle = '#444'; ctx.fillRect(-12*scl, envY + bH/2 - 5*scl, 24*scl, 10*scl);
+                    if (isHolding) { ctx.shadowColor = '#FF4500'; ctx.shadowBlur = 20*scl; ctx.fillStyle = '#FFA500'; ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 15*scl + Math.random()*5*scl, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#FFFF00'; ctx.beginPath(); ctx.arc(0, envY + bH/2 + 10*scl, 8*scl + Math.random()*4*scl, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0; }
+                }
+
+                let pisadaY = (!this.isJumping && faseAtual !== 3 && this.frameX === 1) ? (6 * scl) : 0;
+                ctx.drawImage(playerSprite, this.frameX * rW, 0, rW, rH, -this.width/2, -(this.height - ajustePe) + pisadaY, this.width, this.height);
                 
-                atualizarProgressoHUD();
-            } else {
-                AudioManager.playErrorVoice();
-                gerenciarCombo(false);
-                shakeIntensity = 10;
-                flashDamage();
-                
-                // Ignorar colisão das outras peças que vêm junto
-                collectibles.forEach(col => { if(col !== c) col.ignorarColisao = true; });
-                
-                if (faseAtual === 2) desafioFase2 = null;
-                if (faseAtual === 4) desafioFase4 = null;
-                if (faseAtual === 5) desafioFase5 = null;
-                if (faseAtual === 6) desafioFase6 = null;
+                if (faseAtual === 3) {
+                    let bW = this.width * 1.2; let basketW = this.width * 1.2; let basketH = this.height * 0.35; let basketX = -basketW / 2; let basketY = -this.height * 0.3;
+                    ctx.fillStyle = this.gradCache; 
+                    ctx.beginPath(); let r = 8*scl; ctx.moveTo(basketX + r, basketY); ctx.lineTo(basketX + basketW - r, basketY); ctx.quadraticCurveTo(basketX + basketW, basketY, basketX + basketW, basketY + r); ctx.lineTo(basketX + basketW, basketY + basketH - r); ctx.quadraticCurveTo(basketX + basketW, basketY + basketH, basketX + basketW - r, basketY + basketH); ctx.lineTo(basketX + r, basketY + basketH); ctx.quadraticCurveTo(basketX, basketY + basketH, basketX, basketY + basketH - r); ctx.lineTo(basketX, basketY + r); ctx.quadraticCurveTo(basketX, basketY, basketX + r, basketY); ctx.fill();
+                    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2*scl; for(let i=1; i<4; i++) { ctx.beginPath(); ctx.moveTo(basketX, basketY + (basketH/4)*i); ctx.lineTo(basketX+basketW, basketY + (basketH/4)*i); ctx.stroke(); }
+                }
+                ctx.restore();
             }
-        } 
-        else if (c.tipo === 'estrela_vitória') {
-             AudioManager.playMagicSFX();
-             createExplosion(c.x, c.y, '#FFD700');
-             letraVitoriaIndex++;
-             atualizarHUDVitoria();
-             if (letraVitoriaIndex >= palavrasVitoria[palavraAtualIndex].length) {
-                 palavraAtualIndex++;
-                 letraVitoriaIndex = 0;
-                 if (!isInfinite && palavraAtualIndex >= palavrasVitoria.length) dispararGrandFinale();
-             }
         }
-        else if (c.tipo === 'numero') {
-            AudioManager.playMagicSFX();
-            createExplosion(c.x, c.y, '#00FFFF');
-            numeroAtualIndex++;
-            if (!isInfinite && numeroAtualIndex >= numerosVitoria.length) dispararGrandFinale();
-        }
+        jump() { if (!this.isJumping && faseAtual !== 3) { if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } this.vy = this.jumpPower; this.isJumping = true; for(let i=0;i<10;i++) particulas.push(new Particula(this.x + this.width/2, this.y + this.height - (this.height*this.espacoVazio), 'rgba(255, 228, 225, 0.8)', (Math.random()*-4)-2, (Math.random()*-4)-1, Math.random()*10+5)); } }
     }
 
-    // Input Handling Moderno Consolidado (Pointer Events)
-    function handlePointerDown(e) {
-        if (e.type !== 'pointerdown' && (e.type === 'keydown' && e.code !== 'Space' && e.code !== 'ArrowUp')) return;
-        if (!gameActive || isPaused) return;
-        
-        if (faseAtual === 3) {
-            isHolding = true;
-            if(!tutorialAtivo) player.vy = -5; // Boost inicial
-        } else if (!player.isJumping) {
-            player.vy = player.jumpPower;
-            player.isJumping = true;
-            AudioManager.playHoverTick();
-        }
+    const player = new Player(); let collectibles = []; let itemTimer = 0; 
+    let itemInterval = 2500; 
+
+    function handleDown(e) { 
+        if (e.target.closest('button') || e.target.closest('.ps5-btn') || e.target.closest('.btn-corner') || document.getElementById('modal-historia').style.display === 'flex' || document.getElementById('exit-screen').style.display === 'flex' || !gameActive) return; 
+        isHolding = true; 
+        if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } 
+        if(gameActive && !isPaused && faseAtual !== 3) { e.preventDefault(); player.jump(); } 
+        if(faseAtual === 3) e.preventDefault(); 
     }
+    
+    function handleUp(e) { isHolding = false; }
+    
+    window.addEventListener('mousedown', handleDown); 
+    window.addEventListener('mouseup', handleUp); 
+    window.addEventListener('touchstart', handleDown, {passive: false}); 
+    window.addEventListener('touchend', handleUp); 
+    window.addEventListener('touchcancel', handleUp); 
+    window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') { isHolding = true; if (tutorialAtivo) { tutorialAtivo = false; tutorialUI.style.opacity = '0'; setTimeout(()=> tutorialUI.style.display = 'none', 500); } if(gameActive && !isPaused && faseAtual !== 3) player.jump(); } }); window.addEventListener('keyup', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') isHolding = false; });
 
-    function handlePointerUp(e) {
-        if (e.type !== 'pointerup' && (e.type === 'keyup' && e.code !== 'Space' && e.code !== 'ArrowUp')) return;
-        isHolding = false;
-    }
-
-    window.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('pointerup', handlePointerUp);
-    window.addEventListener('keydown', handlePointerDown);
-    window.addEventListener('keyup', handlePointerUp);
-
+    let lastTime = 0;
     function animate(timeStamp) {
-        if (!gameActive) return;
+        if (!gameActive) return; 
+        if (isPaused) return; 
         
-        animationId = requestAnimationFrame(animate);
+        let deltaTime = timeStamp - lastTime; 
+        if (deltaTime > 100) deltaTime = 16; 
+        lastTime = timeStamp; 
+        
+        let timeScale = deltaTime / 16.666;
 
-        let deltaTime = (timeStamp - lastTime);
-        if(isNaN(deltaTime) || deltaTime > 100) deltaTime = 16.66; // Capping em frames longos (e.g., mudança de aba)
-        lastTime = timeStamp;
-
-        if (isPaused) return;
-
+        // --- SISTEMA DE HIT STOP (IMPACTO PS5) ---
         if (hitStopTime > 0) {
             hitStopTime -= deltaTime;
-            return; // Pause no Gameplay para Hit Stop
+            animationId = requestAnimationFrame(animate);
+            return; 
         }
 
-        let timeScale = (deltaTime / 16.66) * (gameSpeed / baseGameSpeed);
+        let cw = window.innerWidth;
+        let ch = window.innerHeight;
 
-        ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, cw, ch);
+        ctx.save();
 
-        // Screen Shake
+        // --- SISTEMA DE SCREEN SHAKE ---
         if (shakeIntensity > 0) {
-            ctx.translate((Math.random() - 0.5) * shakeIntensity, (Math.random() - 0.5) * shakeIntensity);
-            shakeIntensity *= 0.9;
-            if (shakeIntensity < 0.5) shakeIntensity = 0;
+            ctx.translate((Math.random()-0.5) * shakeIntensity, (Math.random()-0.5) * shakeIntensity);
+            shakeIntensity -= deltaTime * 0.05;
+            if(shakeIntensity < 0) shakeIntensity = 0;
         }
 
-        // Fundo Paralax
-        bgX -= (gameSpeed * 0.5) * timeScale;
-        if (bgX <= -canvas.width) bgX = 0;
+        let fundoAtual = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6) ? fundoImg2 : fundoImg1;
+        if (fundoAtual.complete && fundoAtual.naturalWidth !== 0) { 
+            bgX -= (gameSpeed * 0.04) * timeScale; 
+            let bgW = cw; if (bgX <= -bgW * 2) bgX += bgW * 2; 
+            ctx.drawImage(fundoAtual, bgX, 0, bgW, ch); 
+            ctx.save(); ctx.translate(bgX + bgW * 2, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore(); 
+            ctx.drawImage(fundoAtual, bgX + bgW * 2, 0, bgW, ch); 
+            ctx.save(); ctx.translate(bgX + bgW * 4, 0); ctx.scale(-1, 1); ctx.drawImage(fundoAtual, 0, 0, bgW, ch); ctx.restore();
+        }
         
-        if (fundoImg1.complete) {
-            ctx.drawImage(fundoImg1, bgX, 0, canvas.width, canvas.height);
-            ctx.drawImage(fundoImg1, bgX + canvas.width, 0, canvas.width, canvas.height);
+        let groundY = ch - alturaChao; 
+        if(!isPaused) estradaOffset += (gameSpeed * 2.5) * timeScale; 
+        if (estradaOffset > 100) estradaOffset -= 100;
+
+        ctx.save(); 
+        ctx.fillStyle = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6) ? 'rgba(40, 20, 70, 0.9)' : 'rgba(230, 150, 70, 0.9)'; 
+        ctx.fillRect(0, groundY, cw, alturaChao); 
+        ctx.shadowColor = '#FFF'; ctx.shadowBlur = 10; 
+        ctx.fillStyle = (faseAtual === 2 || faseAtual === 3 || faseAtual === 5 || faseAtual === 6) ? '#00FFFF' : '#FFFFFF'; 
+        ctx.beginPath(); ctx.moveTo(0, groundY); 
+        for(let i=0; i<=cw; i+=40) { ctx.lineTo(i, groundY + Math.sin(i*0.05 + bgX*0.1) * 5); } 
+        ctx.lineTo(cw, groundY + 15); ctx.lineTo(0, groundY + 15); ctx.fill(); ctx.shadowBlur = 0; 
+        ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0, groundY + 15, cw, 6); 
+        ctx.fillStyle = 'rgba(0,0,0,0.3)'; 
+        for(let x = -150 - estradaOffset; x < cw + 250; x += 100) { 
+            ctx.beginPath(); ctx.moveTo(x, groundY + 20); ctx.lineTo(x + 40, groundY + 20); ctx.lineTo(x - 20, ch); ctx.lineTo(x - 60, ch); ctx.fill(); 
+        } 
+        ctx.restore();
+
+        // Evita Filter() repetitivo otimizando a checagem no array original
+        for (let i = particulas.length - 1; i >= 0; i--) {
+            let p = particulas[i];
+            p.update(timeScale); p.draw(ctx);
+            if (p.vida <= 0) particulas.splice(i, 1);
         }
 
-        // Chão (Opcional, se houver desenho específico. Aqui usamos o fundo)
-        
-        // Player
-        player.update(timeScale);
-        player.draw(ctx);
+        player.update(timeScale); player.draw(ctx);
 
-        // Spawn Objects
-        spawnObjects(timeScale);
-        
-        collectibles.forEach(c => { c.update(timeScale); c.draw(ctx); });
-        collectibles = collectibles.filter(c => !c.markedForDeletion);
-
-        particulas.forEach(p => { p.update(timeScale); p.draw(ctx); });
-        particulas = particulas.filter(p => p.vida > 0);
-
-        textosFlutuantes.forEach(t => { t.update(timeScale); t.draw(ctx); });
-        textosFlutuantes = textosFlutuantes.filter(t => t.vida > 0);
-
-        checkCollisions();
-
-        if (tutorialAtivo) {
-            if (player.isJumping || isHolding) {
-                tutorialUI.style.opacity = '0';
-                setTimeout(() => tutorialUI.style.display = 'none', 500);
-                tutorialAtivo = false;
+        if (itemTimer > itemInterval) { 
+            let podeSpawnar = true;
+            
+            if (faseAtual === 1) {
+                let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
+                if (letrasFaltantes.length > 0 || isInfinite) {
+                    let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra;
+                    if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: AlfabetoIsadora.find(i=>i.letra===letraAlvo).palavra}));
+                } else {
+                    faseAtual = 2; prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX();
+                }
+                itemTimer = 0;
+            } 
+            else if (faseAtual === 2) {
+                if (!isInfinite && acertosAtuaisFase2 >= acertosParaVencerFase2) {
+                    faseAtual = 3; prepararFase(3); podeSpawnar = false; AudioManager.playSuccessSFX();
+                } else if (collectibles.length === 0) {
+                    if (!desafioFase2) {
+                        let certa = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        let errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)]; while (errada.letra === certa.letra) errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        desafioFase2 = {certa, errada, ordem: Math.random() > 0.5};
+                    }
+                    letraUi.innerText = `ACHE: ${desafioFase2.certa.palavra.toUpperCase()}`; 
+                    AudioManager.playVoice(`Ache a letra de ${desafioFase2.certa.palavra}`); 
+                    hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
+                    
+                    collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.certa : desafioFase2.errada, cw + 100, desafioFase2.ordem));
+                    collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.errada : desafioFase2.certa, cw + 700, !desafioFase2.ordem)); 
+                }
+                itemTimer = 0;
+            } 
+            else if (faseAtual === 3) {
+                if (collectibles.length === 0) {
+                    let palavra = palavrasVitoria[palavraAtualIndex];
+                    if (letraVitoriaIndex < palavra.length) {
+                        collectibles.push(new Collectible('estrela_vitória', {letra: palavra[letraVitoriaIndex]}, cw + 100, true));
+                    } else {
+                        palavraAtualIndex++; letraVitoriaIndex = 0; AudioManager.playSuccessSFX();
+                        if (palavraAtualIndex >= palavrasVitoria.length) {
+                            if(isInfinite) { palavraAtualIndex = 0; atualizarHUDVitoria(); itemTimer = -1000; } 
+                            else { faseAtual = 4; prepararFase(4); itemTimer = -1000; }
+                        } else { atualizarHUDVitoria(); itemTimer = -1000; }
+                    }
+                }
+                itemTimer = 0;
             }
+            else if (faseAtual === 4) {
+                if (!isInfinite && acertosFase4 >= dadosFase4.length) {
+                    faseAtual = 5; prepararFase(5); podeSpawnar = false; AudioManager.playSuccessSFX();
+                } else if (collectibles.length === 0) {
+                    if (!desafioFase4) {
+                        let obj = isInfinite ? dadosFase4[Math.floor(Math.random() * dadosFase4.length)] : dadosFase4[acertosFase4];
+                        let errada = obj.w[Math.floor(Math.random() * obj.w.length)];
+                        desafioFase4 = {obj, errada, ordem: Math.random() > 0.5};
+                    }
+                    letraUi.innerText = `PEGUE O ${desafioFase4.obj.s} DE ${desafioFase4.obj.p}`; 
+                    AudioManager.playVoice(`Pegue o ${desafioFase4.obj.s} de ${desafioFase4.obj.p}`);
+                    hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
+                    
+                    collectibles.push(new Collectible('silaba', {s: desafioFase4.ordem ? desafioFase4.obj.s : desafioFase4.errada}, cw + 100, desafioFase4.ordem));
+                    collectibles.push(new Collectible('silaba', {s: desafioFase4.ordem ? desafioFase4.errada : desafioFase4.obj.s}, cw + 700, !desafioFase4.ordem));
+                }
+                itemTimer = 0;
+            }
+            else if (faseAtual === 5) {
+                if (!isInfinite && acertosFase5 >= dadosFase5.length) {
+                    faseAtual = 6; prepararFase(6); podeSpawnar = false; AudioManager.playSuccessSFX();
+                } else if (collectibles.length === 0) {
+                    if (!desafioFase5) {
+                        let obj = isInfinite ? dadosFase5[Math.floor(Math.random() * dadosFase5.length)] : dadosFase5[acertosFase5];
+                        let opcoes = [ {l: obj.l, c: true}, {l: obj.w[0], c: false}, {l: obj.w[1], c: false} ];
+                        opcoes.sort(() => Math.random() - 0.5);
+                        desafioFase5 = {obj, opcoes};
+                    }
+                    letraUi.innerText = `ONDE ESTÁ A LETRA DE ${desafioFase5.obj.p}?`; 
+                    AudioManager.playVoice(`Onde está a letra de ${desafioFase5.obj.p}?`);
+                    hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
+                    
+                    collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[0].l}, cw + 200, desafioFase5.opcoes[0].c));
+                    collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[1].l}, cw + 600, desafioFase5.opcoes[1].c));
+                    collectibles.push(new Collectible('caixa_memoria', {letra: desafioFase5.opcoes[2].l}, cw + 1000, desafioFase5.opcoes[2].c));
+                }
+                itemTimer = 0;
+            }
+            else if (faseAtual === 6) {
+                if (!isInfinite && acertosFase6 >= dadosFase6.length) {
+                    faseAtual = 7; prepararFase(7); podeSpawnar = false; AudioManager.playSuccessSFX();
+                } else if (collectibles.length === 0) {
+                    if (!desafioFase6) {
+                        let obj = isInfinite ? dadosFase6[Math.floor(Math.random() * dadosFase6.length)] : dadosFase6[acertosFase6];
+                        let opcoes = [ {p: obj.p, c: true}, {p: obj.w[0], c: false}, {p: obj.w[1], c: false} ];
+                        opcoes.sort(() => Math.random() - 0.5);
+                        desafioFase6 = {obj, opcoes};
+                    }
+                    letraUi.innerText = desafioFase6.obj.f; 
+                    AudioManager.playVoice("Complete a frase!");
+                    hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
+                    
+                    collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[0].p}, cw + 200, desafioFase6.opcoes[0].c));
+                    collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[1].p}, cw + 650, desafioFase6.opcoes[1].c));
+                    collectibles.push(new Collectible('caixa_frase', {palavra: desafioFase6.opcoes[2].p}, cw + 1100, desafioFase6.opcoes[2].c));
+                }
+                itemTimer = 0;
+            }
+            else if (faseAtual === 7) {
+                if (collectibles.length === 0) {
+                    if (numeroAtualIndex < numerosVitoria.length) {
+                        let n = numerosVitoria[numeroAtualIndex];
+                        letraUi.innerText = `COLETE O NÚMERO ${n}`;
+                        collectibles.push(new Collectible('numero', n));
+                    } else {
+                        dispararGrandFinale(); itemTimer = -999999;
+                    }
+                }
+                itemTimer = 0;
+            }
+
+        } else { itemTimer += deltaTime; }
+        
+        try {
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                let item = collectibles[i];
+                if(item.markedForDeletion) { collectibles.splice(i, 1); continue; }
+                
+                item.update(timeScale); item.draw(ctx);
+                const dx = (player.x + player.width/2) - item.x; let ajustePe = player.height * player.espacoVazio; 
+                let posYPersonagem = faseAtual === 3 ? (player.y + player.height/2) : (player.y + (player.height - ajustePe)/2);
+                
+                if (item.tipo === 'caixa_memoria' || item.tipo === 'caixa_frase') {
+                    let isFrase = item.tipo === 'caixa_frase';
+                    let hitWidth = isFrase ? item.radius * 1.5 : item.radius;
+                    let topoPlayer = player.y + (player.height * 0.1); 
+                    let baseCaixa = item.y + item.radius;
+                    let centroPlayer = player.y + player.height/2;
+                    
+                    if (player.isJumping && player.vy < 0 && Math.abs(dx) < hitWidth + (player.width/3) && topoPlayer < baseCaixa && centroPlayer > item.y && !item.ignorarColisao && !item.isResolvido) {
+                        player.vy = 3; 
+                        
+                        if(item.isCorrect) {
+                            item.isResolvido = true; 
+                            shakeIntensity = 3; 
+
+                            if (isFrase) {
+                                acertosFase6++; desafioFase6 = null; 
+                                letraUi.innerText = letraUi.innerText.replace('_____', item.info.palavra);
+                                hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
+                            } else {
+                                acertosFase5++; desafioFase5 = null; 
+                            }
+                            gerenciarCombo(true);
+                            AudioManager.playSuccessSFX(); 
+                            textosFlutuantes.push(new TextoFlutuante("PERFEITO!", item.x, item.y - 60, '#FFF', isFrase ? '#00FF7F' : '#8A2BE2'));
+                            for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, isFrase ? '#00FF7F' : '#00FFFF', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
+                            
+                            collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; });
+                            atualizarProgressoHUD();
+                            
+                        } else {
+                            item.markedForDeletion = true; 
+                            hitStopTime = 80; shakeIntensity = 12;
+                            damageOverlay.classList.add('damage-active');
+                            setTimeout(() => damageOverlay.classList.remove('damage-active'), 150);
+
+                            gerenciarCombo(false);
+                            AudioManager.playErrorSFX(); 
+                            textosFlutuantes.push(new TextoFlutuante("TENTE DE NOVO!", item.x, item.y - 60, '#FFF', '#FF0000'));
+                            for(let j=0; j<10; j++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
+                            
+                            setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
+                        }
+                    }
+                    continue; 
+                }
+
+                const dy = posYPersonagem - item.y; const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < item.radius + (player.width/2.5) && !item.ignorarColisao && !item.isResolvido) { 
+                    
+                    if (item.tipo === 'letra') {
+                        item.markedForDeletion = true; 
+                        shakeIntensity = 2;
+                        gerenciarCombo(true);
+                        AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
+                        if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); }
+                        for(let j=0; j<6; j++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', (Math.random()*6)-3, (Math.random()*6)-3, Math.random()*10+5));
+                    } 
+                    else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
+                        if (item.isCorrect) {
+                            item.isResolvido = true; 
+                            shakeIntensity = 3;
+                            
+                            if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
+                            else { acertosFase4++; desafioFase4 = null; }
+                            
+                            gerenciarCombo(true);
+                            AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
+                            for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', (Math.random()*8)-4, (Math.random()*8)-4, Math.random()*15+5));
+                            
+                            collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; });
+                            atualizarProgressoHUD();
+                        } else {
+                            item.markedForDeletion = true; 
+                            hitStopTime = 80; shakeIntensity = 12;
+                            damageOverlay.classList.add('damage-active');
+                            setTimeout(() => damageOverlay.classList.remove('damage-active'), 150);
+
+                            gerenciarCombo(false);
+                            AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
+                            for(let j=0; j<10; j++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
+                            
+                            setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
+                        }
+                    }
+                    else if (item.tipo === 'estrela_vitória') {
+                        item.markedForDeletion = true; 
+                        shakeIntensity = 4;
+                        gerenciarCombo(true);
+                        letraVitoriaIndex++; atualizarHUDVitoria(); AudioManager.playMagicSFX();
+                        textosFlutuantes.push(new TextoFlutuante(item.info.letra, item.x, item.y - 40, '#FFF', '#FFD700'));
+                        for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, '#FFD700', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
+                    }
+                    else if (item.tipo === 'numero') {
+                        item.markedForDeletion = true; 
+                        shakeIntensity = 2;
+                        gerenciarCombo(true);
+                        numeroAtualIndex++; AudioManager.playMagicSFX();
+                        textosFlutuantes.push(new TextoFlutuante(item.info, item.x, item.y - 40, '#FFF', '#00FFFF'));
+                        for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, '#00FFFF', (Math.random()*10)-5, (Math.random()*10)-5, Math.random()*15+5));
+                    }
+                } 
+                else if (item.x < -150) { 
+                    item.markedForDeletion = true; 
+                }
+            }
+        } catch (error) { console.error("Erro no loop do jogo:", error); }
+        
+        for (let i = textosFlutuantes.length - 1; i >= 0; i--) {
+            let t = textosFlutuantes[i];
+            t.update(timeScale); t.draw(ctx);
+            if(t.vida <= 0) textosFlutuantes.splice(i, 1);
         }
+        
+        ctx.restore();
+        if(gameActive && !isPaused) { animationId = requestAnimationFrame(animate); }
     }
 
-    // Inicializar Tamanho da tela.
-    redimensionarCanvas();
+    // ========================================================
+    // LOGICA DE CARREGAMENTO PS5 (LOADER INICIAL)
+    // ========================================================
+    window.onload = () => { 
+        hudLayer.style.display = 'none'; 
+        btnSom.style.display = 'none'; 
+        btnPause.style.display = 'none';
+        redimensionarCanvas(); 
+        if (!gameActive && fundoImg1.complete) ctx.drawImage(fundoImg1, 0, 0, canvas.width, canvas.height); 
+        
+        setTimeout(() => {
+            const loader = document.getElementById('loading-screen');
+            if (loader) {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                setTimeout(() => loader.style.display = 'none', 800);
+            }
+        }, 1500); 
+    }
 </script>
+
+
+
 </body>
 </html>
