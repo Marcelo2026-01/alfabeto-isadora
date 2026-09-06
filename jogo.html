@@ -458,7 +458,6 @@
     let hitStopTime = 0;
     let shakeIntensity = 0;
     
-    // Variáveis de Desafio para cada fase
     let desafioFase1 = null;
     let desafioFase2 = null;
     let desafioFase4 = null;
@@ -698,8 +697,19 @@
     }
 
     function prepararFase(fase) {
-        if(fase === 1) { metaAlfabeto.innerText = isInfinite ? "ATO 1: ALFABETO" : "COLETE O ALFABETO"; metaAlfabeto.style.color = "#FFD700"; txtTutorial.innerText = "ESPAÇO OU TOQUE PARA PULAR"; letraUi.innerText = "Sua jornada vai começar..."; }
-        else if (fase === 2) { metaAlfabeto.innerText = isInfinite ? "ATO 2: ENIGMA" : "DESAFIO: ACHE A LETRA!"; metaAlfabeto.style.color = "#FF1493"; txtTutorial.innerText = "Pule na Certa, Desvie da Errada!"; letraUi.innerText = "Prepare-se..."; AudioManager.playVoice("Pule na letra certa!"); }
+        if(fase === 1) { 
+            metaAlfabeto.innerText = isInfinite ? "ATO 1: ALFABETO" : "COLETE O ALFABETO"; 
+            metaAlfabeto.style.color = "#FFD700"; 
+            txtTutorial.innerText = "ESPAÇO OU TOQUE PARA PULAR"; 
+            letraUi.innerText = "Sua jornada vai começar..."; 
+        }
+        else if (fase === 2) { 
+            metaAlfabeto.innerText = isInfinite ? "ATO 2: A LETRA INICIAL" : "DESAFIO: LETRA INICIAL"; 
+            metaAlfabeto.style.color = "#FF1493"; 
+            txtTutorial.innerText = "Pule na letra certa!"; 
+            letraUi.innerText = "Prepare-se..."; 
+            AudioManager.playVoice("Vamos descobrir as letras iniciais!"); 
+        }
         else if (fase === 3) { metaAlfabeto.innerText = isInfinite ? "ATO 3: VOO" : "O VOO DA VITÓRIA!"; metaAlfabeto.style.color = "#FFD700"; txtTutorial.innerText = "SEGURE A TELA PARA VOAR!"; atualizarHUDVitoria(); }
         else if (fase === 4) { metaAlfabeto.innerText = isInfinite ? "ATO 4: SÍLABAS" : "CASTELO DAS SÍLABAS"; metaAlfabeto.style.color = "#00FFFF"; txtTutorial.innerText = "ESPAÇO OU TOQUE PARA PULAR"; letraUi.innerText = "Junte as sílabas..."; }
         else if (fase === 5) { metaAlfabeto.innerText = isInfinite ? "ATO 5: MEMÓRIA" : "VALE DAS SOMBRAS"; metaAlfabeto.style.color = "#8A2BE2"; txtTutorial.innerText = "PULE NA CAIXA CERTA!"; letraUi.innerText = "Escute com atenção..."; }
@@ -1353,6 +1363,7 @@
                 }
                 itemTimer = 0;
             } 
+            // FASE 2 - Reestruturada Pedagogicamente
             else if (faseAtual === 2) {
                 if (!isInfinite && acertosAtuaisFase2 >= acertosParaVencerFase2) {
                     faseAtual = 3; 
@@ -1361,15 +1372,31 @@
                 } else if (collectibles.length === 0) {
                     if (!desafioFase2) {
                         let certa = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
-                        let errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)]; while (errada.letra === certa.letra) errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
-                        desafioFase2 = {certa, errada, ordem: Math.random() > 0.5};
+                        
+                        let errada1 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        while (errada1.letra === certa.letra) errada1 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        
+                        let numOpcoes = (acertosAtuaisFase2 < 4) ? 2 : 3;
+                        let opcoes = [ {info: certa, c: true}, {info: errada1, c: false} ];
+
+                        if (numOpcoes === 3) {
+                            let errada2 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                            while (errada2.letra === certa.letra || errada2.letra === errada1.letra) errada2 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                            opcoes.push({info: errada2, c: false});
+                        }
+
+                        opcoes.sort(() => Math.random() - 0.5); // Embaralha as alternativas
+                        desafioFase2 = {certa, opcoes};
                     }
-                    letraUi.innerText = `ACHE: ${desafioFase2.certa.palavra.toUpperCase()}`; 
-                    AudioManager.playVoice(`Ache a letra de ${desafioFase2.certa.palavra}`); 
+                    
+                    letraUi.innerText = `COM QUE LETRA COMEÇA: ${desafioFase2.certa.palavra.toUpperCase()}?`; 
+                    AudioManager.playVoice(`Com que letra começa ${desafioFase2.certa.palavra}?`); 
                     hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
                     
-                    collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.certa : desafioFase2.errada, cw + 100, desafioFase2.ordem));
-                    collectibles.push(new Collectible('letra_desafio', desafioFase2.ordem ? desafioFase2.errada : desafioFase2.certa, cw + 700, !desafioFase2.ordem)); 
+                    let espacamento = desafioFase2.opcoes.length === 2 ? 500 : 450;
+                    for (let i = 0; i < desafioFase2.opcoes.length; i++) {
+                        collectibles.push(new Collectible('letra_desafio', desafioFase2.opcoes[i].info, cw + 200 + (i * espacamento), desafioFase2.opcoes[i].c));
+                    }
                 }
                 itemTimer = 0;
             } 
@@ -1563,16 +1590,27 @@
                             setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
                         }
                     } 
+                    // Colisão da Fase 2 (letra_desafio) e Fase 4 (silaba)
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
                             item.isResolvido = true; 
                             shakeIntensity = 3;
                             
-                            if(item.tipo === 'letra_desafio') { acertosAtuaisFase2++; desafioFase2 = null; } 
-                            else { acertosFase4++; desafioFase4 = null; }
+                            if(item.tipo === 'letra_desafio') { 
+                                acertosAtuaisFase2++; 
+                                desafioFase2 = null; 
+                                // Feedback pedagógico reforçado para FASE 2
+                                AudioManager.playColetaLetra(`Muito bem! ${item.info.letra} de ${item.info.palavra}`);
+                                textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 50, '#FFF', '#32CD32'));
+                            } 
+                            else { 
+                                acertosFase4++; 
+                                desafioFase4 = null; 
+                                AudioManager.playSuccessSFX(); 
+                                textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
+                            }
                             
                             gerenciarCombo(true);
-                            AudioManager.playSuccessSFX(); textosFlutuantes.push(new TextoFlutuante("CERTO!", item.x, item.y - 50, '#FFF', '#32CD32'));
                             for(let j=0; j<15; j++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#32CD32' : '#FFFFFF', (Math.random()*8)-4, (Math.random()*8)-4, Math.random()*15+5));
                             
                             collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; });
@@ -1584,10 +1622,18 @@
                             setTimeout(() => damageOverlay.classList.remove('damage-active'), 150);
 
                             gerenciarCombo(false);
-                            AudioManager.playErrorSFX(); textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
-                            for(let j=0; j<10; j++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
+                            AudioManager.playErrorSFX(); 
                             
-                            setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
+                            if (item.tipo === 'letra_desafio') {
+                                // Feedback de erro específico da FASE 2
+                                textosFlutuantes.push(new TextoFlutuante("OBSERVE A PRIMEIRA LETRA!", item.x - 100, item.y - 50, '#FFF', '#FF0000'));
+                                setTimeout(() => { AudioManager.playVoice("Quase! Observe a primeira letra."); }, 500);
+                            } else {
+                                textosFlutuantes.push(new TextoFlutuante("OPS!", item.x, item.y - 50, '#FFF', '#FF0000'));
+                                setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
+                            }
+                            
+                            for(let j=0; j<10; j++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
                         }
                     }
                     else if (item.tipo === 'estrela_vitória') {
