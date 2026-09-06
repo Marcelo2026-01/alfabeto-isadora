@@ -1026,12 +1026,12 @@
         
         update(timeScale) { 
             if (this.isResolvido) {
-                // Microinteração suave para Fase 1 (Flashcard)
+                // Microinteração de absorção magnética para o Bloco 3D (Fase 1)
                 if (this.tipo === 'letra') {
                     this.coletaTimer = (this.coletaTimer || 0) + timeScale;
-                    this.y -= 3 * timeScale; 
+                    this.y -= 6 * timeScale; 
                     this.x -= (gameSpeed * 1.5) * timeScale; 
-                    if (this.coletaTimer > 25) this.markedForDeletion = true;
+                    if (this.coletaTimer > 20) this.markedForDeletion = true;
                     return;
                 }
                 
@@ -1045,9 +1045,19 @@
             this.x -= (gameSpeed * 1.5) * timeScale; 
             this.timerOscilacao += 0.1 * timeScale;
             
-            if(this.tipo === 'letra' || this.tipo === 'numero') { this.spin += 0.05 * timeScale; this.y += Math.sin(this.spin*2) * 1.5 * timeScale; } 
-            else if (this.tipo === 'estrela_vitória') { this.spin += 0.02 * timeScale; this.y += Math.sin(this.timerOscilacao) * 0.8 * timeScale; }
-            else if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') { this.y += Math.sin(this.timerOscilacao) * 0.5 * timeScale; }
+            if (this.tipo === 'numero') { 
+                this.spin += 0.05 * timeScale; 
+                this.y += Math.sin(this.spin*2) * 1.5 * timeScale; 
+            } else if (this.tipo === 'letra') {
+                // Flutuação suave (Sem Giro) para a Fase 1
+                this.y += Math.sin(this.timerOscilacao * 0.08) * 1.2 * timeScale;
+            } else if (this.tipo === 'estrela_vitória') { 
+                this.spin += 0.02 * timeScale; 
+                this.y += Math.sin(this.timerOscilacao) * 0.8 * timeScale; 
+            }
+            else if (this.tipo === 'caixa_memoria' || this.tipo === 'caixa_frase') { 
+                this.y += Math.sin(this.timerOscilacao) * 0.5 * timeScale; 
+            }
             else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
                 this.spin -= 0.08 * timeScale; 
                 let groundY = window.innerHeight - alturaChao - this.radius - (10 * scaleMultiplier);
@@ -1117,57 +1127,71 @@
                 ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 4*scl); 
             } 
             else if (this.tipo === 'letra') {
-                // Flashcard Pedagógico (Fase 1)
-                let cardW = this.radius * 1.6;
-                let cardH = this.radius * 2.0;
+                // FASE 1: PEÇA DE LETRA DO ALFABETO EM 3D (Brinquedo Educativo Premium)
+                let cardW = this.radius * 1.8;
+                let cardH = this.radius * 1.8;
                 let cX = -cardW / 2;
                 let cY = -cardH / 2;
-                let corner = 15 * scl;
+                let corner = 18 * scl;
+                let thick = 14 * scl; // Profundidade 3D
 
                 ctx.save();
                 
                 if (this.isResolvido) {
-                    let progress = Math.min(1, (this.coletaTimer || 0) / 25); 
-                    let s = 1 + (Math.sin(progress * Math.PI) * 0.15); // Suave expansão e contração
-                    let alpha = 1 - Math.pow(progress, 3); // Desaparece no final
+                    let progress = Math.min(1, (this.coletaTimer || 0) / 20); 
+                    let s = 1 - (progress * 0.5); // Reduz de tamanho
+                    let alpha = 1 - Math.pow(progress, 2); // Desaparece no final
                     ctx.scale(s, s);
                     ctx.globalAlpha = Math.max(0, alpha);
+                    
+                    // Brilho intenso ao coletar
+                    ctx.shadowColor = '#FFD700';
+                    ctx.shadowBlur = 30 * scl;
                 } else if (this.ignorarColisao) {
                     ctx.globalAlpha = 0.4;
                     ctx.scale(0.85, 0.85);
-                }
-
-                // Profundidade / Sombra 3D
-                ctx.fillStyle = this.isResolvido ? '#FF8C00' : '#A4B0BE';
-                if (this.isResolvido) {
-                    ctx.shadowColor = '#FFD700';
+                } else {
+                    // Brilho sutil para indicar que a peça é interativa
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
                     ctx.shadowBlur = 20 * scl;
                 }
-                ctx.beginPath();
-                ctx.roundRect(cX, cY + 8 * scl, cardW, cardH, corner);
-                ctx.fill();
-                ctx.shadowBlur = 0;
 
-                // Face principal do Card
-                let grad = ctx.createLinearGradient(0, cY, 0, cY + cardH);
-                grad.addColorStop(0, '#FFFFFF');
-                grad.addColorStop(1, '#F1F2F6');
-                ctx.fillStyle = grad;
+                // 1. Sombra projetada
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.beginPath();
+                ctx.roundRect(cX, cY + thick + 8*scl, cardW, cardH, corner);
+                ctx.fill();
+                ctx.shadowBlur = 0; // Desliga sombra do contexto global
+
+                // 2. Base 3D (Espessura premium)
+                ctx.fillStyle = '#FDCB6E'; // Dourado/Amarelo premium
+                ctx.beginPath();
+                ctx.roundRect(cX, cY + thick, cardW, cardH, corner);
+                ctx.fill();
+
+                // 3. Face Superior (Branco iluminado)
+                ctx.fillStyle = '#FFFFFF';
                 ctx.beginPath();
                 ctx.roundRect(cX, cY, cardW, cardH, corner);
                 ctx.fill();
 
-                // Borda fina
-                ctx.strokeStyle = this.isResolvido ? '#FFD700' : '#DFE4EA';
+                // 4. Borda (Bevel suave)
+                ctx.strokeStyle = '#FFEAA7';
                 ctx.lineWidth = 3 * scl;
                 ctx.stroke();
 
-                // Letra Principal
-                ctx.fillStyle = this.isResolvido ? '#FF4500' : '#2F3640';
-                ctx.font = `900 ${this.radius * 1.3}px 'Fredoka', sans-serif`;
+                // 5. Letra em Relevo (Emboss)
+                ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(displayTexto, 0, 4 * scl);
+
+                // Profundidade da letra
+                ctx.fillStyle = '#076FBC'; // Azul Escuro
+                ctx.fillText(displayTexto, 0, 7 * scl);
+
+                // Face da letra
+                ctx.fillStyle = '#0984E3'; // Azul Vibrante
+                ctx.fillText(displayTexto, 0, 3 * scl);
 
                 ctx.restore();
             }
@@ -1613,7 +1637,7 @@
                 const dy = posYPersonagem - item.y; const distance = Math.sqrt(dx * dx + dy * dy);
                 if (distance < item.radius + (player.width/2.5) && !item.ignorarColisao && !item.isResolvido) { 
                     
-                    // Colisão da Fase 1 - Flashcards
+                    // Colisão da Fase 1 - Letras 3D
                     if (item.tipo === 'letra') {
                         if (item.isCorrect) {
                             item.isResolvido = true;
