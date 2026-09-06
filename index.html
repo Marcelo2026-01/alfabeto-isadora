@@ -1012,9 +1012,14 @@
                 this.y = Math.random() * (limC - limT) + limT; 
             } 
             else {
-                this.radius = 45 * scaleMultiplier; this.x = cw + 600 * scaleMultiplier; 
-                this.y = Math.random() > 0.5 ? ch - alturaChao - this.radius - 60 : ch - alturaChao - 260 * scaleMultiplier;
+                this.radius = 45 * scaleMultiplier; 
+                this.x = cw + 600 * scaleMultiplier; 
                 if (xOverride) this.x = xOverride;
+                
+                // OTIMIZAÇÃO: Ancorando as posições alta e baixa matematicamente no chão
+                let posBaixa = ch - alturaChao - this.radius - (40 * scaleMultiplier);
+                let posAlta = ch - alturaChao - this.radius - (210 * scaleMultiplier);
+                this.y = Math.random() > 0.5 ? posAlta : posBaixa;
             }
             
             this.gradCache = null;
@@ -1329,11 +1334,14 @@
 
                     let cw = window.innerWidth;
                     let level = letrasColetadas.length;
+                    
+                    // OTIMIZAÇÃO: Espaçamento responsivo baseado no tamanho da tela
+                    let espacamento = cw < 768 ? 450 : 600;
 
                     // Progressão de Dificuldade
                     if (level < 5) {
                         // Nível 1: Apenas a letra correta
-                        collectibles.push(new Collectible('letra', desafioFase1.certa, cw + 300, true));
+                        collectibles.push(new Collectible('letra', desafioFase1.certa, cw + 200, true));
                     } else if (level < 15) {
                         // Nível 2: Introdução de 1 distrator
                         let errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
@@ -1341,7 +1349,7 @@
                         
                         let ordem = Math.random() > 0.5;
                         collectibles.push(new Collectible('letra', ordem ? desafioFase1.certa : errada, cw + 200, ordem));
-                        collectibles.push(new Collectible('letra', ordem ? errada : desafioFase1.certa, cw + 700, !ordem));
+                        collectibles.push(new Collectible('letra', ordem ? errada : desafioFase1.certa, cw + 200 + espacamento, !ordem));
                     } else {
                         // Nível 3: Introdução de 2 distratores
                         let errada1 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
@@ -1357,8 +1365,8 @@
                         opcoes.sort(() => Math.random() - 0.5); // Embaralha
 
                         collectibles.push(new Collectible('letra', opcoes[0].info, cw + 200, opcoes[0].c));
-                        collectibles.push(new Collectible('letra', opcoes[1].info, cw + 700, opcoes[1].c));
-                        collectibles.push(new Collectible('letra', opcoes[2].info, cw + 1200, opcoes[2].c));
+                        collectibles.push(new Collectible('letra', opcoes[1].info, cw + 200 + espacamento, opcoes[1].c));
+                        collectibles.push(new Collectible('letra', opcoes[2].info, cw + 200 + espacamento * 2, opcoes[2].c));
                     }
                 }
                 itemTimer = 0;
@@ -1655,6 +1663,13 @@
                 } 
                 else if (item.x < -150) { 
                     item.markedForDeletion = true; 
+                    
+                    // OTIMIZAÇÃO E CORREÇÃO DE BUG DA FASE 1:
+                    // Se o item que passou (e não foi coletado) era a letra CORRETA, resetamos o desafio
+                    // para forçar que o HUD e o Áudio repassem a instrução para a criança na próxima tentativa.
+                    if (faseAtual === 1 && item.isCorrect && !item.ignorarColisao) {
+                        desafioFase1 = null; 
+                    }
                 }
             }
         } catch (error) { console.error("Erro no loop do jogo:", error); }
