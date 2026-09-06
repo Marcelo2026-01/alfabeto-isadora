@@ -458,6 +458,8 @@
     let hitStopTime = 0;
     let shakeIntensity = 0;
     
+    // Variáveis de Desafio para cada fase
+    let desafioFase1 = null;
     let desafioFase2 = null;
     let desafioFase4 = null;
     let desafioFase5 = null;
@@ -465,14 +467,14 @@
 
     const AlfabetoIsadora = [ 
         { letra: 'A', palavra: 'Abelha' }, { letra: 'B', palavra: 'Bola' }, { letra: 'C', palavra: 'Casa' }, 
-        { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Escola' }, { letra: 'F', palavra: 'Fada' }, 
-        { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hora' }, { letra: 'I', palavra: 'Igreja' }, 
+        { letra: 'D', palavra: 'Dado' }, { letra: 'E', palavra: 'Elefante' }, { letra: 'F', palavra: 'Fada' }, 
+        { letra: 'G', palavra: 'Gato' }, { letra: 'H', palavra: 'Hipopótamo' }, { letra: 'I', palavra: 'Igreja' }, 
         { letra: 'J', palavra: 'Jacaré' }, { letra: 'K', palavra: 'Kiwi' }, { letra: 'L', palavra: 'Leão' }, 
-        { letra: 'M', palavra: 'Macaco' }, { letra: 'N', palavra: 'Nuvem' }, { letra: 'O', palavra: 'Ovo' }, 
+        { letra: 'M', palavra: 'Macaco' }, { letra: 'N', palavra: 'Navio' }, { letra: 'O', palavra: 'Ovo' }, 
         { letra: 'P', palavra: 'Pato' }, { letra: 'Q', palavra: 'Queijo' }, { letra: 'R', palavra: 'Rato' }, 
         { letra: 'S', palavra: 'Sapo' }, { letra: 'T', palavra: 'Tatu' }, { letra: 'U', palavra: 'Uva' }, 
-        { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Wafer' }, { letra: 'X', palavra: 'Xícara' }, 
-        { letra: 'Y', palavra: 'Yoga' }, { letra: 'Z', palavra: 'Zebra' } 
+        { letra: 'V', palavra: 'Vaca' }, { letra: 'W', palavra: 'Waffle' }, { letra: 'X', palavra: 'Xícara' }, 
+        { letra: 'Y', palavra: 'Yakisoba' }, { letra: 'Z', palavra: 'Zebra' } 
     ];
     let letrasParaVencerFase1 = 26; let letrasColetadas = [];
 
@@ -652,7 +654,7 @@
             try {
                 window.speechSynthesis.cancel(); 
                 
-                const frasesErro = ["Ops!", "Quase lá!", "Tente de novo!"];
+                const frasesErro = ["Ops!", "Quase lá!", "Tente de novo!", "Observe a letra!"];
                 const frase = frasesErro[Math.floor(Math.random() * frasesErro.length)];
                 
                 let vozes = window.speechSynthesis.getVoices();
@@ -767,7 +769,7 @@
         }
 
         startScreen.style.opacity = '0';
-        desafioFase2 = null; desafioFase4 = null; desafioFase5 = null; desafioFase6 = null;
+        desafioFase1 = null; desafioFase2 = null; desafioFase4 = null; desafioFase5 = null; desafioFase6 = null;
         
         initTimeoutId = setTimeout(() => {
             startScreen.style.display = 'none'; 
@@ -801,13 +803,11 @@
         }, 1800); 
     }
 
-    // Função de correção para reiniciar SOMENTE A FASE ATUAL
     function reiniciarFaseAtual() {
         if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
         
         AudioManager.playMagicSFX();
         
-        // Limpar objetos da tela para evitar bugs ao recomeçar a fase
         collectibles = [];
         particulas = [];
         textosFlutuantes = [];
@@ -825,9 +825,9 @@
         progressFill.classList.remove('combo-ativo');
         letraUi.classList.remove('texto-combo-ativo');
 
-        // Resetar contadores específicos da fase
         if (faseAtual === 1) {
             letrasColetadas = [];
+            desafioFase1 = null;
         } else if (faseAtual === 2) {
             acertosAtuaisFase2 = 0;
             desafioFase2 = null;
@@ -920,7 +920,6 @@
         resetIdleTimer();
     }
     
-    // Corrigido para chamar reiniciarFaseAtual() no botão REINICIAR FASE invés do iniciarJogo()
     btnReiniciar.addEventListener('click', (e) => { 
         e.preventDefault(); e.stopPropagation();
         isPaused = false; pauseScreen.style.opacity = '0'; 
@@ -1005,6 +1004,7 @@
             else {
                 this.radius = 45 * scaleMultiplier; this.x = cw + 600 * scaleMultiplier; 
                 this.y = Math.random() > 0.5 ? ch - alturaChao - this.radius - 60 : ch - alturaChao - 260 * scaleMultiplier;
+                if (xOverride) this.x = xOverride;
             }
             
             this.gradCache = null;
@@ -1078,7 +1078,8 @@
                 ctx.shadowBlur = 0; ctx.fillStyle = '#000'; ctx.font = `bold ${this.radius * 1.2}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 4); 
             }
             else if (this.tipo === 'letra' || this.tipo === 'estrela_vitória') {
-                ctx.shadowColor = '#FFD700'; ctx.shadowBlur = this.tipo === 'estrela_vitória' ? 40 : 25; 
+                ctx.shadowColor = this.ignorarColisao ? '#555' : (this.tipo === 'estrela_vitória' ? '#FFD700' : '#FFD700'); 
+                ctx.shadowBlur = this.ignorarColisao ? 0 : (this.tipo === 'estrela_vitória' ? 40 : 25); 
                 if (this.tipo === 'estrela_vitória') {
                     if(!this.gradCache) {
                         this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius * 1.3);
@@ -1094,10 +1095,15 @@
                         this.gradCache = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius); 
                         this.gradCache.addColorStop(0, '#FFFFEE'); this.gradCache.addColorStop(0.7, '#FFD700'); this.gradCache.addColorStop(1, '#B8860B');
                     }
-                    ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.gradCache; ctx.fill(); 
-                    ctx.save(); ctx.rotate(this.spin); ctx.beginPath(); ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 1.5); ctx.strokeStyle = '#FFF'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+                    ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI * 2); 
+                    ctx.fillStyle = this.ignorarColisao ? 'rgba(100, 100, 100, 0.8)' : this.gradCache; 
+                    ctx.fill(); 
+                    ctx.save(); ctx.rotate(this.spin); ctx.beginPath(); ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 1.5); 
+                    ctx.strokeStyle = this.ignorarColisao ? 'rgba(200, 200, 200, 0.3)' : '#FFF'; 
+                    ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
                 }
-                ctx.shadowBlur = 0; ctx.fillStyle = this.tipo === 'estrela_vitória' ? '#FFF' : '#FF1493'; ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 4*scl); 
+                ctx.shadowBlur = 0; ctx.fillStyle = this.ignorarColisao ? '#CCC' : (this.tipo === 'estrela_vitória' ? '#FFF' : '#FF1493'); 
+                ctx.font = `900 ${this.radius * 1.1}px 'Fredoka', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(displayTexto, 0, 4*scl); 
             } 
             else if (this.tipo === 'letra_desafio' || this.tipo === 'silaba') {
                 ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, this.radius + 10*scl, this.radius*0.8, 8*scl, 0, 0, Math.PI*2); ctx.fill();
@@ -1293,15 +1299,57 @@
         if (itemTimer > itemInterval) { 
             let podeSpawnar = true;
             
+            // FASE 1 - Reestruturada Pedagogicamente
             if (faseAtual === 1) {
-                let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
-                if (letrasFaltantes.length > 0 || isInfinite) {
-                    let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0].letra : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)].letra;
-                    if (!collectibles.some(c => c.tipo === 'letra' && c.info.letra === letraAlvo)) collectibles.push(new Collectible('letra', {letra: letraAlvo, palavra: AlfabetoIsadora.find(i=>i.letra===letraAlvo).palavra}));
-                } else {
+                if (!isInfinite && letrasColetadas.length >= letrasParaVencerFase1) {
                     faseAtual = 2;
                     collectibles = []; particulas = []; textosFlutuantes = [];
                     prepararFase(2); podeSpawnar = false; AudioManager.playSuccessSFX();
+                } else if (collectibles.length === 0) {
+                    if (!desafioFase1) {
+                        let letrasFaltantes = AlfabetoIsadora.filter(item => !letrasColetadas.includes(item.letra));
+                        let letraAlvo = letrasFaltantes.length > 0 ? letrasFaltantes[0] : AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+
+                        letraUi.innerText = `PEGUE A LETRA: ${letraAlvo.letra}`;
+                        AudioManager.playVoice(`Pegue a letra ${letraAlvo.letra}, de ${letraAlvo.palavra}`);
+                        hudLayer.classList.add('hud-punch'); setTimeout(() => hudLayer.classList.remove('hud-punch'), 200);
+
+                        desafioFase1 = { certa: letraAlvo };
+                    }
+
+                    let cw = window.innerWidth;
+                    let level = letrasColetadas.length;
+
+                    // Progressão de Dificuldade
+                    if (level < 5) {
+                        // Nível 1: Apenas a letra correta
+                        collectibles.push(new Collectible('letra', desafioFase1.certa, cw + 300, true));
+                    } else if (level < 15) {
+                        // Nível 2: Introdução de 1 distrator
+                        let errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        while (errada.letra === desafioFase1.certa.letra) errada = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        
+                        let ordem = Math.random() > 0.5;
+                        collectibles.push(new Collectible('letra', ordem ? desafioFase1.certa : errada, cw + 200, ordem));
+                        collectibles.push(new Collectible('letra', ordem ? errada : desafioFase1.certa, cw + 700, !ordem));
+                    } else {
+                        // Nível 3: Introdução de 2 distratores
+                        let errada1 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        while (errada1.letra === desafioFase1.certa.letra) errada1 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        let errada2 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+                        while (errada2.letra === desafioFase1.certa.letra || errada2.letra === errada1.letra) errada2 = AlfabetoIsadora[Math.floor(Math.random() * AlfabetoIsadora.length)];
+
+                        let opcoes = [
+                            { info: desafioFase1.certa, c: true },
+                            { info: errada1, c: false },
+                            { info: errada2, c: false }
+                        ];
+                        opcoes.sort(() => Math.random() - 0.5); // Embaralha
+
+                        collectibles.push(new Collectible('letra', opcoes[0].info, cw + 200, opcoes[0].c));
+                        collectibles.push(new Collectible('letra', opcoes[1].info, cw + 700, opcoes[1].c));
+                        collectibles.push(new Collectible('letra', opcoes[2].info, cw + 1200, opcoes[2].c));
+                    }
                 }
                 itemTimer = 0;
             } 
@@ -1481,13 +1529,39 @@
                 const dy = posYPersonagem - item.y; const distance = Math.sqrt(dx * dx + dy * dy);
                 if (distance < item.radius + (player.width/2.5) && !item.ignorarColisao && !item.isResolvido) { 
                     
+                    // Colisão da Fase 1 - Reestruturada
                     if (item.tipo === 'letra') {
-                        item.markedForDeletion = true; 
-                        shakeIntensity = 2;
-                        gerenciarCombo(true);
-                        AudioManager.playColetaLetra(`${item.info.letra} de ${item.info.palavra}`); textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
-                        if (!letrasColetadas.includes(item.info.letra)) { letrasColetadas.push(item.info.letra); atualizarProgressoHUD(); }
-                        for(let j=0; j<6; j++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', (Math.random()*6)-3, (Math.random()*6)-3, Math.random()*10+5));
+                        if (item.isCorrect) {
+                            item.markedForDeletion = true; 
+                            shakeIntensity = 2;
+                            gerenciarCombo(true);
+                            
+                            AudioManager.playColetaLetra(`Muito bem! ${item.info.letra} de ${item.info.palavra}`); 
+                            textosFlutuantes.push(new TextoFlutuante(`${item.info.letra} de ${item.info.palavra}!`, item.x - 40, item.y - 20, '#FFF', '#FF8C00'));
+                            
+                            if (!letrasColetadas.includes(item.info.letra)) { 
+                                letrasColetadas.push(item.info.letra); 
+                                atualizarProgressoHUD(); 
+                            }
+                            
+                            for(let j=0; j<6; j++) particulas.push(new Particula(item.x, item.y, Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', (Math.random()*6)-3, (Math.random()*6)-3, Math.random()*10+5));
+                            
+                            collectibles.forEach(c => { if(c !== item) c.ignorarColisao = true; });
+                            desafioFase1 = null; 
+                        } else {
+                            item.markedForDeletion = true; 
+                            hitStopTime = 80; shakeIntensity = 12;
+                            damageOverlay.classList.add('damage-active');
+                            setTimeout(() => damageOverlay.classList.remove('damage-active'), 150);
+
+                            gerenciarCombo(false);
+                            AudioManager.playErrorSFX(); 
+                            textosFlutuantes.push(new TextoFlutuante("QUASE!", item.x, item.y - 50, '#FFF', '#FF0000'));
+                            
+                            for(let j=0; j<10; j++) particulas.push(new Particula(item.x, item.y, '#555', (Math.random()*4)-2, (Math.random()*4)-2, Math.random()*10+5));
+                            
+                            setTimeout(() => { AudioManager.playErrorVoice(); }, 500);
+                        }
                     } 
                     else if (item.tipo === 'letra_desafio' || item.tipo === 'silaba') {
                         if (item.isCorrect) {
