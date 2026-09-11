@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#1a252f">
     <title>O Alfabeto da Isadora - Jogo Educativo Interativo</title>
 
@@ -287,89 +287,215 @@
 
             .foto-isadora-livro { height: clamp(120px, 35vmin, 160px); width: clamp(60px, 18vmin, 80px); margin-bottom: 5px; } .foto-casa-livro { height: clamp(100px, 25vmin, 140px); margin-bottom: 10px; }
         }
+
+        /* ========================================================
+           REFINAMENTO VISUAL — EXPERIÊNCIA EDUCATIVA PREMIUM
+           Mantém todos os seletores e estados da lógica existente.
+           ======================================================== */
+        :root {
+            --surface: #101a30;
+            --surface-soft: rgba(16, 26, 48, .78);
+            --text-main: #f8fbff;
+            --text-soft: #c1cbe2;
+            --brand: #ff4d9a;
+            --brand-light: #ff8fc3;
+            --accent: #62e6dc;
+            --gold: #ffd166;
+            --line: rgba(255,255,255,.18);
+            --shadow-premium: 0 18px 50px rgba(2, 8, 25, .42);
+        }
+        body { background: #071225; color: var(--text-main); }
+        #game-container {
+            isolation: isolate;
+            background: radial-gradient(circle at 82% 16%, rgba(98,230,220,.24), transparent 30%), linear-gradient(160deg, #6ed8f2 0%, #bcecff 44%, #f8e7cd 100%);
+        }
+        #game-stage { position: absolute; inset: 0; z-index: 1; }
+        #game-stage canvas { position: absolute; inset: 0; z-index: 1; }
+        #damage-overlay { z-index: 80; }
+        #loading-screen {
+            background-color: #071225;
+            background-image: radial-gradient(circle at 18% 20%, rgba(98,230,220,.16), transparent 34%), radial-gradient(circle at 82% 76%, rgba(255,77,154,.18), transparent 37%), linear-gradient(140deg,#071225,#182b51);
+        }
+        .loader-ring { margin-bottom: 28px; }
+        .loader-text { letter-spacing: .3em; font-size: clamp(14px, 3vw, 22px); }
+        .loader-tip { color: #aebddb; letter-spacing: .08em; text-transform: none; }
+        .btn-corner, .btn-pause-ui, .ps5-btn, .btn-livro, #btn-fechar-historia {
+            -webkit-tap-highlight-color: transparent;
+        }
+        button:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 4px;
+        }
+        #ui-layer {
+            background: linear-gradient(135deg, rgba(15, 29, 57, .86), rgba(19, 35, 65, .58));
+            border-color: rgba(255,255,255,.28);
+            border-radius: 18px;
+            box-shadow: var(--shadow-premium), inset 0 1px 0 rgba(255,255,255,.18);
+        }
+        #meta-alfabeto { color: var(--gold); font-weight: 900; }
+        #letra-ui { letter-spacing: .06em; }
+        .progress-bar-container { background: rgba(4, 12, 28, .58); border-color: rgba(255,255,255,.2); }
+        .progress-bar-fill { background: linear-gradient(90deg, var(--brand), var(--gold)); }
+        .btn-corner {
+            background: rgba(10, 25, 51, .7);
+            border-color: rgba(255,255,255,.32);
+            border-radius: 16px;
+        }
+        .btn-corner:hover { background: rgba(27, 51, 91, .9); transform: translateY(-2px); }
+        #start-screen {
+            background: linear-gradient(90deg, rgba(4, 13, 31, .98) 0%, rgba(8, 21, 47, .91) 42%, rgba(8, 21, 47, .24) 72%, transparent 100%);
+        }
+        .ps5-sidebar { position: relative; }
+        .ps5-sidebar::before {
+            content: 'JOGUE • APRENDA • BRILHE';
+            position: absolute; top: 10%; left: 8vw; color: var(--accent); font-size: clamp(10px,1.2vw,14px); font-weight: 900; letter-spacing: .2em;
+        }
+        .ps5-title { letter-spacing: .02em; text-wrap: balance; }
+        .ps5-subtitle { color: var(--brand-light); }
+        .ps5-menu-options { gap: clamp(7px, 1.4vmin, 13px); scrollbar-color: var(--brand) transparent; }
+        .ps5-btn {
+            min-height: 44px;
+            color: rgba(255,255,255,.82);
+            border: 1px solid transparent;
+            text-align: left;
+        }
+        .ps5-btn:hover, .ps5-btn:focus-visible, .ps5-btn.highlight {
+            color: #10203e;
+            background: linear-gradient(100deg, #ffffff, #dffefa);
+            border-color: rgba(255,255,255,.72);
+            box-shadow: 0 14px 32px rgba(0,0,0,.25);
+        }
+        .ps5-hero-glow { background: radial-gradient(circle, rgba(255,77,154,.5) 0%, rgba(98,230,220,.25) 42%, transparent 70%); }
+        #tutorial-ui { z-index: 45; }
+        .ps5-tutorial-box { border-radius: 18px; letter-spacing: .08em; }
+        #pause-screen, #victory-screen, #exit-screen {
+            background: radial-gradient(circle at 50% 20%, rgba(56,88,146,.3), transparent 34%), rgba(5, 14, 32, .94) !important;
+        }
+        #pause-screen, #victory-screen { gap: 13px; }
+        .btn-pause-ui {
+            min-height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg,#ffffff,#daf8fa);
+            box-shadow: 0 7px 0 #a6ced7, 0 13px 26px rgba(0,0,0,.22);
+        }
+        .btn-pause-ui:hover, .btn-pause-ui:focus-visible { transform: translateY(-2px) scale(1.02); }
+        .btn-pause-ui:active { transform: translateY(4px); box-shadow: 0 2px 0 #a6ced7; }
+        .btn-pause-ui.sair { background: linear-gradient(135deg,#ff6b77,#ed3f63); box-shadow: 0 7px 0 #ad2443, 0 13px 26px rgba(0,0,0,.22); }
+        .victory-title { color: var(--gold); letter-spacing: .08em; }
+        .victory-subtitle { color: var(--accent); max-width: min(88vw, 700px); }
+        .credits { color: var(--text-soft); }
+        #modal-historia { background: rgba(4, 13, 31, .89); }
+        #livro-container {
+            background: linear-gradient(145deg, rgba(25,43,78,.94), rgba(13,24,48,.95));
+            border-radius: 24px;
+            border-color: rgba(255,255,255,.19);
+            box-shadow: 0 24px 70px rgba(0,0,0,.55);
+        }
+        #livro-container h2 { color: var(--brand-light); text-transform: none; }
+        #livro-container p { color: #edf3ff; line-height: 1.65; }
+        .btn-livro { min-height: 42px; border-radius: 12px; }
+        #btn-fechar-historia { border-radius: 14px; }
+        #aviso-rotacao { background: radial-gradient(circle at 50% 35%, #2d5680, #071225 70%); }
+        #aviso-rotacao h2 { color: var(--gold); }
+        @media (max-width: 760px) and (orientation: portrait) {
+            #start-screen { background: linear-gradient(180deg, rgba(4,13,31,.98), rgba(8,21,47,.9)); }
+            .ps5-sidebar { width: 100%; padding: 16vh 7vw 7vh; align-items: center; text-align: center; }
+            .ps5-sidebar::before { left: 50%; transform: translateX(-50%); white-space: nowrap; }
+            .ps5-menu-options { align-items: stretch; width: min(100%, 460px); }
+            .ps5-btn { justify-content: center; text-align: center; }
+            .ps5-hero-area { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+        }
     </style>
 </head>
 <body>
-
-<div id="loading-screen">
-    <div class="loader-ring"></div>
+<div id="loading-screen" role="status" aria-live="polite" aria-label="Carregando o jogo">
+    <div class="loader-ring" aria-hidden="true"></div>
     <div class="loader-text">CARREGANDO...</div>
-    <div class="loader-tip" id="loader-tip-text">DICA: Para uma melhor experiência, jogue com o som ligado!</div>
+    <p class="loader-tip" id="loader-tip-text">DICA: Para uma melhor experiência, jogue com o som ligado!</p>
 </div>
 
-<div id="damage-overlay"></div>
+<main id="game-container" aria-label="O Alfabeto da Isadora">
+    <div id="damage-overlay" aria-hidden="true"></div>
 
-<div id="game-container">
-    <div id="aviso-rotacao">
-        <div class="icone-celular">[ ! ]</div>
-        <h2>Vire o Celular</h2>
+    <section id="aviso-rotacao" role="alert" aria-labelledby="titulo-rotacao">
+        <div class="icone-celular" aria-hidden="true">[ ! ]</div>
+        <h2 id="titulo-rotacao">Vire o celular</h2>
         <p>Para brincar, o celular precisa estar deitado.</p>
-        <button id="btn-forcar-giro" class="btn-pause-ui">GIRAR TELA</button>
-    </div>
+        <button id="btn-forcar-giro" class="btn-pause-ui" type="button">GIRAR TELA</button>
+    </section>
 
-    <button id="btn-som" class="btn-corner" style="display: none;">♪ SOM</button>
-    <div id="btn-pause" class="btn-corner" style="display: none;">||</div>
+    <section id="game-stage" aria-label="Área de jogo interativa">
+        <canvas id="gameCanvas" role="img" aria-label="Área do jogo interativo da Isadora"></canvas>
+    </section>
 
-    <div id="ui-layer" aria-live="polite" style="display: none;">
+    <section id="ui-layer" aria-live="polite" aria-atomic="true" aria-label="Progresso da fase" style="display: none;">
         <span id="meta-alfabeto">COLETE O ALFABETO</span>
         <span id="letra-ui">Sua jornada vai começar...</span>
-        <div class="progress-bar-container">
+        <div class="progress-bar-container" role="progressbar" aria-label="Progresso da fase" aria-valuemin="0" aria-valuemax="100">
             <div id="progress-fill" class="progress-bar-fill"></div>
         </div>
-    </div>
+    </section>
 
-    <div id="tutorial-ui">
+    <nav id="game-controls" aria-label="Controles do jogo">
+        <button id="btn-som" class="btn-corner" type="button" aria-label="Ativar ou desativar som" style="display: none;">♪ SOM</button>
+        <button id="btn-pause" class="btn-corner" type="button" aria-label="Pausar jogo" style="display: none;">||</button>
+    </nav>
+
+    <aside id="tutorial-ui" aria-live="polite" aria-label="Instrução da fase">
         <div class="ps5-tutorial-box">
             <span class="ps5-btn-hint" id="txt-tutorial">ESPAÇO OU TOQUE PARA PULAR</span>
         </div>
-    </div>
+    </aside>
     
-    <div id="start-screen">
+    <section id="start-screen" aria-labelledby="game-title">
         <div class="ps5-sidebar">
-            <div class="ps5-title-area">
-                <h1 class="ps5-title">O ALFABETO</h1>
-                <h2 class="ps5-subtitle">DA ISADORA</h2>
-            </div>
-            <div class="ps5-menu-options" style="max-height: 50vh; overflow-y: auto; padding-right: 15px;">
-                <button id="btn-jogar" class="ps5-btn active"><span class="ps5-icon">▶</span> INICIAR JOGO</button>
-                <button id="btn-modo" class="ps5-btn"><span class="ps5-icon">✦</span> MODO: CAMPANHA (COMPLETA)</button>
-                <button id="btn-historia" class="ps5-btn"><span class="ps5-icon">≡</span> HISTÓRIA</button>
-                <button id="btn-som-menu" class="ps5-btn"><span class="ps5-icon">♪</span> AUDIO: LIGADO</button>
-                <button id="btn-sair-menu" class="ps5-btn"><span class="ps5-icon">✖</span> SAIR DO JOGO</button>
-            </div>
+            <header class="ps5-title-area">
+                <h1 class="ps5-title" id="game-title">O ALFABETO</h1>
+                <p class="ps5-subtitle">DA ISADORA</p>
+            </header>
+            <nav class="ps5-menu-options" aria-label="Menu principal" style="max-height: 50vh; overflow-y: auto; padding-right: 15px;">
+                <button id="btn-jogar" class="ps5-btn active" type="button"><span class="ps5-icon" aria-hidden="true">▶</span> INICIAR JOGO</button>
+                <button id="btn-modo" class="ps5-btn" type="button"><span class="ps5-icon" aria-hidden="true">✦</span> MODO: CAMPANHA (COMPLETA)</button>
+                <button id="btn-historia" class="ps5-btn" type="button"><span class="ps5-icon" aria-hidden="true">≡</span> HISTÓRIA</button>
+                <button id="btn-som-menu" class="ps5-btn" type="button" aria-pressed="true"><span class="ps5-icon" aria-hidden="true">♪</span> AUDIO: LIGADO</button>
+                <button id="btn-sair-menu" class="ps5-btn" type="button"><span class="ps5-icon" aria-hidden="true">✖</span> SAIR DO JOGO</button>
+            </nav>
         </div>
-        <div class="ps5-hero-area">
+        <div class="ps5-hero-area" aria-hidden="true">
             <div class="ps5-hero-glow"></div>
             <div class="ps5-hero-mascot"></div>
         </div>
-    </div>
+    </section>
 
-    <div id="pause-screen">
-        <h1 class="titulo-jogo" style="font-size: clamp(30px, 8vmin, 60px); color: #FFF; font-family: 'Fredoka', sans-serif; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">PAUSADO</h1>
-        <button id="btn-continuar" class="btn-pause-ui">CONTINUAR</button>
-        <button id="btn-reiniciar" class="btn-pause-ui">REINICIAR FASE</button>
-        <button id="btn-voltar-menu" class="btn-pause-ui sair">MENU PRINCIPAL</button>
-    </div>
+    <section id="pause-screen" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+        <h2 class="titulo-jogo" id="pause-title" style="font-size: clamp(30px, 8vmin, 60px); color: #FFF; font-family: 'Fredoka', sans-serif; text-shadow: 0 5px 15px rgba(0,0,0,0.5);">PAUSADO</h2>
+        <button id="btn-continuar" class="btn-pause-ui" type="button">CONTINUAR</button>
+        <button id="btn-reiniciar" class="btn-pause-ui" type="button">REINICIAR FASE</button>
+        <button id="btn-voltar-menu" class="btn-pause-ui sair" type="button">MENU PRINCIPAL</button>
+    </section>
 
-    <div id="victory-screen">
-        <div class="trophy-icon">🏆</div>
-        <h1 class="victory-title">PLATINA!</h1>
-        <h2 class="victory-subtitle">VOCÊ DOMINOU O ALFABETO E AS SÍLABAS</h2>
+    <section id="victory-screen" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+        <div class="trophy-icon" aria-hidden="true">🏆</div>
+        <h2 class="victory-title" id="victory-title">PLATINA!</h2>
+        <p class="victory-subtitle">VOCÊ DOMINOU O ALFABETO E AS SÍLABAS</p>
         <div class="credits">
             Protagonista: <strong>Isadora</strong><br>
             Diretor Criativo: <strong>Papai Jose Marcelo</strong><br>
             Apoio Especial: <strong>Casa Sorrir</strong><br><br>
             <em>O Vale dos Números chegará na próxima atualização!</em>
         </div>
-        <button id="btn-vitória-menu" class="btn-pause-ui">VOLTAR AO MENU</button>
-    </div>
+        <button id="btn-vitória-menu" class="btn-pause-ui" type="button">VOLTAR AO MENU</button>
+    </section>
 
-    <div id="modal-historia">
-        <button id="btn-fechar-historia" aria-label="Fechar Livro">✖</button>
-        <div id="livro-container">
+    <section id="modal-historia" role="dialog" aria-modal="true" aria-labelledby="historia-title">
+        <button id="btn-fechar-historia" type="button" aria-label="Fechar história">✖</button>
+        <article id="livro-container">
             <div class="pagina ativa" id="livro-p1">
                 <div class="foto-isadora-livro pose-1"></div>
-                <h2>Um Presente do Céu</h2>
+                <h2 id="historia-title">Um Presente do Céu</h2>
                 <p>Em Mirandiba, nasceu a pequena Isadora. Ela chegou trazendo um sorriso único, com uma marquinha especial chamada lábio leporino.</p>
             </div>
             <div class="pagina" id="livro-p2">
@@ -388,23 +514,21 @@
                 <p>Hoje, aquela marquinha é o símbolo de uma grande vitória. Isadora cresce feliz e brincando.</p>
             </div>
             <div class="controles-livro">
-                <button id="prevBtnLivro" class="btn-livro" disabled><span class="ps5-icon">◀</span> Anterior</button>
-                <div class="numero-pagina" id="paginacaoLivro">1 / 4</div>
-                <button id="nextBtnLivro" class="btn-livro">Próxima <span class="ps5-icon">▶</span></button>
+                <button id="prevBtnLivro" class="btn-livro" type="button" disabled><span class="ps5-icon" aria-hidden="true">◀</span> Anterior</button>
+                <div class="numero-pagina" id="paginacaoLivro" aria-live="polite">1 / 4</div>
+                <button id="nextBtnLivro" class="btn-livro" type="button">Próxima <span class="ps5-icon" aria-hidden="true">▶</span></button>
             </div>
-        </div>
-    </div>
+        </article>
+    </section>
 
-    <div id="exit-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; opacity: 0; transition: opacity 0.5s ease; text-align: center;">
-        <div style="background: rgba(15, 20, 35, 0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 80%; display: flex; flex-direction: column; align-items: center;">
-            <h1 style="color: #FF107A; font-size: clamp(24px, 6vw, 35px); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-family: 'Fredoka', sans-serif;">Sistema</h1>
+    <section id="exit-screen" role="dialog" aria-modal="true" aria-labelledby="exit-title" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; opacity: 0; transition: opacity 0.5s ease; text-align: center;">
+        <div class="exit-card" style="background: rgba(15, 20, 35, 0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.8); max-width: 80%; display: flex; flex-direction: column; align-items: center;">
+            <h2 id="exit-title" style="color: #FF107A; font-size: clamp(24px, 6vw, 35px); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-family: 'Fredoka', sans-serif;">Sistema</h2>
             <p style="color: #A0AAB5; font-size: clamp(14px, 3.5vw, 18px); margin-bottom: 25px; line-height: 1.5; font-family: 'Fredoka', sans-serif;">Para encerrar sua sessão, minimize ou feche este aplicativo no seu celular.</p>
-            <button id="btn-cancelar-sair" class="btn-pause-ui">VOLTAR AO MENU</button>
+            <button id="btn-cancelar-sair" class="btn-pause-ui" type="button">VOLTAR AO MENU</button>
         </div>
-    </div>
-
-    <canvas id="gameCanvas" role="img" aria-label="Area do jogo interativo da Isadora"></canvas>
-</div>
+    </section>
+</main>
 
 <script>
     if ('speechSynthesis' in window) { window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; }
