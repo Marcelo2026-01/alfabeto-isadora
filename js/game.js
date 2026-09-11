@@ -1,0 +1,42 @@
+(() => {
+  const STORAGE_KEY='o-alfabeto-da-isadora';
+  const $=selector=>document.querySelector(selector);
+  const fresh=()=>({current:0,completed:[],score:0,hits:0,errors:0,errorByLetter:{},audio:true});
+  let state=load();
+  let reviewing=false, reviewReturn=0;
+
+  function load(){try{return {...fresh(),...JSON.parse(localStorage.getItem(STORAGE_KEY))}}catch{return fresh()}}
+  function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+  function shuffled(items){return [...items].sort(()=>Math.random()-.5)}
+  function show(id){['home-screen','game-screen','finish-screen'].forEach(screen=>$('#'+screen).hidden=screen!==id)}
+  function nearby(letter,count=2){return shuffled(LETTERS.filter(item=>item.index!==letter.index).sort((a,b)=>Math.abs(a.index-letter.index)-Math.abs(b.index-letter.index)).slice(0,5)).slice(0,count).map(item=>item.upper)}
+
+  function renderMap(){const map=$('#alphabet-map');if(!map)return;map.innerHTML=LETTERS.map((letter,index)=>`<span class="${state.completed.includes(index)?'done':''} ${index===state.current?'current':''}">${letter.upper}</span>`).join('')}
+  function updateHome(){const complete=state.completed.length;const hasChallenges=Object.keys(state.errorByLetter).length>0;$('#home-progress-fill').style.width=(complete/26*100)+'%';$('#home-progress-text').textContent=`${complete} de 26 letras`;$('#continue-button').hidden=!complete;$('#review-button').hidden=!hasChallenges;$('#reset-button').hidden=!complete;$('#start-button').textContent=complete?'Praticar letra atual':'Começar'}
+  function openHome(){updateHome();show('home-screen')}
+  function updateHeader(){const complete=state.completed.length;$('#stage-label').textContent=`Etapa ${Math.min(state.current+1,26)} de 26`;$('#completed-label').textContent=`${complete} concluídas`;$('#stage-progress-fill').style.width=(complete/26*100)+'%';$('#score-label').textContent=`⭐ ${state.score}`;$('#audio-button').textContent=AudioGuide.enabled?'🔊':'🔇';$('#audio-button').setAttribute('aria-label',AudioGuide.enabled?'Desativar áudio':'Ativar áudio')}
+
+  function openLesson(){if(state.completed.length===26){openFinish();return}show('game-screen');const letter=LETTERS[state.current];$('#uppercase').textContent=letter.upper;$('#lowercase').textContent=letter.lower;$('#letter-name').textContent=letter.name;$('#word').textContent=letter.word.toUpperCase();$('#word-visual').textContent=letter.emoji;$('#word-visual').setAttribute('aria-label',letter.word);updateHeader();renderMap();renderActivity(letter);setTimeout(()=>AudioGuide.speak(`${letter.name}. ${letter.upper} de ${letter.word}. Agora vamos praticar.`),250)}
+
+  function activityHeader(title,instruction){$('#activity-title').textContent=title;$('#activity-instruction').textContent=instruction;$('#feedback').textContent='';$('#feedback').className='feedback'}
+  function optionButtons(values,correct,word=false){return `<div class="options">${values.map(value=>`<button class="answer-option ${word?'word':''}" data-value="${value}">${value}</button>`).join('')}</div>`}
+  function attachOptions(correct){$('#activity-content').querySelectorAll('.answer-option').forEach(button=>button.addEventListener('click',()=>respond(button,button.dataset.value===correct)))}
+  function renderActivity(letter){const type=letter.index%6;let instruction,title,choices,correct;
+    if(type===0){title='Encontre a letra';instruction=`Toque na letra ${letter.upper}.`;choices=shuffled([letter.upper,...nearby(letter)]);correct=letter.upper;activityHeader(title,instruction);$('#activity-content').innerHTML=optionButtons(choices,correct);attachOptions(correct)}
+    if(type===1){title='Letra inicial';instruction=`${letter.word} começa com qual letra?`;choices=shuffled([letter.upper,...nearby(letter)]);correct=letter.upper;activityHeader(title,instruction);$('#activity-content').innerHTML=optionButtons(choices,correct);attachOptions(correct)}
+    if(type===2){title='Complete a sequência';const before=LETTERS[Math.max(0,letter.index-1)].upper,after=LETTERS[Math.min(25,letter.index+1)].upper;instruction=`Qual letra fica entre ${before} e ${after}?`;choices=shuffled([letter.upper,...nearby(letter)]);correct=letter.upper;activityHeader(title,instruction);$('#activity-content').innerHTML=`<div class="sequence"><b>${before}</b><span>→</span><b class="blank" aria-label="lacuna"></b><span>→</span><b>${after}</b></div>${optionButtons(choices,correct)}`;attachOptions(correct)}
+    if(type===3){title='Associe a palavra';instruction=`Qual palavra começa com ${letter.upper}?`;choices=shuffled([letter.word,...shuffled(WORDS.filter(word=>word!==letter.word)).slice(0,2)]);correct=letter.word;activityHeader(title,instruction);$('#activity-content').innerHTML=optionButtons(choices,correct,true);attachOptions(correct)}
+    if(type===4){title='Memória relâmpago';instruction=`Encontre a carta da letra ${letter.upper}.`;activityHeader(title,instruction);renderMemory(letter)}
+    if(type===5){title='Desafio de revisão';instruction=`Qual letra combina com ${letter.emoji} ${letter.word}?`;choices=shuffled([letter.upper,...nearby(letter)]);correct=letter.upper;activityHeader(title,instruction);$('#activity-content').innerHTML=optionButtons(choices,correct);attachOptions(correct)}
+    AudioGuide.speak(instruction)
+  }
+  function renderMemory(letter){const cards=shuffled([letter.upper,letter.word,...nearby(letter)]);$('#activity-content').innerHTML=`<div class="options">${cards.map(card=>`<button class="memory-card" data-value="${card}">?</button>`).join('')}</div>`;$('#activity-content').querySelectorAll('.memory-card').forEach(card=>card.addEventListener('click',()=>{if(card.disabled)return;card.textContent=card.dataset.value;card.classList.add('revealed');setTimeout(()=>{if(card.dataset.value===letter.upper){card.classList.add('matched');respond(card,true)}else{card.textContent='?';card.classList.remove('revealed');respond(card,false)}},460)}))}
+  function respond(button,correct){const feedback=$('#feedback');if(button.dataset.answered)return;if(correct){button.dataset.answered='yes';button.classList.add('correct');$('#activity-content').querySelectorAll('button').forEach(item=>item.disabled=true);state.score+=10;state.hits++;if(!state.completed.includes(state.current))state.completed.push(state.current);save();feedback.textContent='Muito bem! Você acertou! +10 pontos';feedback.className='feedback good';AudioGuide.beep(true);AudioGuide.speak('Muito bem!');setTimeout(()=>{if(reviewing){state.current=reviewReturn;reviewing=false}else state.current++;save();openLesson()},850)}else{state.errors++;state.errorByLetter[state.current]=(state.errorByLetter[state.current]||0)+1;save();button.classList.add('wrong');feedback.textContent='Quase! Tente outra resposta.';feedback.className='feedback bad';AudioGuide.beep(false);setTimeout(()=>button.classList.remove('wrong'),380)}}
+  function openFinish(){show('finish-screen');$('#final-score').textContent=state.score;$('#final-hits').textContent=state.hits;AudioGuide.speak('Parabéns! Você completou o alfabeto!')}
+  function toggleAudio(){AudioGuide.toggle();state.audio=AudioGuide.enabled;save();updateHeader()}
+  function stopReview(){if(reviewing){state.current=reviewReturn;reviewing=false;save()}}
+  function reviewChallenges(){const target=Object.entries(state.errorByLetter).sort((a,b)=>b[1]-a[1]).map(([index])=>Number(index)).find(index=>state.completed.includes(index));if(target===undefined){openLesson();return}reviewReturn=state.current;reviewing=true;state.current=target;openLesson()}
+  function reset(){if(window.confirm('Deseja apagar o progresso e começar de novo?')){state=fresh();AudioGuide.setEnabled(true);save();openHome()}}
+  function bind(){ $('#start-button').addEventListener('click',openLesson);$('#continue-button').addEventListener('click',openLesson);$('#review-button').addEventListener('click',reviewChallenges);$('#reset-button').addEventListener('click',reset);$('#back-button').addEventListener('click',()=>{stopReview();openHome()});$('#audio-button').addEventListener('click',toggleAudio);$('#listen-button').addEventListener('click',()=>{const l=LETTERS[state.current];AudioGuide.speak(`${l.name}. ${l.upper} de ${l.word}.`)});$('#play-again-button').addEventListener('click',()=>{state=fresh();save();openLesson()});document.addEventListener('keydown',event=>{if(event.key==='Escape'){stopReview();openHome()}})}
+  AudioGuide.setEnabled(state.audio!==false);bind();openHome();
+})();

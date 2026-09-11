@@ -1,0 +1,4 @@
+const LETTERS = [
+ ['A','a','Á','Avião','✈️'],['B','b','Bê','Bola','⚽'],['C','c','Cê','Casa','🏠'],['D','d','Dê','Dado','🎲'],['E','e','Ê','Elefante','🐘'],['F','f','Éfe','Flor','🌷'],['G','g','Gê','Gato','🐱'],['H','h','Agá','Helicóptero','🚁'],['I','i','I','Ilha','🏝️'],['J','j','Jota','Jacaré','🐊'],['K','k','Cá','Kiwi','🥝'],['L','l','Éle','Lua','🌙'],['M','m','Ême','Macaco','🐒'],['N','n','Êne','Navio','🚢'],['O','o','Ó','Ovo','🥚'],['P','p','Pê','Pipa','🪁'],['Q','q','Quê','Queijo','🧀'],['R','r','Érre','Rato','🐭'],['S','s','Ésse','Sol','☀️'],['T','t','Tê','Trem','🚂'],['U','u','U','Uva','🍇'],['V','v','Vê','Vaca','🐮'],['W','w','Dáblio','Waffle','🧇'],['X','x','Xis','Xícara','☕'],['Y','y','Ípsilon','Yak','🦬'],['Z','z','Zê','Zebra','🦓']
+].map(([upper,lower,name,word,emoji],index)=>({upper,lower,name,word,emoji,index}));
+const WORDS = LETTERS.map(letter=>letter.word);
