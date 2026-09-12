@@ -1,17 +1,1 @@
-{
-  "name": "O Alfabeto da Isadora",
-  "short_name": "Isadora",
-  "start_url": "/jogo.html",
-  "display": "fullscreen",
-  "background_color": "#05070e",
-  "theme_color": "#00D8FF",
-  "orientation": "landscape",
-  "icons": [
-    {
-      "src": "icone512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
-}
+{"name":"Isadora · Uma aventura de descobertas","short_name":"Isadora","lang":"pt-BR","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#14343a","theme_color":"#14343a","icons":[{"src":"assets/icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]}
