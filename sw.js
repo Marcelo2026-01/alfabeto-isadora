@@ -1,4 +1,4 @@
-const CACHE='isadora-discoveries-v2-1';
+const CACHE='isadora-discoveries-v2-2';
 const FILES=['./','./index.html','./style.css','./game.js','./manifest.json','./assets/icon.png','./assets/isadora.png','./assets/mundos.png','./assets/musica_jogo.mp3','./assets/musica_menu.mp3','./assets/risada.mp3'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('isadora-discoveries-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

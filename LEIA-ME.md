@@ -61,3 +61,13 @@ A corrida para durante os desafios para separar o tempo de leitura da exigência
 Nova arte criada com a ferramenta integrada de geração de imagens. A personagem não foi regenerada. Prompt utilizado:
 
 > Use case: stylized-concept. Create a production game background atlas, one image containing exactly THREE equal horizontal wide panoramic strips stacked vertically, no borders, no text, no characters. Each strip side-scrolling platformer background, premium hand painted 3D storybook aesthetic soft rich detailed surfaces and atmospheric depth, child friendly magical world. TOP THIRD: emerald rolling meadow, flowering trees on edges, turquoise winding river, distant peach-roof windmill village, warm cream sky. MIDDLE THIRD: lavender floating islands with tiny ivory castles and peach roofs, waterfalls fading into pink clouds, luminous azure sky. BOTTOM THIRD: enchanted midnight teal forest, immense trees at sides, luminous turquoise mushrooms, blue stream, distant warm lantern treehouse, starry navy sky. All strips have distant environment only, open readable middle area for gameplay, NO foreground platforms, NO UI, NO letters. Cohesive sophisticated console adventure art direction. Landscape strip aspect 3:1 each, total image square 1536x1536 if possible. Render beautiful layered composition.
+
+## Melhorias recentes
+
+- Ilustração em emoji nas perguntas de letra/sílaba inicial e junto ao objetivo do Jardim das letras, para apoiar quem ainda não lê.
+- Correção: Esc na tela de “Vamos tentar de novo?” não devolve mais o jogo com zero corações.
+- Música do menu inicia no primeiro toque/tecla (navegadores bloqueiam autoplay).
+- Atalhos 1, 2 e 3 para responder aos desafios.
+- Estrelas conquistadas aparecem nos cartões do mapa.
+- Botão “Apagar progresso” em Configurações.
+- Narração do aviso de resposta incorreta; cache do service worker atualizado (v2-2).
